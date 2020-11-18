@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTubeStreamTemplatesCLI", "YouTubeStreamTemplatesCLI\YouTubeStreamTemplatesCLI.csproj", "{C5B5196D-6C89-4B4F-A829-74176568AA30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTubeStreamTemplates", "YouTubeStreamTemplates\YouTubeStreamTemplates.csproj", "{A934E433-5183-4330-938E-220890D37DEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTubeStreamTemplatesWindows", "YouTubeStreamTemplatesWindows\YouTubeStreamTemplatesWindows.csproj", "{2282E81A-AB3E-4F84-A11B-245B1E12FFDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTubeStreamTemplatesCrossPlatform", "YouTubeStreamTemplatesCrossPlatform\YouTubeStreamTemplatesCrossPlatform.csproj", "{DFD168BF-4CA6-4074-8DE0-0AD264F31AFE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5B5196D-6C89-4B4F-A829-74176568AA30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5B5196D-6C89-4B4F-A829-74176568AA30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5B5196D-6C89-4B4F-A829-74176568AA30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5B5196D-6C89-4B4F-A829-74176568AA30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A934E433-5183-4330-938E-220890D37DEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A934E433-5183-4330-938E-220890D37DEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A934E433-5183-4330-938E-220890D37DEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A934E433-5183-4330-938E-220890D37DEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2282E81A-AB3E-4F84-A11B-245B1E12FFDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2282E81A-AB3E-4F84-A11B-245B1E12FFDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2282E81A-AB3E-4F84-A11B-245B1E12FFDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2282E81A-AB3E-4F84-A11B-245B1E12FFDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD168BF-4CA6-4074-8DE0-0AD264F31AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD168BF-4CA6-4074-8DE0-0AD264F31AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD168BF-4CA6-4074-8DE0-0AD264F31AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD168BF-4CA6-4074-8DE0-0AD264F31AFE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
