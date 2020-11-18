@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace YouTubeStreamTemplatesCLI
+﻿namespace YouTubeStreamTemplatesCLI
 {
     internal static class Program
     {
-        internal static void Main(string[] args) { Console.WriteLine("Hello World!"); }
+        internal static void Main(string[] args) { YouTubeStreamTemplates.Program.Main(); }
     }
 }

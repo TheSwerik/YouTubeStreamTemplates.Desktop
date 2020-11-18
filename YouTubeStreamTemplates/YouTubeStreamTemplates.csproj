@@ -5,4 +5,12 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Google.Apis" Version="1.49.0"/>
+        <PackageReference Include="Google.Apis.Auth" Version="1.49.0"/>
+        <PackageReference Include="Google.Apis.Core" Version="1.49.0"/>
+        <PackageReference Include="Google.Apis.Discovery.v1" Version="1.49.0"/>
+        <PackageReference Include="Google.Apis.YouTube.v3" Version="1.49.0.2141"/>
+    </ItemGroup>
+
 </Project>

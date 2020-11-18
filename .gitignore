@@ -1,3 +1,5 @@
 ﻿**/.idea
 **/bin
 **/obj
+**/apikey.txt
+**/client_id.json
