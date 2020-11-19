@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
@@ -12,64 +13,55 @@ using YouTubeStreamTemplates.LiveStream;
 
 namespace YouTubeStreamTemplates
 {
-    public class Program
+    public class LiveStreamService
     {
         private YouTubeService _youTubeService;
 
-        [STAThread]
-        public static void Main()
+        public async Task<List<LiveStream.LiveStream>> GetAllStreams()
         {
-            try
-            {
-                var program = new Program();
-                // program.ListStreams().Wait();
-                program.UpdateStream().Wait();
-            }
-            catch (AggregateException ex)
-            {
-                foreach (var e in ex.InnerExceptions) Console.WriteLine("ERROR: " + e.Message + "\n" + e.StackTrace);
-            }
-        }
-
-        private async Task<LiveBroadcast> ListStreams()
-        {
-            await SetYouTubeService();
             var request = _youTubeService.LiveBroadcasts.List("snippet");
             request.Mine = true;
             var response = await request.ExecuteAsync();
 
             if (response.Items == null) return null;
-            var streams = new List<LiveStream.LiveStream>();
-            foreach (var stream in response.Items)
-            {
-                streams.Add(new LiveStream.LiveStream
-                            {
-                                Title = stream.Snippet.Title,
-                                Description = stream.Snippet.Description,
-                                Thumbnail = stream.Snippet.Thumbnails.Standard,
-                                StartDate = DateTime.Parse(stream.Snippet.ScheduledStartTime),
-                                LiveBroadcast = stream
-                            });
-                Console.WriteLine(stream.Snippet.ScheduledStartTime + " - " + stream.Snippet.Title);
-            }
+            var streams = response.Items.Select(stream => new LiveStream.LiveStream
+                                                          {
+                                                              Id = stream.Id,
+                                                              Title = stream.Snippet.Title,
+                                                              Description = stream.Snippet.Description,
+                                                              Thumbnails = stream.Snippet.Thumbnails,
+                                                              StartDate = DateTime.Parse(
+                                                                  stream.Snippet.ScheduledStartTime)
+                                                          })
+                                  .ToList();
 
             Console.WriteLine();
             streams.Sort(LiveStreamComparer.ByDateDesc);
-            foreach (var stream in streams)
-                Console.WriteLine(stream.StartDate + "\t" + stream.Title + "\t" + stream.Thumbnail?.Url);
-            return streams[0].LiveBroadcast;
+            return streams;
         }
 
-        private async Task UpdateStream()
+        public async Task<LiveStream.LiveStream> GetLatestStream() { return (await GetAllStreams())[0]; }
+
+        public async Task UpdateStream()
         {
-            var liveBroadcast = await ListStreams();
-            liveBroadcast.Snippet.Title = "test";
-            await SetYouTubeService();
-            var request = _youTubeService.LiveBroadcasts.Update(liveBroadcast, "snippet");
+            var liveBroadcast = await GetLatestStream();
+            Console.WriteLine(liveBroadcast);
+            Console.WriteLine(liveBroadcast.Id);
+            var video = new Video
+                        {
+                            Id = liveBroadcast.Id,
+                            Snippet = new VideoSnippet
+                                      {
+                                          Title = "test",
+                                          CategoryId = "20",
+                                          Thumbnails = liveBroadcast.Thumbnails
+                                      }
+                        };
+            var request = _youTubeService.Videos.Update(video, "snippet");
             var response = await request.ExecuteAsync();
 
             if (response == null) return;
-            Console.WriteLine(response.Snippet.ScheduledStartTime + " - " + response.Snippet.Title);
+            Console.WriteLine(response.Snippet.Title + " - " + response.Snippet.Title);
         }
 
         private async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
@@ -93,9 +85,9 @@ namespace YouTubeStreamTemplates
                        });
         }
 
-        ~Program() { _youTubeService?.Dispose(); }
+        ~LiveStreamService() { _youTubeService?.Dispose(); }
 
-        private async Task SetYouTubeService()
+        public async Task Init()
         {
             _youTubeService ??= await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly,
                                                            YouTubeService.Scope.YoutubeForceSsl);
