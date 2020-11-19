@@ -64,8 +64,7 @@ namespace YouTubeStreamTemplates
 
         private async Task<UserCredential> GetCredentials()
         {
-            await using var stream = new FileStream(@"D:\Projects\YouTubeStreamTemplates\client_id.json", FileMode.Open,
-                                                    FileAccess.Read);
+            await using var stream = new FileStream(@"..\..\..\..\client_id.json", FileMode.Open, FileAccess.Read);
             return await GoogleWebAuthorizationBroker.AuthorizeAsync(
                        GoogleClientSecrets.Load(stream).Secrets,
                        new[]
@@ -89,8 +88,7 @@ namespace YouTubeStreamTemplates
                        {
                            HttpClientInitializer = await GetCredentials(),
                            ApplicationName = "YouTube Sample",
-                           ApiKey = await File.ReadAllTextAsync(
-                                        @"D:\Projects\YouTubeStreamTemplates\apikey.txt")
+                           ApiKey = await File.ReadAllTextAsync(@"..\..\..\..\apikey.txt")
                        });
         }
     }
