@@ -21,11 +21,11 @@ namespace YouTubeStreamTemplates
         public async Task<LiveStream.LiveStream> GetCurrentStream()
         {
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
-            // request.Mine = true;
-            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
-            var response = await request.ExecuteAsync();
+            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
+            // request.Mine = true;
 
+            var response = await request.ExecuteAsync();
             Console.WriteLine(response.Items?.Count);
             if (response.Items == null || response.Items.Count <= 0) return null;
             if (response.Items.Count == 1) return response.Items[0].ToLiveStream();

@@ -7,14 +7,15 @@ namespace YouTubeStreamTemplates.LiveStream
     {
         public static LiveStream ToLiveStream(this LiveBroadcast liveBroadcast)
         {
-            return new
+            return new LiveStream()
                    {
-                       liveBroadcast.Id,
-                       liveBroadcast.Snippet.Title,
-                       liveBroadcast.Snippet.Description,
-                       liveBroadcast.Snippet.Thumbnails,
+                      Id= liveBroadcast.Id,
+                      Title= liveBroadcast.Snippet.Title,
+                      Description= liveBroadcast.Snippet.Description,
+                      Thumbnails=liveBroadcast.Snippet.Thumbnails,
                        StartTime = DateTime.Parse(liveBroadcast.Snippet.ActualStartTime),
                        EndTime = DateTime.Parse(liveBroadcast.Snippet.ActualEndTime)
                    };
         }
     }
+}
