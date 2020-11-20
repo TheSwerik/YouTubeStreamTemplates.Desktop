@@ -15,8 +15,11 @@ namespace YouTubeStreamTemplatesCLI
             }
             catch (AggregateException e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                foreach (var innerException in e.InnerExceptions)
+                {
+                    Console.WriteLine(innerException.GetType() + ": " + innerException.Message);
+                    Console.WriteLine(innerException.StackTrace);
+                }
             }
         }
     }

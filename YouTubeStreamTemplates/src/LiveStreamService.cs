@@ -10,6 +10,7 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
+using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.LiveStream;
 
 namespace YouTubeStreamTemplates
@@ -27,7 +28,7 @@ namespace YouTubeStreamTemplates
 
             var response = await request.ExecuteAsync();
             Console.WriteLine(response.Items?.Count);
-            if (response.Items == null || response.Items.Count <= 0) return null;
+            if (response.Items == null || response.Items.Count <= 0) throw new NoCurrentStreamException();
             if (response.Items.Count == 1) return response.Items[0].ToLiveStream();
 
             // Get the latest Stream if there is more than one:
@@ -40,7 +41,6 @@ namespace YouTubeStreamTemplates
         public async Task UpdateStream()
         {
             var liveBroadcast = await GetCurrentStream();
-            if (liveBroadcast.Tags != null) Console.WriteLine(string.Join(", ", liveBroadcast.Tags));
             var video = new Video
                         {
                             Id = liveBroadcast.Id,
