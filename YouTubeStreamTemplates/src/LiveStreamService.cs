@@ -10,7 +10,6 @@ using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.LiveStreaming;
-using Scope = Google.Apis.YouTube.v3.YouTubeService.Scope;
 
 namespace YouTubeStreamTemplates
 {
@@ -22,7 +21,8 @@ namespace YouTubeStreamTemplates
 
         public static async Task<LiveStreamService> Init()
         {
-            var ytService = await CreateYouTubeService(Scope.YoutubeReadonly, Scope.YoutubeForceSsl);
+            var ytService =
+                await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly, YouTubeService.Scope.YoutubeForceSsl);
             if (ytService == null) throw new CouldNotCreateServiceException();
             var liveStreamService = new LiveStreamService(ytService);
             return liveStreamService;
@@ -59,8 +59,7 @@ namespace YouTubeStreamTemplates
 
         public async Task<LiveStream> GetCurrentStream()
         {
-            if (_youTubeService == null) await Init();
-            var request = _youTubeService!.LiveBroadcasts.List("id,snippet,contentDetails,status");
+            var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
             request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
             // request.Mine = true;
@@ -81,9 +80,7 @@ namespace YouTubeStreamTemplates
         {
             var liveStream = await GetCurrentStream();
             var video = liveStream.ToVideo();
-
-            if (_youTubeService == null) await Init();
-            var request = _youTubeService!.Videos.Update(video, "snippet");
+            var request = _youTubeService.Videos.Update(video, "snippet");
 
             var response = await request.ExecuteAsync();
             if (response == null) return;
