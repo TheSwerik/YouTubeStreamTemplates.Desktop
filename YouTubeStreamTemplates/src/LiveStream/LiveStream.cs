@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Google.Apis.YouTube.v3.Data;
 
@@ -14,6 +15,7 @@ namespace YouTubeStreamTemplates.LiveStream
         public string[] Playlists { get; set; }
         public string[] Tags { get; set; }
         public string Language { get; set; }
+        public Dictionary<string, VideoLocalization> Localizations { get; set; }
         public string Category { get; set; }
         public string Game { get; set; }
         public DateTime StartDate { get; init; }
@@ -22,7 +24,7 @@ namespace YouTubeStreamTemplates.LiveStream
 
         public LiveBroadcast ToLiveBroadcast()
         {
-            return new
+            return new()
                    {
                        Id = Id,
                        Snippet = new LiveBroadcastSnippet

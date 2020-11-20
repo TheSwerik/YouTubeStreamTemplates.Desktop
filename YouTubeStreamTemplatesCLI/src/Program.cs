@@ -7,11 +7,11 @@ namespace YouTubeStreamTemplatesCLI
     {
         internal static void Main(string[] args)
         {
-            var service = new LiveStreamService();
-            service.Init().Wait();
-            service.UpdateStream().Wait();
             try
             {
+                var service = new LiveStreamService();
+                service.Init().Wait();
+                service.UpdateStream().Wait();
             }
             catch (AggregateException e)
             {
