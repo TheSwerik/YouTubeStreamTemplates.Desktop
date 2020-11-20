@@ -20,8 +20,8 @@ namespace YouTubeStreamTemplates.LiveStream
             if (x == null) return -1;
             return _sortMode switch
                    {
-                       DateDesc => -x.StartDate.CompareTo(y.StartDate),
-                       DateAsc => x.StartDate.CompareTo(y.StartDate),
+                       DateDesc => -x.StartTime.CompareTo(y.StartTime),
+                       DateAsc => x.StartTime.CompareTo(y.StartTime),
                        TitleDesc => -string.Compare(x.Title, y.Title, StringComparison.InvariantCulture),
                        TitleAsc => string.Compare(x.Title, y.Title, StringComparison.InvariantCulture),
                        _ => throw new ArgumentOutOfRangeException(nameof(_sortMode), _sortMode + "", "wrong")

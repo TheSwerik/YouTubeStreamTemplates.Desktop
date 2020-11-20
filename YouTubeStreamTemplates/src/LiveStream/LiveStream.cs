@@ -18,9 +18,10 @@ namespace YouTubeStreamTemplates.LiveStream
         public Dictionary<string, VideoLocalization> Localizations { get; set; }
         public string Category { get; set; }
         public string Game { get; set; }
-        public DateTime StartDate { get; init; }
+        public DateTime StartTime { get; init; }
+        public DateTime EndTime { get; init; }
 
-        public int CompareTo(LiveStream other) { return StartDate.CompareTo(other.StartDate); }
+        public int CompareTo(LiveStream other) { return StartTime.CompareTo(other.StartTime); }
 
         public LiveBroadcast ToLiveBroadcast()
         {
@@ -32,7 +33,7 @@ namespace YouTubeStreamTemplates.LiveStream
                                      Title = Title,
                                      Description = Description,
                                      Thumbnails = Thumbnails,
-                                     ScheduledStartTime = StartDate.ToUniversalTime()
+                                     ScheduledStartTime = StartTime.ToUniversalTime()
                                                                    .ToString(CultureInfo.InvariantCulture)
                                  }
 // Kind = 

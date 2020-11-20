@@ -27,17 +27,11 @@ namespace YouTubeStreamTemplates
             var response = await request.ExecuteAsync();
 
             Console.WriteLine(response.Items?.Count);
-            if (response.Items == null || response.Items.Count == 0) return null;
-            var streams = response.Items
-                                  .Select(stream => new LiveStream.LiveStream
-                                                    {
-                                                        Id = stream.Id,
-                                                        Title = stream.Snippet.Title,
-                                                        Description = stream.Snippet.Description,
-                                                        Thumbnails = stream.Snippet.Thumbnails,
-                                                        StartDate = DateTime.Parse(stream.Snippet.ActualStartTime)
-                                                    })
-                                  .ToList();
+            if (response.Items == null || response.Items.Count <= 0) return null;
+            if (response.Items.Count == 1) return response.Items[0].ToLiveStream();
+
+            // Get the latest Stream if there is more than one:
+            var streams = response.Items.Select(s => s.ToLiveStream()).ToList();
             streams.Sort(LiveStreamComparer.ByDateDesc);
             streams.ForEach(s => Console.WriteLine(s.Title));
             return streams[0];
