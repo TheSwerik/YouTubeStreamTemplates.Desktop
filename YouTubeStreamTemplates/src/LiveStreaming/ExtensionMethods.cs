@@ -1,7 +1,7 @@
 ﻿using System;
 using Google.Apis.YouTube.v3.Data;
 
-namespace YouTubeStreamTemplates.LiveStream
+namespace YouTubeStreamTemplates.LiveStreaming
 {
     public static class ExtensionMethods
     {

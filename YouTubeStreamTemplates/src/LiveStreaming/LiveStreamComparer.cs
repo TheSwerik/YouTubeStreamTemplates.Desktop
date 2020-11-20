@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using static YouTubeStreamTemplates.LiveStream.LiveStreamSortMode;
+using static YouTubeStreamTemplates.LiveStreaming.LiveStreamSortMode;
 
-namespace YouTubeStreamTemplates.LiveStream
+namespace YouTubeStreamTemplates.LiveStreaming
 {
     public class LiveStreamComparer : IComparer<LiveStream>
     {
@@ -12,9 +12,9 @@ namespace YouTubeStreamTemplates.LiveStream
         public static readonly LiveStreamComparer ByTitleAsc = new(TitleAsc);
         private readonly LiveStreamSortMode _sortMode;
 
-        public LiveStreamComparer(LiveStreamSortMode sortMode) { _sortMode = sortMode; }
+        private LiveStreamComparer(LiveStreamSortMode sortMode) { _sortMode = sortMode; }
 
-        public int Compare(LiveStream x, LiveStream y)
+        public int Compare(LiveStream? x, LiveStream? y)
         {
             if (y == null) return 1;
             if (x == null) return -1;

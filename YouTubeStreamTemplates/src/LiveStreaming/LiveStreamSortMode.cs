@@ -1,4 +1,4 @@
-﻿namespace YouTubeStreamTemplates.LiveStream
+﻿namespace YouTubeStreamTemplates.LiveStreaming
 {
     public enum LiveStreamSortMode
     {

@@ -11,17 +11,19 @@ using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using YouTubeStreamTemplates.Exceptions;
-using YouTubeStreamTemplates.LiveStream;
+using YouTubeStreamTemplates.LiveStreaming;
+using LiveStream = YouTubeStreamTemplates.LiveStreaming.LiveStream;
 
 namespace YouTubeStreamTemplates
 {
     public class LiveStreamService
     {
-        private YouTubeService _youTubeService;
+        private YouTubeService? _youTubeService;
 
-        public async Task<LiveStream.LiveStream> GetCurrentStream()
+        public async Task<LiveStream> GetCurrentStream()
         {
-            var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
+            if (_youTubeService == null) await Init();
+            var request = _youTubeService!.LiveBroadcasts.List("id,snippet,contentDetails,status");
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
             request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
             // request.Mine = true;
@@ -63,7 +65,8 @@ namespace YouTubeStreamTemplates
                                                            .ToString(CultureInfo.InvariantCulture)
                                                    }
                         };
-            // var request = _youTubeService.Videos.Update(video, "snippet");
+            if (_youTubeService == null) await Init();
+            // var request = _youTubeService!.Videos.Update(video, "snippet");
             // var response = await request.ExecuteAsync();
 
             // if (response == null) return;

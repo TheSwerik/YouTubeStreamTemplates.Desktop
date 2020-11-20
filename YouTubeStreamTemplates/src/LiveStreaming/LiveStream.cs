@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Globalization;
 using Google.Apis.YouTube.v3.Data;
 
-namespace YouTubeStreamTemplates.LiveStream
+namespace YouTubeStreamTemplates.LiveStreaming
 {
     //TODO rename
     public class LiveStream : IComparable<LiveStream>
     {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public ThumbnailDetails Thumbnails { get; set; }
-        public string[] Playlists { get; set; }
-        public string[] Tags { get; set; }
-        public string Language { get; set; }
-        public Dictionary<string, VideoLocalization> Localizations { get; set; }
-        public string Category { get; set; }
-        public string Game { get; set; }
-        public DateTime StartTime { get; init; }
-        public DateTime EndTime { get; init; }
+        public string Id { get; init; } = null!;
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public ThumbnailDetails Thumbnails { get; set; } = null!;
+        public string[] Tags { get; set; } = null!;
+        public string Language { get; set; } = null!;
+        public Dictionary<string, VideoLocalization>? Localizations { get; set; }
+        public string Category { get; set; } = null!;
+        public string? Game { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
 
-        public int CompareTo(LiveStream other) { return StartTime.CompareTo(other.StartTime); }
+        public int CompareTo(LiveStream? other) { return StartTime.CompareTo(other?.StartTime); }
 
         public LiveBroadcast ToLiveBroadcast()
         {
