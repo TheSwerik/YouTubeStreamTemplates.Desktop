@@ -18,13 +18,16 @@ namespace YouTubeStreamTemplates
     {
         private YouTubeService _youTubeService;
 
-        public async Task<List<LiveStream.LiveStream>> GetAllStreams()
+        public async Task<LiveStream.LiveStream> GetCurrentStream()
         {
-            var request = _youTubeService.LiveBroadcasts.List("snippet");
-            request.Mine = true;
+            var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
+            // request.Mine = true;
+            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
+            request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
             var response = await request.ExecuteAsync();
 
-            if (response.Items == null) return null;
+            Console.WriteLine(response.Items?.Count);
+            if (response.Items == null || response.Items.Count == 0) return null;
             var streams = response.Items
                                   .Select(stream => new LiveStream.LiveStream
                                                     {
@@ -32,18 +35,17 @@ namespace YouTubeStreamTemplates
                                                         Title = stream.Snippet.Title,
                                                         Description = stream.Snippet.Description,
                                                         Thumbnails = stream.Snippet.Thumbnails,
-                                                        StartDate = DateTime.Parse(stream.Snippet.ScheduledStartTime)
+                                                        StartDate = DateTime.Parse(stream.Snippet.ActualStartTime)
                                                     })
                                   .ToList();
             streams.Sort(LiveStreamComparer.ByDateDesc);
-            return streams;
+            streams.ForEach(s => Console.WriteLine(s.Title));
+            return streams[0];
         }
-
-        public async Task<LiveStream.LiveStream> GetLatestStream() { return (await GetAllStreams())[0]; }
 
         public async Task UpdateStream()
         {
-            var liveBroadcast = await GetLatestStream();
+            var liveBroadcast = await GetCurrentStream();
             if (liveBroadcast.Tags != null) Console.WriteLine(string.Join(", ", liveBroadcast.Tags));
             var video = new Video
                         {

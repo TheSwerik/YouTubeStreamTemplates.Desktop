@@ -16,6 +16,8 @@ namespace YouTubeStreamTemplates.LiveStream
 
         public int Compare(LiveStream x, LiveStream y)
         {
+            if (y == null) return 1;
+            if (x == null) return -1;
             return _sortMode switch
                    {
                        DateDesc => -x.StartDate.CompareTo(y.StartDate),
