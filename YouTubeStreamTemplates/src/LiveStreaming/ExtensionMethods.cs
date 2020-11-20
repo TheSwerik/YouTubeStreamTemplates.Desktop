@@ -37,10 +37,10 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Localizations = liveStream.Localizations,
                        LiveStreamingDetails = new VideoLiveStreamingDetails
                                               {
-                                                  ScheduledStartTime =
-                                                      DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-                                                  ScheduledEndTime = DateTime.UtcNow.AddDays(1)
-                                                                             .ToString(CultureInfo.InvariantCulture)
+                                                  ScheduledStartTime = liveStream.StartTime.ToUniversalTime()
+                                                      .ToString(CultureInfo.InvariantCulture),
+                                                  ScheduledEndTime = liveStream.EndTime.ToUniversalTime()
+                                                                               .ToString(CultureInfo.InvariantCulture)
                                               }
                    };
         }
