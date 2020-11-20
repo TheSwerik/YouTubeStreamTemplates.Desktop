@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,10 +8,8 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
-using Google.Apis.YouTube.v3.Data;
 using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.LiveStreaming;
-using LiveStream = YouTubeStreamTemplates.LiveStreaming.LiveStream;
 
 namespace YouTubeStreamTemplates
 {
@@ -42,35 +39,15 @@ namespace YouTubeStreamTemplates
 
         public async Task UpdateStream()
         {
-            var liveBroadcast = await GetCurrentStream();
-            var video = new Video
-                        {
-                            Id = liveBroadcast.Id,
-                            Snippet = new VideoSnippet
-                                      {
-                                          Title = "test",
-                                          Description = liveBroadcast.Description,
-                                          CategoryId = liveBroadcast.Category,
-                                          Thumbnails = liveBroadcast.Thumbnails,
-                                          Tags = liveBroadcast.Tags,
-                                          DefaultLanguage = liveBroadcast.Language,
-                                          DefaultAudioLanguage = liveBroadcast.Language
-                                      },
-                            Localizations = liveBroadcast.Localizations,
-                            LiveStreamingDetails = new VideoLiveStreamingDetails
-                                                   {
-                                                       ScheduledStartTime =
-                                                           DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-                                                       ScheduledEndTime = DateTime.UtcNow.AddDays(1)
-                                                           .ToString(CultureInfo.InvariantCulture)
-                                                   }
-                        };
-            if (_youTubeService == null) await Init();
-            // var request = _youTubeService!.Videos.Update(video, "snippet");
-            // var response = await request.ExecuteAsync();
+            var liveStream = await GetCurrentStream();
+            var video = liveStream.ToVideo();
 
-            // if (response == null) return;
-            // Console.WriteLine(response.Snippet.Title + " - " + response.Snippet.Title);
+            if (_youTubeService == null) await Init();
+            var request = _youTubeService!.Videos.Update(video, "snippet");
+
+            var response = await request.ExecuteAsync();
+            if (response == null) return;
+            Console.WriteLine(response.Snippet.Title + " - " + response.Snippet.Title);
         }
 
         private async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
