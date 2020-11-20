@@ -15,7 +15,47 @@ namespace YouTubeStreamTemplates
 {
     public class LiveStreamService
     {
-        private YouTubeService? _youTubeService;
+        private readonly YouTubeService _youTubeService;
+
+        #region Initialisation
+
+        public static async Task<LiveStreamService> Init()
+        {
+            var ytService =
+                await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly, YouTubeService.Scope.YoutubeForceSsl);
+            if (ytService == null) throw new CouldNotCreateServiceException();
+            var liveStreamService = new LiveStreamService(ytService);
+            return liveStreamService;
+        }
+
+        private LiveStreamService(YouTubeService youTubeService) { _youTubeService = youTubeService; }
+
+        ~LiveStreamService() { _youTubeService?.Dispose(); }
+
+        private static async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
+        {
+            await using var stream = new FileStream(@"..\..\..\..\client_id.json", FileMode.Open, FileAccess.Read);
+            return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                       GoogleClientSecrets.Load(stream).Secrets,
+                       scopes,
+                       "user",
+                       CancellationToken.None,
+                       new FileDataStore("YouTube.Test2"));
+        }
+
+        private static async Task<YouTubeService> CreateYouTubeService(params string[] scopes)
+        {
+            return new(new BaseClientService.Initializer
+                       {
+                           HttpClientInitializer = await GetCredentials(scopes),
+                           ApplicationName = "YouTube Sample",
+                           ApiKey = await File.ReadAllTextAsync(@"..\..\..\..\apikey.txt")
+                       });
+        }
+
+        #endregion
+
+        #region Public Methods
 
         public async Task<LiveStream> GetCurrentStream()
         {
@@ -50,34 +90,6 @@ namespace YouTubeStreamTemplates
             Console.WriteLine(response.Snippet.Title + " - " + response.Snippet.Title);
         }
 
-        private async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
-        {
-            await using var stream = new FileStream(@"..\..\..\..\client_id.json", FileMode.Open, FileAccess.Read);
-            return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                       GoogleClientSecrets.Load(stream).Secrets,
-                       scopes,
-                       "user",
-                       CancellationToken.None,
-                       new FileDataStore("YouTube.Test2"));
-        }
-
-        private async Task<YouTubeService> CreateYouTubeService(params string[] scopes)
-        {
-            return new(new BaseClientService.Initializer
-                       {
-                           HttpClientInitializer = await GetCredentials(scopes),
-                           ApplicationName = "YouTube Sample",
-                           ApiKey = await File.ReadAllTextAsync(@"..\..\..\..\apikey.txt")
-                       });
-        }
-
-        ~LiveStreamService() { _youTubeService?.Dispose(); }
-
-        public async Task Init()
-        {
-            _youTubeService ??= await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly,
-                                                           YouTubeService.Scope.YoutubeForceSsl);
-            if (_youTubeService == null) throw new CouldNotCreateServiceException();
-        }
+        #endregion
     }
 }

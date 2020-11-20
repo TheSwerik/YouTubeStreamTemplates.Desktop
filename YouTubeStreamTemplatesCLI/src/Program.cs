@@ -9,8 +9,7 @@ namespace YouTubeStreamTemplatesCLI
         {
             try
             {
-                var service = new LiveStreamService();
-                service.UpdateStream().Wait();
+                var service = LiveStreamService.Init().Result;
             }
             catch (AggregateException e)
             {
