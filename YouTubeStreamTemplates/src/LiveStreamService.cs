@@ -77,6 +77,7 @@ namespace YouTubeStreamTemplates
         {
             _youTubeService ??= await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly,
                                                            YouTubeService.Scope.YoutubeForceSsl);
+            if (_youTubeService == null) throw new CouldNotCreateServiceException();
         }
     }
 }
