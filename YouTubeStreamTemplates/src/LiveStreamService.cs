@@ -10,6 +10,7 @@ using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.LiveStreaming;
+using Scope = Google.Apis.YouTube.v3.YouTubeService.Scope;
 
 namespace YouTubeStreamTemplates
 {
@@ -21,8 +22,7 @@ namespace YouTubeStreamTemplates
 
         public static async Task<LiveStreamService> Init()
         {
-            var ytService =
-                await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly, YouTubeService.Scope.YoutubeForceSsl);
+            var ytService = await CreateYouTubeService(Scope.YoutubeReadonly, Scope.YoutubeForceSsl);
             if (ytService == null) throw new CouldNotCreateServiceException();
             var liveStreamService = new LiveStreamService(ytService);
             return liveStreamService;
