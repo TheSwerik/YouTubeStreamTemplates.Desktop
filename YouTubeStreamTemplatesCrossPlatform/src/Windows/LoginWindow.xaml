@@ -7,6 +7,8 @@
         Title="YouTubeStreamTemplatesCrossPlatform"
         Width="400" Height="200" CanResize="False">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,2*,*" ColumnDefinitions="*,5*,*">
-        <Button Grid.Row="1" Grid.Column="1" Content="Login with Google" />
+        <Image Grid.Row="1" Grid.Column="1"
+               Source="{DynamicResource SigninImage}" Stretch="None"
+               PointerReleased="Login_OnClick" PointerPressed="Login_OnPress" />
     </Grid>
 </Window>

@@ -10,4 +10,8 @@
         <ProjectReference Include="..\YouTubeStreamTemplates\YouTubeStreamTemplates.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="obj"/>
+    </ItemGroup>
+
 </Project>

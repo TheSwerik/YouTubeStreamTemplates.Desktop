@@ -6,6 +6,13 @@
         <Nullable>enable</Nullable>
         <!--        <TargetFramework>net5.0-windows</TargetFramework>-->
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="res\**\*.*" CopyToOutputDirectory="PreserveNewest"/>
+        <AvaloniaResource Include="res\**"/>
+        <!--        <EmbeddedResource Include="res\*"/>-->
+    </ItemGroup>
+
     <ItemGroup>
         <Compile Update="**\*.xaml.cs">
             <DependentUpon>%(Filename)</DependentUpon>
@@ -14,8 +21,13 @@
             <SubType>Designer</SubType>
         </AvaloniaResource>
     </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.9.12"/>
         <PackageReference Include="Avalonia.Desktop" Version="0.9.12"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\YouTubeStreamTemplates\YouTubeStreamTemplates.csproj"/>
     </ItemGroup>
 </Project>
