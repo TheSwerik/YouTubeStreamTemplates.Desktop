@@ -13,8 +13,9 @@
         <Color x:Key="BlackColor">#000000</Color>
         <Color x:Key="DarkGrayColor">#222222</Color>
 
+        <Color x:Key="DarkMainBackgroundColor">#1a1816</Color>
         <Color x:Key="MainBackgroundColor">#272521</Color>
-        <Color x:Key="AlternativeMainBackgroundColor">#383530</Color>
+        <Color x:Key="LightMainBackgroundColor">#383530</Color>
         <Color x:Key="SuccessColor">#bcffbc</Color>
         <Color x:Key="ErrorColor">#a34235</Color>
 
@@ -28,13 +29,15 @@
         <SolidColorBrush x:Key="ThemeBorderLowBrush" Color="{DynamicResource BlackColor}" Opacity="0.4" />
         <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource DarkGrayColor}" Opacity="0.4" />
         <SolidColorBrush x:Key="ThemeControlLowBrush" Color="{DynamicResource BlackColor}" Opacity="0.2" />
-        <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{DynamicResource AlternativeMainBackgroundColor}" />
+        <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{DynamicResource LightMainBackgroundColor}" />
         <SolidColorBrush x:Key="ThemeControlMidHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.3" />
         <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.7" />
         <SolidColorBrush x:Key="ThemeControlVeryHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.7" />
         <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource MainBackgroundColor}" />
         <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{DynamicResource WhiteColor}" Opacity="0.8" />
         <SolidColorBrush x:Key="ThemeForegroundLowBrush" Color="{DynamicResource WhiteColor}" Opacity="0.3" />
+
+        <SolidColorBrush x:Key="BackgroundMainBackgroundBrush" Color="{DynamicResource DarkMainBackgroundColor}" />
 
         <!-- Custom brushes -->
         <!-- <SolidColorBrush x:Key="AlternativeThemeBackgroundBrush" Color="{DynamicResource AlternativeMainBackgroundColor}" /> -->
@@ -47,5 +50,4 @@
         </imaging:Bitmap>
         <ImageBrush Source="/res/Youtube/google_signin_dark.png" x:Key="SigninBrush" />
     </Style.Resources>
-
 </Style>

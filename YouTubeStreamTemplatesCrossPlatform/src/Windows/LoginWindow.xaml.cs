@@ -5,7 +5,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using YouTubeStreamTemplates;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Windows
 {
@@ -29,7 +28,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows
         {
             var img = (Image) sender!;
             img.Opacity = 1;
-            Service.LiveStreamService = await LiveStreamService.Init();
+            // Service.LiveStreamService = await LiveStreamService.Init();
 
             if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
             desktop.MainWindow = new MainWindow();
