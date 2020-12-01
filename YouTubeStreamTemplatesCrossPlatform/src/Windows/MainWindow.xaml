@@ -2,10 +2,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tabs="clr-namespace:YouTubeStreamTemplatesCrossPlatform.Windows.Tabs"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="YouTubeStreamTemplatesCrossPlatform.Windows.MainWindow"
         Title="YouTubeStreamTemplatesCrossPlatform">
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,2*,*" ColumnDefinitions="*,5*,*">
-        <TextBlock Text="TESTT" />
-    </Grid>
+    <TabControl>
+        <TabItem Header="Home">
+            <tabs:Home />
+        </TabItem>
+        <TabItem Header="Templates">
+            <tabs:Templates />
+        </TabItem>
+        <TabItem Header="Streams">
+            Tja
+        </TabItem>
+    </TabControl>
 </Window>
