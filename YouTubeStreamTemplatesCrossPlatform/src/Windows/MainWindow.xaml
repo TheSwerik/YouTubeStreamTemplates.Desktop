@@ -5,5 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="YouTubeStreamTemplatesCrossPlatform.Windows.MainWindow"
         Title="YouTubeStreamTemplatesCrossPlatform">
-    Welcome to Avalonia!
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,2*,*" ColumnDefinitions="*,5*,*">
+        <TextBlock Text="TESTT" />
+    </Grid>
 </Window>
