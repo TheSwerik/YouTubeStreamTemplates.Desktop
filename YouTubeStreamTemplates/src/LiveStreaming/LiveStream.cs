@@ -17,7 +17,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         public Dictionary<string, VideoLocalization>? Localizations { get; set; }
         public string Category { get; set; } = null!;
 
-        /// <summary>DOESN'T WORK IN THE CURRENT YOUTuBE API VERSION</summary>
+        /// <summary>DOESN'T WORK IN THE CURRENT YOUTUBE API VERSION</summary>
         public string? Game { get; set; }
 
         public DateTime StartTime { get; set; }

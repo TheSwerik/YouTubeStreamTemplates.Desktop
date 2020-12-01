@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using YouTubeStreamTemplatesCrossPlatform.Windows;
 
 namespace YouTubeStreamTemplatesCrossPlatform
 {
@@ -11,7 +12,7 @@ namespace YouTubeStreamTemplatesCrossPlatform
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                desktop.MainWindow = new MainWindow();
+                desktop.MainWindow = new LoginWindow();
             base.OnFrameworkInitializationCompleted();
         }
     }

@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace YouTubeStreamTemplatesCrossPlatform
+namespace YouTubeStreamTemplatesCrossPlatform.Windows
 {
-    public class MainWindow : Window
+    public class LoginWindow : Window
     {
-        public MainWindow() { InitializeComponent(); }
+        public LoginWindow() { InitializeComponent(); }
 
         private void InitializeComponent() { AvaloniaXamlLoader.Load(this); }
     }
