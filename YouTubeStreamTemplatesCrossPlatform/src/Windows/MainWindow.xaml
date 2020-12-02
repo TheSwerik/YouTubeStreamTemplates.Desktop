@@ -10,35 +10,19 @@
         <Style Selector="TabControl WrapPanel">
             <Setter Property="Background" Value="{DynamicResource BackgroundMainBackgroundBrush}" />
         </Style>
-        <!-- TODO Styling fix -->
         <Style Selector="TabItem">
             <Setter Property="Height" Value="34" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Background" Value="#2B579A" />
-            <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="10 0" />
         </Style>
         <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}" />
         </Style>
-
-        <Style Selector="TabItem:focus">
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="10 0" />
-        </Style>
-        <Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#ff0000" />
-        </Style>
-
-        <Style Selector="TabItem:selected">
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="10 0" />
-        </Style>
         <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}" />
         </Style>
-
     </Window.Styles>
+
     <TabControl>
         <TabItem Header="Home" VerticalContentAlignment="Center">
             <tabs:Home />
