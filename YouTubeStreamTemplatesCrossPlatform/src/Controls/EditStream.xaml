@@ -1,0 +1,23 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:liveStreaming="clr-namespace:YouTubeStreamTemplates.LiveStreaming;assembly=YouTubeStreamTemplates"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditStream">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+          RowDefinitions="*,*,*,*" ColumnDefinitions="*,*,*,*">
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Title:" />
+        <ComboBox Grid.Row="1" Grid.Column="2" x:Name="LiveStreamComboBox" SelectedIndex="0"
+                  SelectionChanged="LiveStreamComboBox_OnSelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="liveStreaming:LiveStream">
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="Description:" />
+        <TextBox Grid.Row="2" Grid.Column="2" x:Name="DescriptionTextBox" />
+    </Grid>
+</UserControl>

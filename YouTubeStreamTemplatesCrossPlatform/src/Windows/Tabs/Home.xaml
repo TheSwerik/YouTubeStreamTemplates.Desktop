@@ -2,9 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:YouTubeStreamTemplatesCrossPlatform.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="YouTubeStreamTemplatesCrossPlatform.Windows.Tabs.Home">
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,2*,*" ColumnDefinitions="*,5*,*">
-        <TextBlock Text="HOM;EAPSals" />
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*" ColumnDefinitions="*,*">
+        <controls:EditStream Grid.Column="0" />
+        <controls:EditStream Grid.Column="1" />
     </Grid>
 </UserControl>
