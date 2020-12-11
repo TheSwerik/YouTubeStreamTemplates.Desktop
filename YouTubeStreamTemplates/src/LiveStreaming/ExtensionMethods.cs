@@ -28,7 +28,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                                  {
                                      Title = liveStream.Title,
                                      Description = liveStream.Description,
-                                     CategoryId = liveStream.Category,
+                                     CategoryId = liveStream.Category.ToString(),
                                      Thumbnails = liveStream.Thumbnails,
                                      Tags = liveStream.Tags,
                                      DefaultLanguage = liveStream.Language,

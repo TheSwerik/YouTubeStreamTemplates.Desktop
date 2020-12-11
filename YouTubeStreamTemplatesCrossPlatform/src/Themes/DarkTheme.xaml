@@ -27,7 +27,7 @@
         <SolidColorBrush x:Key="ThemeAccentBrush3" Color="{DynamicResource BrightPurpleColor}" />
         <SolidColorBrush x:Key="ThemeAccentBrush4" Color="{DynamicResource PurpleColor}" />
         <SolidColorBrush x:Key="ThemeBorderLowBrush" Color="{DynamicResource BlackColor}" Opacity="0.4" />
-        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource DarkGrayColor}" Opacity="0.4" />
+        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource WhiteColor}" Opacity="0.4" />
         <SolidColorBrush x:Key="ThemeControlLowBrush" Color="{DynamicResource BlackColor}" Opacity="0.2" />
         <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{DynamicResource LightMainBackgroundColor}" />
         <SolidColorBrush x:Key="ThemeControlMidHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.3" />

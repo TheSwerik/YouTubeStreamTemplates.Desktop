@@ -6,7 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditStream">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-          RowDefinitions="*,*,*,*" ColumnDefinitions="*,*,*,*">
+          RowDefinitions="*,*,*,*,*,*" ColumnDefinitions="*,3*,5*,*">
         <TextBlock Grid.Row="1" Grid.Column="1" Text="Title:" />
         <ComboBox Grid.Row="1" Grid.Column="2" x:Name="LiveStreamComboBox" SelectedIndex="0"
                   SelectionChanged="LiveStreamComboBox_OnSelectionChanged">
@@ -18,6 +18,19 @@
         </ComboBox>
 
         <TextBlock Grid.Row="2" Grid.Column="1" Text="Description:" />
-        <TextBox Grid.Row="2" Grid.Column="2" x:Name="DescriptionTextBox" />
+        <TextBox Grid.Row="2" Grid.Column="2" x:Name="DescriptionTextBox" LostFocus="LiveStreamDescription_OnFocusLost" />
+
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="Tags:" />
+        <TextBox Grid.Row="3" Grid.Column="2" x:Name="TagTextBox" />
+
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="Category:" />
+        <ComboBox Grid.Row="4" Grid.Column="2" x:Name="CategoryComboBox" SelectedIndex="0"
+                  SelectionChanged="CategoryComboBox_OnSelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="liveStreaming:LiveStream">
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
     </Grid>
 </UserControl>
