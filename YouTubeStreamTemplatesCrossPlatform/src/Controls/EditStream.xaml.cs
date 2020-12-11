@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplatesCrossPlatform.Entities;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {

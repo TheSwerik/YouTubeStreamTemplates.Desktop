@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using YouTubeStreamTemplates.Exceptions;
+using YouTubeStreamTemplates.LiveStreaming;
 
-namespace YouTubeStreamTemplates.LiveStreaming
+namespace YouTubeStreamTemplatesCrossPlatform.Entities
 {
     public class ObservableLiveStream : LiveStream, IObservable<LiveStream>
     {
