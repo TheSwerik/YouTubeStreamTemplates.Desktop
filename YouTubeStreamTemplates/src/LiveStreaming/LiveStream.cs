@@ -41,5 +41,15 @@ namespace YouTubeStreamTemplates.LiveStreaming
 // Kind = 
                    };
         }
+
+        public override string ToString()
+        {
+            return Id + "\n" +
+                   Title + "\n" +
+                   string.Join(", ", Tags) + "\n" +
+                   Category + "\n" +
+                   StartTime + "\n" +
+                   EndTime;
+        }
     }
 }
