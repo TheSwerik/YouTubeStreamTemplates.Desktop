@@ -11,7 +11,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
     {
         private readonly IDisposable _subscription = null!;
         private readonly WrapPanel _tagsPanel;
-        private readonly ObservableLiveStream SelectedLivestream { get; } = null!;
+        private ObservableLiveStream SelectedLivestream { get; } = null!;
 
         #region EventListener
 
