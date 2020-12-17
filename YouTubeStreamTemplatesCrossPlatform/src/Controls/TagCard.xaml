@@ -3,11 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.TagEditor">
+             x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.TagCard">
     <Border BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1">
-        <WrapPanel x:Name="TagsPanel" Background="{DynamicResource ThemeBackgroundBrush}">
-            <TextBox x:Name="InputTextBox" KeyUp="InputTextBox_OnKeyUp" MinWidth="100" MaxWidth="200" />
-            <!-- TODO TextBox -> BorderThickness="0" -->
-        </WrapPanel>
+        <Grid x:Name="TagsPanel" Background="{DynamicResource ThemeBackgroundBrush}" ColumnDefinitions="Auto,Auto">
+            <TextBlock Grid.Column="0" x:Name="TextBlock" />
+            <Button Grid.Column="1" Content="X" x:Name="CloseButton" />
+        </Grid>
     </Border>
 </UserControl>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
@@ -10,27 +11,41 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
     {
         private readonly IDisposable _subscription = null!;
         private readonly WrapPanel _tagsPanel;
-        public ObservableLiveStream SelectedLivestream { get; set; } = null!;
+        private readonly ObservableLiveStream SelectedLivestream { get; } = null!;
 
         #region EventListener
 
-        private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e) { throw new NotImplementedException(); }
+        private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e) { Console.WriteLine(e.Key); }
 
         #endregion
 
         #region Init
 
-        public TagEditor(ObservableLiveStream selectedLivestream) : this()
-        {
-            SelectedLivestream = selectedLivestream;
-            //TODO
-            // _subscription  = _tagsPanel.Bind(ItemsControl.ItemsProperty, SelectedLivestream.Select(l => l.Tags));
-        }
-
+        // ReSharper disable once MemberCanBePrivate.Global
         public TagEditor()
         {
             AvaloniaXamlLoader.Load(this);
             _tagsPanel = this.Find<WrapPanel>("TagsPanel")!;
+        }
+
+        public TagEditor(ObservableLiveStream selectedLivestream) : this()
+        {
+            _tagsPanel.Children.CollectionChanged += (a, b) => OnTagsChanged();
+            SelectedLivestream = selectedLivestream;
+
+            if (SelectedLivestream.CurrentLiveStream == null) return;
+
+            var textBox = _tagsPanel.Children.First();
+            _tagsPanel.Children.Clear();
+            foreach (var tag in SelectedLivestream.CurrentLiveStream.Tags)
+                _tagsPanel.Children.Add(new TagCard(tag, _tagsPanel.Children));
+            _tagsPanel.Children.Add(textBox);
+        }
+
+        private void OnTagsChanged()
+        {
+            Console.WriteLine(_tagsPanel.Bounds.Width + "\t" + _tagsPanel.Children.Last().Bounds.X + " + " +
+                              _tagsPanel.Children.Last().Bounds.Width);
         }
 
         public void Dispose()

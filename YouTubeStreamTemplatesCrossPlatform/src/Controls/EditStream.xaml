@@ -6,7 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditStream">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-          RowDefinitions="*,*,*,*,*,*" ColumnDefinitions="*,3*,5*,*">
+          RowDefinitions="*,*,*,*,*,*" ColumnDefinitions="*,3*,5*,*"
+          x:Name="ContentGrid">
         <TextBlock Grid.Row="1" Grid.Column="1" Text="Title:" />
         <ComboBox Grid.Row="1" Grid.Column="2" x:Name="LiveStreamComboBox" SelectedIndex="0"
                   SelectionChanged="LiveStreamComboBox_OnSelectionChanged">
@@ -21,7 +22,7 @@
         <TextBox Grid.Row="2" Grid.Column="2" x:Name="DescriptionTextBox" LostFocus="LiveStreamDescription_OnFocusLost" />
 
         <TextBlock Grid.Row="3" Grid.Column="1" Text="Tags:" />
-        <TextBox Grid.Row="3" Grid.Column="2" x:Name="TagTextBox" />
+        <!-- <controls:TagEditor Grid.Row="3" Grid.Column="2"  x:Name="TagEditor"/> -->
 
         <TextBlock Grid.Row="4" Grid.Column="1" Text="Category:" />
         <ComboBox Grid.Row="4" Grid.Column="2" x:Name="CategoryComboBox" SelectedIndex="0"
