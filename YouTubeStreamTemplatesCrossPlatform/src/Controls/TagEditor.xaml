@@ -6,8 +6,7 @@
              x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.TagEditor">
     <Border BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1">
         <WrapPanel x:Name="TagsPanel" Background="{DynamicResource ThemeBackgroundBrush}">
-            <TextBox x:Name="InputTextBox" KeyUp="InputTextBox_OnKeyUp" MinWidth="100" />
-            <!-- TODO TextBox -> BorderThickness="0" -->
+            <TextBox x:Name="InputTextBox" KeyUp="InputTextBox_OnKeyUp" MinWidth="100" BorderThickness="0" />
         </WrapPanel>
     </Border>
 </UserControl>

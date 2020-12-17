@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using YouTubeStreamTemplatesCrossPlatform.Entities;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
@@ -21,10 +22,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void OnTagsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            _inputTextBox.Width = _tagsPanel.Bounds.Width -
-                                  _tagsPanel.Children.Where(c => c is not TextBox).Sum(c => c.Bounds.Width);
-
-            //TODO somehow call after first render again (because before Bounds = Rect.Empty)
+            Dispatcher.UIThread.InvokeAsync(() => _inputTextBox.Width = _tagsPanel.Bounds.Width -
+                                                                        _tagsPanel.Children.Where(c => c is not TextBox)
+                                                                            .Sum(c => c.Bounds.Width));
         }
 
         #endregion
