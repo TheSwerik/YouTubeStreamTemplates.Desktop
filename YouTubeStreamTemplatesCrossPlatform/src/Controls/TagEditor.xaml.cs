@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -9,6 +10,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
     public class TagEditor : UserControl, IDisposable
     {
+        private readonly TextBox _inputTextBox;
         private readonly IDisposable _subscription = null!;
         private readonly WrapPanel _tagsPanel;
         private ObservableLiveStream SelectedLivestream { get; } = null!;
@@ -16,6 +18,14 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         #region EventListener
 
         private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e) { Console.WriteLine(e.Key); }
+
+        private void OnTagsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            _inputTextBox.Width = _tagsPanel.Bounds.Width -
+                                  _tagsPanel.Children.Where(c => c is not TextBox).Sum(c => c.Bounds.Width);
+
+            //TODO somehow call after first render again (because before Bounds = Rect.Empty)
+        }
 
         #endregion
 
@@ -26,27 +36,29 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             AvaloniaXamlLoader.Load(this);
             _tagsPanel = this.Find<WrapPanel>("TagsPanel")!;
+            _inputTextBox = this.Find<TextBox>("InputTextBox")!;
         }
 
         public TagEditor(ObservableLiveStream selectedLivestream) : this()
         {
-            _tagsPanel.Children.CollectionChanged += (a, b) => OnTagsChanged();
+            _tagsPanel.Children.CollectionChanged += OnTagsChanged;
             SelectedLivestream = selectedLivestream;
+            _subscription = SelectedLivestream.Subscribe(s => RefreshTags());
+        }
 
+        private void RefreshTags()
+        {
             if (SelectedLivestream.CurrentLiveStream == null) return;
 
-            var textBox = _tagsPanel.Children.First();
-            _tagsPanel.Children.Clear();
-            foreach (var tag in SelectedLivestream.CurrentLiveStream.Tags)
-                _tagsPanel.Children.Add(new TagCard(tag, _tagsPanel.Children));
-            _tagsPanel.Children.Add(textBox);
+            var tagControls = _tagsPanel.Children;
+            tagControls.AddRange(
+                SelectedLivestream.CurrentLiveStream.Tags.Select(tag => new TagCard(tag, tagControls)));
+
+            tagControls.Remove(_inputTextBox);
+            tagControls.Add(_inputTextBox);
         }
 
-        private void OnTagsChanged()
-        {
-            Console.WriteLine(_tagsPanel.Bounds.Width + "\t" + _tagsPanel.Children.Last().Bounds.X + " + " +
-                              _tagsPanel.Children.Last().Bounds.Width);
-        }
+        #region Dispose
 
         public void Dispose()
         {
@@ -60,6 +72,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             if (!disposing) return;
             _subscription.Dispose();
         }
+
+        #endregion
 
         #endregion
     }

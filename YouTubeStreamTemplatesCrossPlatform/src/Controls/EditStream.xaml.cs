@@ -59,8 +59,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                                     */
                                });
             liveStreamComboBox.SelectedIndex = 0;
-
-            Console.WriteLine(SelectedLivestream.CurrentLiveStream);
         }
 
         #region Dispose
