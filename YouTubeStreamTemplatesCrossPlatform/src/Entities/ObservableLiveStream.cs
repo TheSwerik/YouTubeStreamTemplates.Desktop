@@ -9,7 +9,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Entities
     {
         private readonly List<IObserver<LiveStream>> _observers = new();
         private readonly List<Unsubscriber> _unsubscribers = new();
-        public LiveStream? CurrentLiveStream { get; private set; }
+
+        public ObservableLiveStream() { CurrentLiveStream = this; }
+        public LiveStream CurrentLiveStream { get; private set; }
 
         public IDisposable Subscribe(IObserver<LiveStream> observer)
         {

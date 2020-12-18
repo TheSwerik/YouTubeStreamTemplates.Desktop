@@ -8,6 +8,7 @@ namespace YouTubeStreamTemplates
     public class SettingsService
     {
         private const string DefaultPath = @"res/Default.cfg";
+        private const string Path = @"settings.cfg";
         private readonly Dictionary<Settings, string> _defaultSettings;
         public Dictionary<Settings, string> Settings { get; init; }
 
@@ -20,9 +21,8 @@ namespace YouTubeStreamTemplates
 
             if (!File.Exists(DefaultPath)) throw new Exception("ERROR DEFAULT IS MISSING"); //TODO make an Exception
             AddAllSettings(_defaultSettings, DefaultPath);
-            if (!File.Exists(_defaultSettings[YouTubeStreamTemplates.Settings.SavePath]))
-                File.Copy(DefaultPath, _defaultSettings[YouTubeStreamTemplates.Settings.SavePath]);
-            AddAllSettings(Settings, _defaultSettings[YouTubeStreamTemplates.Settings.SavePath]);
+            if (!File.Exists(Path)) File.Copy(DefaultPath, Path);
+            AddAllSettings(Settings, Path);
         }
 
         private void AddAllSettings(IDictionary<Settings, string> settings, string path)

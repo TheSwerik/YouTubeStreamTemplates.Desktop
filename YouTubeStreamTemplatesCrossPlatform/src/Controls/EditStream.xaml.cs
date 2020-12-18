@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.LiveStreaming;
 using YouTubeStreamTemplatesCrossPlatform.Entities;
 
@@ -17,6 +20,11 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private ObservableLiveStream SelectedLivestream { get; }
         private Subject<List<LiveStream>> LiveStreams { get; }
 
+        private static void InvokeOnRender(Action action)
+        {
+            Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
+        }
+
         #region Init
 
         public EditStream()
@@ -27,6 +35,30 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _tagEditor = new TagEditor(SelectedLivestream);
             InitializeComponent();
             InitBindings();
+        }
+
+        public EditStream(bool isStream) : this()
+        {
+            InvokeOnRender(async () =>
+                           {
+                               while (Service.LiveStreamService == null || Service.TemplateService == null)
+                                   await Task.Delay(25);
+
+                               try
+                               {
+                                   LiveStreams.OnNext(isStream
+                                                          ? await Service.TemplateService.GetTemplates()
+                                                          : new List<LiveStream>
+                                                            {await Service.LiveStreamService.GetCurrentStream()});
+                               }
+                               catch (NoCurrentStreamException) //TODO
+                               {
+                               }
+
+                               this.Find<ComboBox>("LiveStreamComboBox").SelectedIndex = 0;
+                               this.Find<ComboBox>("CategoryComboBox").SelectedItem =
+                                   SelectedLivestream.CurrentLiveStream.Category;
+                           });
         }
 
         private void InitializeComponent()
@@ -46,27 +78,11 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var textBox = this.Find<TextBox>("DescriptionTextBox");
             _subscriptions.Add(textBox.Bind(TextBox.TextProperty, SelectedLivestream.Select(l => l.Description)));
 
-            LiveStreams.OnNext(new List<LiveStream>
-                               {
-                                   TestStream()
-                                   /*
-                                    // TestData
-                                    new() {Id = "1", Title = "Ass"},
-                                    new() {Id = "2", Title = "Butt"},
-                                    new() {Id = "3", Title = "Buttox"},
-                                    new() {Id = "4", Title = "Arsch"},
-                                    */
-                               });
-            liveStreamComboBox.SelectedIndex = 0;
-
-
             var categoryStreamComboBox = this.Find<ComboBox>("CategoryComboBox");
             categoryStreamComboBox.Items = Enum.GetValues(typeof(Category));
             _subscriptions.Add(SelectedLivestream.Subscribe(s => categoryStreamComboBox.SelectedItem = s.Category));
-            categoryStreamComboBox.SelectedItem = SelectedLivestream.CurrentLiveStream!.Category;
             categoryStreamComboBox.SelectionChanged += (s, e) =>
                                                        {
-                                                           if (SelectedLivestream.CurrentLiveStream == null) return;
                                                            SelectedLivestream.CurrentLiveStream.Category =
                                                                (Category) categoryStreamComboBox.SelectedItem;
                                                            SelectedLivestream.OnNext();
@@ -119,7 +135,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void LiveStreamDescription_OnFocusLost(object? sender, RoutedEventArgs e)
         {
-            if (sender == null || SelectedLivestream.CurrentLiveStream == null) return;
+            if (sender == null) return;
             var descriptionTextBox = (TextBox) sender;
             SelectedLivestream.CurrentLiveStream.Description = descriptionTextBox.Text;
             SelectedLivestream.OnNext();
@@ -134,7 +150,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void CategoryComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (sender == null || SelectedLivestream.CurrentLiveStream == null) return;
+            if (sender == null) return;
             var categoryComboBox = (ComboBox) sender;
             SelectedLivestream.CurrentLiveStream.Category = (Category) categoryComboBox.SelectedItem;
             SelectedLivestream.OnNext();
