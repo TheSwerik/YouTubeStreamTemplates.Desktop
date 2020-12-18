@@ -17,6 +17,11 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly WrapPanel _tagsPanel;
         private ObservableLiveStream SelectedLivestream { get; } = null!;
 
+        private static void InvokeOnRender(Action action)
+        {
+            Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
+        }
+
         #region EventListener
 
         private void InputTextBox_OnLostFocus(object? sender, RoutedEventArgs e) { InputTextBox_FinishWriting(); }
@@ -38,22 +43,17 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void OnTagsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-                                            {
-                                                var maxWidth = _tagsPanel.Bounds.Width;
-                                                var allWithoutTextBox = _tagsPanel.Children
-                                                    .Where(c => c is not TextBox)
-                                                    .ToList();
-                                                var highestY = allWithoutTextBox.Max(c => c.Bounds.Y);
-                                                var lineWidth = allWithoutTextBox
-                                                                .Where(c => Math.Abs(c.Bounds.Y - highestY) < 1)
+            InvokeOnRender(() =>
+                           {
+                               var maxWidth = _tagsPanel.Bounds.Width;
+                               var allWithoutTextBox = _tagsPanel.Children.Where(c => c is not TextBox)
+                                                                 .ToList();
+                               var highestY = allWithoutTextBox.Max(c => c.Bounds.Y);
+                               var lineWidth = allWithoutTextBox.Where(c => Math.Abs(c.Bounds.Y - highestY) < 1)
                                                                 .Sum(c => c.Bounds.Width);
-                                                var desiredWidth = maxWidth - lineWidth;
-                                                return _inputTextBox.Width = desiredWidth < _inputTextBox.MinWidth
-                                                                                 ? maxWidth
-                                                                                 : desiredWidth;
-                                            },
-                                            DispatcherPriority.Render);
+                               var desiredWidth = maxWidth - lineWidth;
+                               _inputTextBox.Width = desiredWidth < _inputTextBox.MinWidth ? maxWidth : desiredWidth;
+                           });
         }
 
         #endregion
@@ -81,16 +81,16 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var stream = SelectedLivestream.CurrentLiveStream;
             if (stream == null) return;
 
-            var children = _tagsPanel.Children;
-            // Remove Listener so that it doesn't get called way too often completely unnecessarily
-            Dispatcher.UIThread.InvokeAsync(() =>
-                                            {
-                                                children.CollectionChanged -= OnTagsChanged;
-                                                children.Clear();
-                                                children.AddRange(stream.Tags.Select(t => new TagCard(t, children)));
-                                                children.CollectionChanged += OnTagsChanged;
-                                                children.Add(_inputTextBox);
-                                            }, DispatcherPriority.Render);
+            var controls = _tagsPanel.Children;
+            InvokeOnRender(() =>
+                           {
+                               // Remove Listener so that it doesn't get called way too often completely unnecessarily
+                               controls.CollectionChanged -= OnTagsChanged;
+                               controls.Clear();
+                               controls.AddRange(stream.Tags.Select(tag => new TagCard(tag, SelectedLivestream)));
+                               controls.CollectionChanged += OnTagsChanged;
+                               controls.Add(_inputTextBox);
+                           });
         }
 
         #region Dispose
