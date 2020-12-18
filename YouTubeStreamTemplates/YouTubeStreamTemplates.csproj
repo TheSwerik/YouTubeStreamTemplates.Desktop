@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="obj"/>
+        <None Include="res/**" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
 
 </Project>
