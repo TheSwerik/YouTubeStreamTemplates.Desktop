@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -17,11 +16,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly WrapPanel _tagsPanel;
         private ObservableLiveStream SelectedLivestream { get; } = null!;
 
-        private static void InvokeOnRender(Action action)
-        {
-            Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
-        }
-
         #region EventListener
 
         private void InputTextBox_OnLostFocus(object? sender, RoutedEventArgs e) { InputTextBox_FinishWriting(); }
@@ -29,31 +23,20 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter) InputTextBox_FinishWriting();
+            InvokeOnRender(_inputTextBox.Focus);
         }
 
         private void InputTextBox_FinishWriting()
         {
             var text = _inputTextBox.Text;
-            if (string.IsNullOrWhiteSpace(text)) return;
+            if (string.IsNullOrWhiteSpace(text) || SelectedLivestream.CurrentLiveStream == null) return;
+            if (text.Length > 100) throw new ArgumentException("text is too long");
+            if (string.Join(",", SelectedLivestream.CurrentLiveStream.Tags).Length + text.Length + 1 > 500)
+                throw new ArgumentException("tags are too long");
 
-            SelectedLivestream.CurrentLiveStream?.Tags.Add(text);
+            SelectedLivestream.CurrentLiveStream.Tags.Add(text);
             SelectedLivestream.OnNext();
             _inputTextBox.Text = "";
-        }
-
-        private void OnTagsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            InvokeOnRender(() =>
-                           {
-                               var maxWidth = _tagsPanel.Bounds.Width;
-                               var allWithoutTextBox = _tagsPanel.Children.Where(c => c is not TextBox)
-                                                                 .ToList();
-                               var highestY = allWithoutTextBox.Max(c => c.Bounds.Y);
-                               var lineWidth = allWithoutTextBox.Where(c => Math.Abs(c.Bounds.Y - highestY) < 1)
-                                                                .Sum(c => c.Bounds.Width);
-                               var desiredWidth = maxWidth - lineWidth;
-                               _inputTextBox.Width = desiredWidth < _inputTextBox.MinWidth ? maxWidth : desiredWidth;
-                           });
         }
 
         #endregion
@@ -70,7 +53,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         public TagEditor(ObservableLiveStream selectedLivestream) : this()
         {
-            _tagsPanel.Children.CollectionChanged += OnTagsChanged;
             SelectedLivestream = selectedLivestream;
             _subscription = SelectedLivestream.Subscribe(_ => RefreshTags());
         }
@@ -84,11 +66,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var controls = _tagsPanel.Children;
             InvokeOnRender(() =>
                            {
-                               // Remove Listener so that it doesn't get called way too often completely unnecessarily
-                               controls.CollectionChanged -= OnTagsChanged;
                                controls.Clear();
                                controls.AddRange(stream.Tags.Select(tag => new TagCard(tag, SelectedLivestream)));
-                               controls.CollectionChanged += OnTagsChanged;
+                               InvokeOnRender(ResizeInputBox);
                                controls.Add(_inputTextBox);
                            });
         }
@@ -109,6 +89,25 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         }
 
         #endregion
+
+        #endregion
+
+        #region Helper Methods
+
+        private void ResizeInputBox()
+        {
+            var maxWidth = _tagsPanel.Bounds.Width;
+            var allWithoutTextBox = _tagsPanel.Children.Where(c => c is not TextBox).ToList();
+            var highestY = allWithoutTextBox.Max(c => c.Bounds.Y);
+            var lineWidth = allWithoutTextBox.Where(c => Math.Abs(c.Bounds.Y - highestY) < 1).Sum(c => c.Bounds.Width);
+            var desiredWidth = maxWidth - lineWidth;
+            _inputTextBox.Width = desiredWidth < _inputTextBox.MinWidth ? maxWidth : desiredWidth;
+        }
+
+        private static void InvokeOnRender(Action action)
+        {
+            Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
+        }
 
         #endregion
     }
