@@ -19,7 +19,8 @@
         </ComboBox>
 
         <TextBlock Grid.Row="3" Grid.Column="1" Text="Description:" />
-        <TextBox Grid.Row="3" Grid.Column="2" x:Name="DescriptionTextBox" LostFocus="LiveStreamDescription_OnFocusLost" />
+        <TextBox Grid.Row="3" Grid.Column="2" x:Name="DescriptionTextBox" AcceptsReturn="True"
+                 LostFocus="LiveStreamDescription_OnFocusLost" />
 
         <TextBlock Grid.Row="5" Grid.Column="1" Text="Tags:" />
         <!-- <controls:TagEditor Grid.Row="3" Grid.Column="2"  x:Name="TagEditor"/> -->
