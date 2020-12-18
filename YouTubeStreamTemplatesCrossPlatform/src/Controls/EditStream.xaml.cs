@@ -114,21 +114,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         #endregion
 
-        private LiveStream TestStream()
-        {
-            return new()
-                   {
-                       Id = "Abc123",
-                       Title = "Summoner Master Solo",
-                       Description = "Test TEst \n Test TEssadast\n\nsadasd",
-                       Tags = new List<string> {"Lets Play", "Summoner", "Stream"},
-                       Language = "German",
-                       Category = Category.Gaming,
-                       StartTime = DateTime.Today,
-                       EndTime = DateTime.Today.AddDays(1)
-                   };
-        }
-
         #endregion
 
         #region EventListener
