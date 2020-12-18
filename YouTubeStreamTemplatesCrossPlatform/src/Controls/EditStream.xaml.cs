@@ -13,21 +13,30 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
     public class EditStream : UserControl, IDisposable
     {
         private readonly List<IDisposable> _subscriptions;
-        public ObservableLiveStream SelectedLivestream { get; set; }
-        public Subject<List<LiveStream>> LiveStreams { get; set; }
+        private readonly TagEditor _tagEditor;
+        private ObservableLiveStream SelectedLivestream { get; }
+        private Subject<List<LiveStream>> LiveStreams { get; }
 
         #region Init
 
         public EditStream()
         {
-            InitializeComponent();
             _subscriptions = new List<IDisposable>();
             SelectedLivestream = new ObservableLiveStream();
             LiveStreams = new Subject<List<LiveStream>>();
+            _tagEditor = new TagEditor(SelectedLivestream);
+            InitializeComponent();
             InitBindings();
         }
 
-        private void InitializeComponent() { AvaloniaXamlLoader.Load(this); }
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+
+            Grid.SetRow(_tagEditor, 3);
+            Grid.SetColumn(_tagEditor, 2);
+            this.Find<Grid>("ContentGrid").Children.Add(_tagEditor);
+        }
 
         private void InitBindings()
         {
@@ -40,13 +49,19 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
             LiveStreams.OnNext(new List<LiveStream>
                                {
-                                   new() {Id = "1", Title = "Ass"},
-                                   new() {Id = "2", Title = "Butt"},
-                                   new() {Id = "3", Title = "Buttox"},
-                                   new() {Id = "4", Title = "Arsch"}
+                                   TestStream()
+                                   /*
+                                    // TestData
+                                    new() {Id = "1", Title = "Ass"},
+                                    new() {Id = "2", Title = "Butt"},
+                                    new() {Id = "3", Title = "Buttox"},
+                                    new() {Id = "4", Title = "Arsch"},
+                                    */
                                });
             liveStreamComboBox.SelectedIndex = 0;
         }
+
+        #region Dispose
 
         public void Dispose()
         {
@@ -67,6 +82,23 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private void ReleaseUnmanagedResources()
         {
             // TODO release unmanaged resources here
+        }
+
+        #endregion
+
+        private LiveStream TestStream()
+        {
+            return new()
+                   {
+                       Id = "Abc123",
+                       Title = "Summoner Master Solo",
+                       Description = "Test TEst \n Test TEssadast\n\nsadasd",
+                       Tags = new List<string> {"Lets Play", "Summoner", "Stream"},
+                       Language = "German",
+                       Category = Category.Gaming,
+                       StartTime = DateTime.Today,
+                       EndTime = DateTime.Today.AddDays(1)
+                   };
         }
 
         #endregion

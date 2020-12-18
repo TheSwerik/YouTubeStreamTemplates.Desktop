@@ -3,3 +3,4 @@
 **/obj
 **/apikey.txt
 **/client_id.json
+*.user
