@@ -93,7 +93,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                        Id = "Abc123",
                        Title = "Summoner Master Solo",
                        Description = "Test TEst \n Test TEssadast\n\nsadasd",
-                       Tags = new[] {"Lets Play", "Summoner", "Stream"},
+                       Tags = new List<string> {"Lets Play", "Summoner", "Stream"},
                        Language = "German",
                        Category = Category.Gaming,
                        StartTime = DateTime.Today,

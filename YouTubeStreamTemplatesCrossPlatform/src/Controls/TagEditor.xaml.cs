@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using YouTubeStreamTemplatesCrossPlatform.Entities;
@@ -18,13 +19,41 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         #region EventListener
 
-        private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e) { Console.WriteLine(e.Key); }
+        private void InputTextBox_OnLostFocus(object? sender, RoutedEventArgs e) { InputTextBox_FinishWriting(); }
+
+        private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) InputTextBox_FinishWriting();
+        }
+
+        private void InputTextBox_FinishWriting()
+        {
+            var text = _inputTextBox.Text;
+            if (string.IsNullOrWhiteSpace(text)) return;
+
+            SelectedLivestream.CurrentLiveStream?.Tags.Add(text);
+            SelectedLivestream.OnNext();
+            _inputTextBox.Text = "";
+        }
 
         private void OnTagsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(() => _inputTextBox.Width = _tagsPanel.Bounds.Width -
-                                                                        _tagsPanel.Children.Where(c => c is not TextBox)
-                                                                            .Sum(c => c.Bounds.Width));
+            Dispatcher.UIThread.InvokeAsync(() =>
+                                            {
+                                                var maxWidth = _tagsPanel.Bounds.Width;
+                                                var allWithoutTextBox = _tagsPanel.Children
+                                                    .Where(c => c is not TextBox)
+                                                    .ToList();
+                                                var highestY = allWithoutTextBox.Max(c => c.Bounds.Y);
+                                                var lineWidth = allWithoutTextBox
+                                                                .Where(c => Math.Abs(c.Bounds.Y - highestY) < 1)
+                                                                .Sum(c => c.Bounds.Width);
+                                                var desiredWidth = maxWidth - lineWidth;
+                                                return _inputTextBox.Width = desiredWidth < _inputTextBox.MinWidth
+                                                                                 ? maxWidth
+                                                                                 : desiredWidth;
+                                            },
+                                            DispatcherPriority.Render);
         }
 
         #endregion
@@ -43,19 +72,25 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             _tagsPanel.Children.CollectionChanged += OnTagsChanged;
             SelectedLivestream = selectedLivestream;
-            _subscription = SelectedLivestream.Subscribe(s => RefreshTags());
+            _subscription = SelectedLivestream.Subscribe(_ => RefreshTags());
         }
 
         private void RefreshTags()
+
         {
-            if (SelectedLivestream.CurrentLiveStream == null) return;
+            var stream = SelectedLivestream.CurrentLiveStream;
+            if (stream == null) return;
 
-            var tagControls = _tagsPanel.Children;
-            tagControls.AddRange(
-                SelectedLivestream.CurrentLiveStream.Tags.Select(tag => new TagCard(tag, tagControls)));
-
-            tagControls.Remove(_inputTextBox);
-            tagControls.Add(_inputTextBox);
+            var children = _tagsPanel.Children;
+            // Remove Listener so that it doesn't get called way too often completely unnecessarily
+            Dispatcher.UIThread.InvokeAsync(() =>
+                                            {
+                                                children.CollectionChanged -= OnTagsChanged;
+                                                children.Clear();
+                                                children.AddRange(stream.Tags.Select(t => new TagCard(t, children)));
+                                                children.CollectionChanged += OnTagsChanged;
+                                                children.Add(_inputTextBox);
+                                            }, DispatcherPriority.Render);
         }
 
         #region Dispose
