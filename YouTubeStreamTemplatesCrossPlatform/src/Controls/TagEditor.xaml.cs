@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -16,19 +17,30 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly WrapPanel _tagsPanel;
         private ObservableLiveStream SelectedLivestream { get; } = null!;
 
+        private void InputTextBox_OnTextInput(object? sender, TextInputEventArgs e) { Console.WriteLine(e.Text); }
+
         #region EventListener
 
         private void InputTextBox_OnLostFocus(object? sender, RoutedEventArgs e) { InputTextBox_FinishWriting(); }
 
         private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter) InputTextBox_FinishWriting();
+            if (e.Key == Key.Enter || e.Key == Key.OemComma) InputTextBox_FinishWriting();
             InvokeOnRender(_inputTextBox.Focus);
         }
 
-        private void InputTextBox_FinishWriting()
+        private void InputTextBox_OnTextEntered(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            var text = _inputTextBox.Text;
+            if (e.NewValue.ToString() == null || !e.Property.Name.Equals("Text")) return;
+            var tags = e.NewValue.ToString()!.Split(",");
+            for (var i = 0; i < tags.Length - 1; i++) InputTextBox_FinishWriting(tags[i]);
+            _inputTextBox.Text = tags[^1];
+            InvokeOnRender(_inputTextBox.Focus);
+        }
+
+        private void InputTextBox_FinishWriting(string? text = null)
+        {
+            text ??= _inputTextBox.Text.Replace(",", "");
             if (string.IsNullOrWhiteSpace(text) || SelectedLivestream.CurrentLiveStream == null) return;
             if (text.Length > 100) throw new ArgumentException("text is too long");
             if (string.Join(",", SelectedLivestream.CurrentLiveStream.Tags).Length + text.Length + 1 > 500)
@@ -49,6 +61,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             AvaloniaXamlLoader.Load(this);
             _tagsPanel = this.Find<WrapPanel>("TagsPanel")!;
             _inputTextBox = this.Find<TextBox>("InputTextBox")!;
+            _inputTextBox.PropertyChanged += InputTextBox_OnTextEntered;
         }
 
         public TagEditor(ObservableLiveStream selectedLivestream) : this()
