@@ -46,7 +46,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var textBox = this.Find<TextBox>("DescriptionTextBox");
             _subscriptions.Add(textBox.Bind(TextBox.TextProperty, SelectedLivestream.Select(l => l.Description)));
 
-
             LiveStreams.OnNext(new List<LiveStream>
                                {
                                    TestStream()
@@ -59,6 +58,19 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                                     */
                                });
             liveStreamComboBox.SelectedIndex = 0;
+
+
+            var categoryStreamComboBox = this.Find<ComboBox>("CategoryComboBox");
+            categoryStreamComboBox.Items = Enum.GetValues(typeof(Category));
+            _subscriptions.Add(SelectedLivestream.Subscribe(s => categoryStreamComboBox.SelectedItem = s.Category));
+            categoryStreamComboBox.SelectedItem = SelectedLivestream.CurrentLiveStream!.Category;
+            categoryStreamComboBox.SelectionChanged += (s, e) =>
+                                                       {
+                                                           if (SelectedLivestream.CurrentLiveStream == null) return;
+                                                           SelectedLivestream.CurrentLiveStream.Category =
+                                                               (Category) categoryStreamComboBox.SelectedItem;
+                                                           SelectedLivestream.OnNext();
+                                                       };
         }
 
         #region Dispose

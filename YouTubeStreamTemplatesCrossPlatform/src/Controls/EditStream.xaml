@@ -26,13 +26,8 @@
         <!-- <controls:TagEditor Grid.Row="3" Grid.Column="2"  x:Name="TagEditor"/> -->
 
         <TextBlock Grid.Row="7" Grid.Column="1" Text="Category:" />
-        <ComboBox Grid.Row="7" Grid.Column="2" x:Name="CategoryComboBox" SelectedIndex="0"
-                  SelectionChanged="CategoryComboBox_OnSelectionChanged">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="liveStreaming:LiveStream">
-                    <TextBlock Text="{Binding Title}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+        <ComboBox Grid.Row="7" Grid.Column="2"
+                  x:Name="CategoryComboBox" SelectedIndex="0"
+                  SelectionChanged="CategoryComboBox_OnSelectionChanged" />
     </Grid>
 </UserControl>
