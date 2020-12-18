@@ -31,7 +31,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void InputTextBox_OnTextEntered(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.NewValue.ToString() == null || !e.Property.Name.Equals("Text")) return;
+            if (!e.Property.Name.Equals("Text") || e.NewValue.ToString() == null) return;
             var tags = e.NewValue.ToString()!.Split(",");
             for (var i = 0; i < tags.Length - 1; i++) InputTextBox_FinishWriting(tags[i]);
             _inputTextBox.Text = tags[^1];
