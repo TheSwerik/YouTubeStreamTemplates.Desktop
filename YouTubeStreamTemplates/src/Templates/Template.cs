@@ -1,4 +1,5 @@
-﻿using YouTubeStreamTemplates.LiveStreaming;
+﻿using System;
+using YouTubeStreamTemplates.LiveStreaming;
 
 namespace YouTubeStreamTemplates.Templates
 {
@@ -6,6 +7,7 @@ namespace YouTubeStreamTemplates.Templates
     {
         public Template(string name)
         {
+            Id = Guid.NewGuid().ToString();
             Name = name;
             ThumbnailsPath = "";
         }

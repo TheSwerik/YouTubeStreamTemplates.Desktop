@@ -16,6 +16,8 @@
 
     <ItemGroup>
         <None Include="res/**" CopyToOutputDirectory="PreserveNewest"/>
-    </ItemGroup>
 
+        <!--TODO: Remove this line, this is for Debugging-->
+        <None Include="Templates/**" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
 </Project>
