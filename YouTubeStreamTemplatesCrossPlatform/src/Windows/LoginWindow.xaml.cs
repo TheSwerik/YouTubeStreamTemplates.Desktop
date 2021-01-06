@@ -3,7 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using YouTubeStreamTemplates;
+using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.Settings;
+using YouTubeStreamTemplates.Templates;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Windows
 {

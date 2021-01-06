@@ -1,4 +1,6 @@
-﻿using YouTubeStreamTemplates;
+﻿using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.Settings;
+using YouTubeStreamTemplates.Templates;
 
 namespace YouTubeStreamTemplatesCrossPlatform
 {

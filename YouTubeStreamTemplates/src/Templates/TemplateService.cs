@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using YouTubeStreamTemplates.LiveStreaming;
 
-namespace YouTubeStreamTemplates
+namespace YouTubeStreamTemplates.Templates
 {
     public class TemplateService
     {

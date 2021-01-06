@@ -1,5 +1,5 @@
 ﻿using System;
-using YouTubeStreamTemplates;
+using YouTubeStreamTemplates.LiveStreaming;
 
 namespace YouTubeStreamTemplatesCLI
 {

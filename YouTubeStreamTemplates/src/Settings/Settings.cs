@@ -1,4 +1,4 @@
-﻿namespace YouTubeStreamTemplates
+﻿namespace YouTubeStreamTemplates.Settings
 {
     public enum Settings
     {
