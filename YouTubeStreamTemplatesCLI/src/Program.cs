@@ -1,5 +1,5 @@
 ﻿using System;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.Templates;
 
 namespace YouTubeStreamTemplatesCLI
 {
@@ -9,7 +9,9 @@ namespace YouTubeStreamTemplatesCLI
         {
             try
             {
-                var service = LiveStreamService.Init().Result;
+                var service = new TemplateService();
+                var result = service.LoadTemplate("Test.tlpt").Result;
+                Console.WriteLine(result);
             }
             catch (AggregateException e)
             {

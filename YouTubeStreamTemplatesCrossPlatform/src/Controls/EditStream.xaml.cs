@@ -46,10 +46,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
                                try
                                {
-                                   LiveStreams.OnNext(isStream
-                                                          ? await Service.TemplateService.GetTemplates()
-                                                          : new List<LiveStream>
-                                                            {await Service.LiveStreamService.GetCurrentStream()});
+                                   // LiveStreams.OnNext(isStream
+                                   //                        ? Service.TemplateService.Templates
+                                   //                        : new List<LiveStream>
+                                   //                          {await Service.LiveStreamService.GetCurrentStream()});
+                                   LiveStreams.OnNext(new List<LiveStream>
+                                                      {await Service.LiveStreamService.GetCurrentStream()});
                                }
                                catch (NoCurrentStreamException) //TODO
                                {
