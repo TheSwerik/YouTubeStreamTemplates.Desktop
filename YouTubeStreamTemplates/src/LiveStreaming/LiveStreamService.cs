@@ -9,9 +9,8 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using YouTubeStreamTemplates.Exceptions;
-using YouTubeStreamTemplates.LiveStreaming;
 
-namespace YouTubeStreamTemplates
+namespace YouTubeStreamTemplates.LiveStreaming
 {
     public class LiveStreamService
     {
@@ -62,17 +61,14 @@ namespace YouTubeStreamTemplates
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
             request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
-            // request.Mine = true;
 
             var response = await request.ExecuteAsync();
-            Console.WriteLine(response.Items?.Count);
             if (response.Items == null || response.Items.Count <= 0) throw new NoCurrentStreamException();
             if (response.Items.Count == 1) return response.Items[0].ToLiveStream();
 
             // Get the latest Stream if there is more than one:
             var streams = response.Items.Select(s => s.ToLiveStream()).ToList();
             streams.Sort(LiveStreamComparer.ByDateDesc);
-            streams.ForEach(s => Console.WriteLine(s.Title));
             return streams[0];
         }
 

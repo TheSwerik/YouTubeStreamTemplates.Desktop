@@ -1,10 +1,11 @@
-using System;
-using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.Settings;
+using YouTubeStreamTemplates.Templates;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Windows
 {
@@ -13,10 +14,16 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows
         public LoginWindow()
         {
             InitializeComponent();
-            Console.WriteLine(Directory.GetCurrentDirectory());
+            // Console.WriteLine(Directory.GetCurrentDirectory());
         }
 
-        private void InitializeComponent() { AvaloniaXamlLoader.Load(this); }
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+
+            Service.SettingsService = new SettingsService();
+            Service.TemplateService = new TemplateService();
+        }
 
         private void Login_OnPress(object? sender, PointerPressedEventArgs pointerPressedEventArgs)
         {
@@ -28,7 +35,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows
         {
             var img = (Image) sender!;
             img.Opacity = 1;
-            // Service.LiveStreamService = await LiveStreamService.Init();
+            Service.LiveStreamService = await LiveStreamService.Init();
 
             if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
             desktop.MainWindow = new MainWindow();
