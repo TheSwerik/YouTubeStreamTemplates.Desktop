@@ -12,7 +12,9 @@ namespace YouTubeStreamTemplates.Settings
     {
         private const string DefaultPath = @"res/Default.cfg";
         private const string Path = @"settings.cfg";
+        private static SettingsService? _instance;
         private readonly Dictionary<Settings, string> _defaultSettings;
+        public static SettingsService Instance => _instance ??= new SettingsService();
         public Dictionary<Settings, string> Settings { get; init; }
 
         #region Public Methods
@@ -29,7 +31,7 @@ namespace YouTubeStreamTemplates.Settings
 
         #region Initialisation
 
-        public SettingsService()
+        private SettingsService()
         {
             Settings = new Dictionary<Settings, string>();
             _defaultSettings = new Dictionary<Settings, string>();
