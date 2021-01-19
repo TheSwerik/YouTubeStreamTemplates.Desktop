@@ -71,8 +71,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             //TODO REMOVE THIS:
             Service.TemplateService = new TemplateService();
-            await Service.TemplateService.LoadAllTemplates(
-                SettingsService.Instance.Settings[Settings.SavePath]);
+            await Service.TemplateService.LoadAllTemplates(SettingsService.Instance.Settings[Settings.SavePath]);
             //-------- Until here -------------------
 
             while (Service.TemplateService == null)
