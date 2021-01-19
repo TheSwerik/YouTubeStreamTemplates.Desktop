@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,20 +7,20 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using YouTubeStreamTemplatesCrossPlatform.Entities;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
-    public class TagEditor : UserControl, IDisposable
+    public class TagEditor : UserControl
     {
         private readonly TextBox _inputTextBox;
-        private readonly IDisposable _subscription = null!;
         private readonly WrapPanel _tagsPanel;
-        private ObservableLiveStream SelectedLivestream { get; } = null!;
 
-        private void InputTextBox_OnTextInput(object? sender, TextInputEventArgs e) { Console.WriteLine(e.Text); }
+        public List<TagCard> TagCards => _tagsPanel.Children.OfType<TagCard>().ToList();
+        public void Remove(TagCard tagCard) { _tagsPanel.Children.Remove(tagCard); }
 
         #region EventListener
+
+        private void InputTextBox_OnTextInput(object? sender, TextInputEventArgs e) { Console.WriteLine(e.Text); }
 
         private void InputTextBox_OnLostFocus(object? sender, RoutedEventArgs e) { InputTextBox_FinishWriting(); }
 
@@ -41,13 +42,13 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private void InputTextBox_FinishWriting(string? text = null)
         {
             text ??= _inputTextBox.Text.Replace(",", "");
-            if (string.IsNullOrWhiteSpace(text) || SelectedLivestream.CurrentLiveStream == null) return;
+            if (string.IsNullOrWhiteSpace(text)) return;
             if (text.Length > 100) throw new ArgumentException("text is too long");
-            if (string.Join(",", SelectedLivestream.CurrentLiveStream.Tags).Length + text.Length + 1 > 500)
-                throw new ArgumentException("tags are too long");
+            // if (string.Join(",", SelectedLivestream.CurrentLiveStream.Tags).Length + text.Length + 1 > 500)
+            // throw new ArgumentException("tags are too long");
 
-            SelectedLivestream.CurrentLiveStream.Tags.Add(text);
-            SelectedLivestream.OnNext();
+            // SelectedLivestream.CurrentLiveStream.Tags.Add(text);
+            // SelectedLivestream.OnNext();
             _inputTextBox.Text = "";
         }
 
@@ -64,44 +65,19 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _inputTextBox.PropertyChanged += InputTextBox_OnTextEntered;
         }
 
-        public TagEditor(ObservableLiveStream selectedLivestream) : this()
+        public TagEditor(List<string> tags) : this() { RefreshTags(tags); }
+
+        public void RefreshTags(List<string> tags)
         {
-            SelectedLivestream = selectedLivestream;
-            _subscription = SelectedLivestream.Subscribe(_ => RefreshTags());
-        }
-
-        private void RefreshTags()
-
-        {
-            var stream = SelectedLivestream.CurrentLiveStream;
-            if (stream == null) return;
-
-            var controls = _tagsPanel.Children;
             InvokeOnRender(() =>
                            {
+                               var controls = _tagsPanel.Children;
                                controls.Clear();
-                               controls.AddRange(stream.Tags.Select(tag => new TagCard(tag, SelectedLivestream)));
+                               controls.AddRange(tags.Select(tag => new TagCard(this, tag)));
                                InvokeOnRender(ResizeInputBox);
                                controls.Add(_inputTextBox);
                            });
         }
-
-        #region Dispose
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            Console.WriteLine("TEST");
-            if (!disposing) return;
-            _subscription.Dispose();
-        }
-
-        #endregion
 
         #endregion
 

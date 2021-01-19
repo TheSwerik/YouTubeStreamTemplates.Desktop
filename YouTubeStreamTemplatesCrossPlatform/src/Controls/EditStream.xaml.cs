@@ -32,7 +32,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _subscriptions = new List<IDisposable>();
             SelectedLivestream = new ObservableLiveStream();
             LiveStreams = new Subject<List<LiveStream>>();
-            _tagEditor = new TagEditor(SelectedLivestream);
+            _tagEditor = new TagEditor(SelectedLivestream.CurrentLiveStream.Tags);
             InitializeComponent();
             InitBindings();
         }

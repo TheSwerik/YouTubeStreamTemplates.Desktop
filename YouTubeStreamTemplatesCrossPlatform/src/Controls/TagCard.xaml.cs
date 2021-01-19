@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using YouTubeStreamTemplatesCrossPlatform.Entities;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
@@ -9,13 +8,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         // ReSharper disable once MemberCanBePrivate.Global
         public TagCard() { AvaloniaXamlLoader.Load(this); }
 
-        public TagCard(string text, ObservableLiveStream livestream) : this()
+        public TagCard(TagEditor tagEditor, string text) : this()
         {
-            this.Find<Button>("CloseButton").Click += (s, e) =>
-                                                      {
-                                                          livestream.CurrentLiveStream?.Tags.Remove(text);
-                                                          livestream.OnNext();
-                                                      };
+            this.Find<Button>("CloseButton").Click += (s, e) => { tagEditor.Remove(this); };
             this.Find<TextBlock>("TextBlock").Text = text;
         }
     }
