@@ -1,13 +1,17 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia.Controls;
+using Avalonia.Styling;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
-    public class GenericComboBox<T> : ComboBox
+    public class GenericComboBox<T> : ComboBox, IStyleable
     {
         public new T SelectedItem
         {
             get => (T) base.SelectedItem;
             set => base.SelectedItem = value;
         }
+
+        Type IStyleable.StyleKey => typeof(ComboBox);
     }
 }
