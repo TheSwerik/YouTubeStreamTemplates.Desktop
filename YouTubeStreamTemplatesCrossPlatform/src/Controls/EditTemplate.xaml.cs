@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -17,13 +16,20 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly TextBox _descriptionTextBox;
         private readonly TagEditor _tagEditor;
         private readonly GenericComboBox<Template> _templateComboBox;
+        private readonly TextBox _titleTextBox;
+
+        #region EventListener
+
+        private void OnChanged(object? sender, RoutedEventArgs args) { Console.WriteLine("SOMETHING CHANGED"); }
+
+        #endregion
+
+        #region Methods
 
         private static void InvokeOnRender(Action action)
         {
             Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
         }
-
-        #region Helper Methods
 
         private void FillValues()
         {
@@ -37,15 +43,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         #endregion
 
-        #region EventListener
-
-        private void OnChanged(object? sender, RoutedEventArgs args) { Console.WriteLine("SOMETHING CHANGED"); }
-
-        #endregion
-
-        private void Test(object? sender, SelectionChangedEventArgs e) { throw new NotImplementedException(); }
-        private void Test2(object? sender, TextInputEventArgs e) { throw new NotImplementedException(); }
-
         #region Init
 
         public EditTemplate()
@@ -55,6 +52,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             InitializeComponent();
             _templateComboBox = this.Find<GenericComboBox<Template>>("TemplateComboBox");
             _categoryComboBox = this.Find<GenericComboBox<Category>>("CategoryComboBox");
+            _titleTextBox = this.Find<TextBox>("TitleTextBox");
             _descriptionTextBox = this.Find<TextBox>("DescriptionTextBox");
 
             InvokeOnRender(async () => await Init());
@@ -64,7 +62,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             AvaloniaXamlLoader.Load(this);
 
-            Grid.SetRow(_tagEditor, 5);
+            Grid.SetRow(_tagEditor, 7);
             Grid.SetColumn(_tagEditor, 2);
             this.Find<Grid>("ContentGrid").Children.Add(_tagEditor);
         }
@@ -85,6 +83,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
             _templateComboBox.SelectionChanged += OnChanged;
             _categoryComboBox.SelectionChanged += OnChanged;
+            _titleTextBox.TextInput += OnChanged;
             _descriptionTextBox.TextInput += OnChanged;
 
             _categoryComboBox.Items = Enum.GetValues(typeof(Category));
