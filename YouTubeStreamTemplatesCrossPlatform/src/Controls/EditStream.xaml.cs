@@ -41,8 +41,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             InvokeOnRender(async () =>
                            {
-                               while (Service.LiveStreamService == null || Service.TemplateService == null)
-                                   await Task.Delay(25);
+                               while (Service.LiveStreamService == null) await Task.Delay(25);
 
                                try
                                {

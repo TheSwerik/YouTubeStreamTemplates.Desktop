@@ -56,6 +56,11 @@ namespace YouTubeStreamTemplates.Templates
         //     if (openFileDialog.ShowDialog()) return openFileDialog.FileName;
         //     throw new Exception();
         // }
+        public async Task LoadAllTemplates(string folderPath)
+        {
+            foreach (var filePath in Directory.EnumerateFiles(folderPath)) await LoadTemplate(filePath);
+            Console.WriteLine(Templates.Count);
+        }
 
         public async Task<Template> LoadTemplate(string path)
         {

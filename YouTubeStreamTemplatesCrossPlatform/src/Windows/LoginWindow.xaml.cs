@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using YouTubeStreamTemplates.LiveStreaming;
-using YouTubeStreamTemplates.Settings;
 using YouTubeStreamTemplates.Templates;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Windows
@@ -21,7 +20,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows
         {
             AvaloniaXamlLoader.Load(this);
 
-            Service.SettingsService = new SettingsService();
             Service.TemplateService = new TemplateService();
         }
 

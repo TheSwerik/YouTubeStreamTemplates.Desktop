@@ -14,7 +14,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows.Tabs
 
             var grid = this.Find<Grid>("Grid");
 
-            var templateEditor = new EditStream(false);
+            var templateEditor = new EditTemplate(false);
             Grid.SetColumn(templateEditor, 0);
             grid.Children.Add(templateEditor);
 
