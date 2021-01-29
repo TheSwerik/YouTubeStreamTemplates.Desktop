@@ -28,9 +28,15 @@
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.10.0"/>
         <PackageReference Include="Avalonia.Desktop" Version="0.10.0"/>
+        <PackageReference Include="NLog" Version="4.7.7"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\YouTubeStreamTemplates\YouTubeStreamTemplates.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
+        <None Include="nlog.release.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Release' " Link="nlog.config"/>
     </ItemGroup>
 </Project>
