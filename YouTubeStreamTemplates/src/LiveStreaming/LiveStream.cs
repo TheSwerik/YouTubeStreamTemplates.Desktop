@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Google.Apis.YouTube.v3.Data;
 
 namespace YouTubeStreamTemplates.LiveStreaming
@@ -36,7 +35,6 @@ namespace YouTubeStreamTemplates.LiveStreaming
                                      Description = Description,
                                      Thumbnails = Thumbnails,
                                      ScheduledStartTime = StartTime.ToUniversalTime()
-                                                                   .ToString(CultureInfo.InvariantCulture)
                                  }
 // Kind = 
                    };

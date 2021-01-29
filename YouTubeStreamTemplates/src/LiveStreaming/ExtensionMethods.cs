@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Google.Apis.YouTube.v3.Data;
 
 namespace YouTubeStreamTemplates.LiveStreaming
@@ -14,12 +13,8 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Title = liveBroadcast.Snippet.Title,
                        Description = liveBroadcast.Snippet.Description,
                        Thumbnails = liveBroadcast.Snippet.Thumbnails,
-                       StartTime = liveBroadcast.Snippet.ActualStartTime == null
-                                       ? DateTime.MinValue
-                                       : DateTime.Parse(liveBroadcast.Snippet.ActualStartTime),
-                       EndTime = liveBroadcast.Snippet.ActualEndTime == null
-                                     ? DateTime.MinValue
-                                     : DateTime.Parse(liveBroadcast.Snippet.ActualEndTime)
+                       StartTime = liveBroadcast.Snippet.ActualStartTime ?? DateTime.MinValue,
+                       EndTime = liveBroadcast.Snippet.ActualEndTime ?? DateTime.MinValue
                    };
         }
 
@@ -41,10 +36,8 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Localizations = liveStream.Localizations,
                        LiveStreamingDetails = new VideoLiveStreamingDetails
                                               {
-                                                  ScheduledStartTime = liveStream.StartTime.ToUniversalTime()
-                                                      .ToString(CultureInfo.InvariantCulture),
+                                                  ScheduledStartTime = liveStream.StartTime.ToUniversalTime(),
                                                   ScheduledEndTime = liveStream.EndTime.ToUniversalTime()
-                                                                               .ToString(CultureInfo.InvariantCulture)
                                               }
                    };
         }
