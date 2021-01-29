@@ -20,7 +20,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         #region EventListener
 
-        private void InputTextBox_OnTextInput(object? sender, TextInputEventArgs e) { Console.WriteLine(e.Text); }
+        //TODO
+        // private void InputTextBox_OnTextInput(object? sender, TextInputEventArgs e) { Console.WriteLine(e.Text); }
 
         private void InputTextBox_OnLostFocus(object? sender, RoutedEventArgs e) { InputTextBox_FinishWriting(); }
 

@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Logging.Serilog;
 
 namespace YouTubeStreamTemplatesCrossPlatform
 {
@@ -19,7 +18,7 @@ namespace YouTubeStreamTemplatesCrossPlatform
         {
             return AppBuilder.Configure<App>()
                              .UsePlatformDetect()
-                             .LogToDebug();
+                             .LogToTrace();
         }
     }
 }
