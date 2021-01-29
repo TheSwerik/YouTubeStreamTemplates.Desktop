@@ -3,31 +3,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:liveStreaming="clr-namespace:YouTubeStreamTemplates.LiveStreaming;assembly=YouTubeStreamTemplates"
+             xmlns:controls="clr-namespace:YouTubeStreamTemplatesCrossPlatform.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditStream">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
           RowDefinitions="*,*,*,10*,*,10*,*,*,*" ColumnDefinitions="*,2*,15*,*"
           x:Name="ContentGrid">
         <TextBlock Grid.Row="1" Grid.Column="1" Text="Title:" />
-        <ComboBox Grid.Row="1" Grid.Column="2" x:Name="LiveStreamComboBox" SelectedIndex="0"
-                  SelectionChanged="LiveStreamComboBox_OnSelectionChanged">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="liveStreaming:LiveStream">
-                    <TextBlock Text="{Binding Title}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+        <TextBox Grid.Row="1" Grid.Column="2" x:Name="TitleTextBox" AcceptsReturn="False" />
 
         <TextBlock Grid.Row="3" Grid.Column="1" Text="Description:" />
-        <TextBox Grid.Row="3" Grid.Column="2" x:Name="DescriptionTextBox" AcceptsReturn="True"
-                 LostFocus="LiveStreamDescription_OnFocusLost" />
+        <TextBox Grid.Row="3" Grid.Column="2" x:Name="DescriptionTextBox" AcceptsReturn="True" />
 
         <TextBlock Grid.Row="5" Grid.Column="1" Text="Tags:" />
-        <!-- <controls:TagEditor Grid.Row="3" Grid.Column="2"  x:Name="TagEditor"/> -->
+        <!-- TagEditor here Grid.Row="7" Grid.Column="2" -->
 
         <TextBlock Grid.Row="7" Grid.Column="1" Text="Category:" />
-        <ComboBox Grid.Row="7" Grid.Column="2"
-                  x:Name="CategoryComboBox" SelectedIndex="0"
-                  SelectionChanged="CategoryComboBox_OnSelectionChanged" />
+        <controls:GenericComboBox Grid.Row="7" Grid.Column="2"
+                                  x:TypeArguments="liveStreaming:Category" x:Name="CategoryComboBox" />
     </Grid>
 </UserControl>

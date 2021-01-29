@@ -53,8 +53,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             InvokeOnRender(async () => await Init());
         }
 
-        public async Task Init()
+        private async Task Init()
         {
+            //TODO REMOVE THIS:
+            Service.LiveStreamService = await LiveStreamService.Init();
+            //-------- Until here -------------------
+
             while (Service.LiveStreamService == null)
             {
                 Console.WriteLine("Waiting for LiveStreamService to initialize...");
@@ -73,7 +77,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             AvaloniaXamlLoader.Load(this);
 
-            Grid.SetRow(_tagEditor, 7);
+            Grid.SetRow(_tagEditor, 5);
             Grid.SetColumn(_tagEditor, 2);
             this.Find<Grid>("ContentGrid").Children.Add(_tagEditor);
         }
