@@ -4,12 +4,15 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using NLog;
+using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.LiveStreaming;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
     public class EditStream : UserControl
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly GenericComboBox<Category> _categoryComboBox;
         private readonly TextBox _descriptionTextBox;
         private readonly TagEditor _tagEditor;
@@ -35,6 +38,29 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _descriptionTextBox.Text = liveStream.Description;
             _categoryComboBox.SelectedItem = liveStream.Category;
             _tagEditor.RefreshTags(liveStream.Tags);
+        }
+
+        private async Task CheckForStream()
+        {
+            //TODO make Custom Exception
+            if (Service.LiveStreamService == null) throw new Exception("LiveStreamService is not Initialized.");
+
+            while (true)
+            {
+                try
+                {
+                    var result = await Service.LiveStreamService.GetCurrentStream();
+                    Logger.Debug("STREAM DETECTED: {0}", result.Title);
+                    await FillValues();
+                    return;
+                }
+                catch (NoCurrentStreamException)
+                {
+                    Logger.Debug("Not currently streaming...");
+                }
+
+                await Task.Delay(1000);
+            }
         }
 
         #endregion
@@ -70,7 +96,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _descriptionTextBox.TextInput += OnChanged;
 
             _categoryComboBox.Items = Enum.GetValues(typeof(Category));
-            await FillValues();
+
+            await Task.Run(CheckForStream);
         }
 
         private void InitializeComponent()
