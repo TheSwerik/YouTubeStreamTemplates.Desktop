@@ -3,10 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Google;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
+using Google.Apis.YouTube.v3.Data;
 using NLog;
 using YouTubeStreamTemplates.Exceptions;
 using YouTubeStreamTemplates.Settings;
@@ -76,27 +78,43 @@ namespace YouTubeStreamTemplates.LiveStreaming
             foreach (var videoCategory in result.Items.Where(v => v.Snippet.Assignable == true))
                 Category.Add(videoCategory.Id, videoCategory.Snippet.Title);
 
-            Logger.Debug(string.Join(", ", Category));
+            Logger.Debug("Found Categories: {0}", string.Join(", ", Category));
         }
 
         #endregion
 
         #region Public Methods
 
-        public async Task<LiveStream> GetCurrentStream()
+        public async Task<LiveBroadcast> GetCurrentBroadcast()
         {
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
-            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
+            // TODO Change back to Active:
+            // request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
+            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Upcoming;
 
             var response = await request.ExecuteAsync();
             if (response.Items == null || response.Items.Count <= 0) throw new NoCurrentStreamException();
-            if (response.Items.Count == 1) return response.Items[0].ToLiveStream();
+            if (response.Items.Count == 1) return response.Items[0];
 
             // Get the latest Stream if there is more than one:
-            var streams = response.Items.Select(s => s.ToLiveStream()).ToList();
-            streams.Sort(LiveStreamComparer.ByDateDesc);
+            var streams = response.Items.ToList();
+            // TODO Change back to Actual (not Planned):
+            // streams.Sort(LiveBroadcastComparer.ByDateDesc);
+            streams.Sort(LiveBroadcastComparer.ByDateDescPlanned);
             return streams[0];
+        }
+
+        public async Task<LiveStream> GetCurrentStream() { return (await GetCurrentBroadcast()).ToLiveStream(); }
+
+        public async Task<LiveStream> GetCurrentStreamAsVideo()
+        {
+            var liveStream = await GetCurrentBroadcast();
+            var videoRequest = _youTubeService.Videos.List("snippet");
+            videoRequest.Id = liveStream.Id;
+            var videos = await videoRequest.ExecuteAsync();
+            if (videos.Items == null || videos.Items.Count <= 0) throw new NoVideoFoundException(liveStream.Id);
+            return videos.Items[0].ToLiveStream();
         }
 
         public async Task UpdateStream(Template template)
@@ -104,11 +122,19 @@ namespace YouTubeStreamTemplates.LiveStreaming
             var liveStream = await GetCurrentStream();
             var video = template.ToVideo();
             video.Id = liveStream.Id;
-            var request = _youTubeService.Videos.Update(video, "snippet");
+            var request = _youTubeService.Videos.Update(video, "id,snippet,liveStreamingDetails");
 
-            var response = await request.ExecuteAsync();
-            if (response == null) return;
-            Logger.Debug(response.Snippet.Title + " - " + response.Snippet.Title);
+            Logger.Debug("Updating Video:\t{0} -> {1}", template.Name, liveStream.Id);
+            try
+            {
+                var response = await request.ExecuteAsync();
+                Logger.Debug("Updated Video:\t{0} -> {1}", template.Name, liveStream.Id);
+            }
+            catch (GoogleApiException e)
+            {
+                throw new CouldNotUpdateVideoException(e.Error);
+                // TODO Somehow catch or throw this in the main Thread
+            }
         }
 
         /// <summary>

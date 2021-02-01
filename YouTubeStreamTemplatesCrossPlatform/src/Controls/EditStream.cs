@@ -2,15 +2,21 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using NLog;
 using YouTubeStreamTemplates.Exceptions;
+using YouTubeStreamTemplates.LiveStreaming;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
     public class EditStream : EditComponent, IStyleable
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private LiveStream? _currentLiveStream;
         Type IStyleable.StyleKey => typeof(EditComponent);
 
         #region Methods
+
+        protected override LiveStream? GetLiveStream() { return _currentLiveStream; }
 
         private async Task CheckForStream()
         {
@@ -21,9 +27,10 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             {
                 try
                 {
-                    var result = await Service.LiveStreamService.GetCurrentStream();
-                    Logger.Debug("STREAM DETECTED: {0}", result.Title);
-                    InvokeOnRender(() => FillValues(result));
+                    _currentLiveStream = await Service.LiveStreamService.GetCurrentStreamAsVideo();
+                    Logger.Debug("Stream Detected:\tid: {0} \tTitle: {1}", _currentLiveStream.Id,
+                                 _currentLiveStream.Title);
+                    InvokeOnRender(() => FillValues(_currentLiveStream));
                     return;
                 }
                 catch (NoCurrentStreamException)

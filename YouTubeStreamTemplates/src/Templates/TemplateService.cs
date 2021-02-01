@@ -40,7 +40,8 @@ namespace YouTubeStreamTemplates.Templates
                           Description = lines.GetValue("Description").Replace(LineSeparator, "\n"),
                           StartTime = DateTime.Parse(lines.GetValue("StartTime")),
                           EndTime = DateTime.Parse(lines.GetValue("EndTime")),
-                          Language = lines.GetValue("Language"),
+                          TextLanguage = lines.GetValue("TextLanguage"),
+                          AudioLanguage = lines.GetValue("AudioLanguage"),
                           Tags = lines.GetValue("Tags").Split(",").ToList(),
                           ThumbnailsPath = lines.GetValue("ThumbnailsPath")
                       };
@@ -50,17 +51,10 @@ namespace YouTubeStreamTemplates.Templates
 
         #region Public Methods
 
-        // public async Task<List<string>> GetTemplatePaths()
-        // {
-        //     var openFileDialog = new OpenFileDialog();
-        //     openFileDialog.Filter = "Template files (*.tlpt)|*.tlpt|All files (*.*)|*.*";
-        //     if (openFileDialog.ShowDialog()) return openFileDialog.FileName;
-        //     throw new Exception();
-        // }
         public async Task LoadAllTemplates(string folderPath)
         {
             foreach (var filePath in Directory.EnumerateFiles(folderPath)) await LoadTemplate(filePath);
-            Logger.Debug(Templates.Count);
+            Logger.Debug("Loaded {0} Templates.", Templates.Count);
         }
 
         public async Task<Template> LoadTemplate(string path)
@@ -89,7 +83,8 @@ namespace YouTubeStreamTemplates.Templates
             await file.WriteLineAsync($"Description: {template.Description.Replace("\n", LineSeparator)}");
             await file.WriteLineAsync($"StartTime: {template.StartTime}");
             await file.WriteLineAsync($"EndTime: {template.EndTime}");
-            await file.WriteLineAsync($"Language: {template.Language}");
+            await file.WriteLineAsync($"TextLanguage: {template.TextLanguage}");
+            await file.WriteLineAsync($"AudioLanguage: {template.AudioLanguage}");
             await file.WriteLineAsync($"Tags: {string.Join(',', template.Tags)}");
             await file.WriteLineAsync($"ThumbnailsPath: {template.ThumbnailsPath}");
         }

@@ -14,7 +14,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
     public class EditComponent : UserControl
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected readonly GenericComboBox<KeyValuePair<string, string>> CategoryComboBox;
         protected readonly TextBox DescriptionTextBox;
         protected readonly TagEditor TagEditor;
@@ -43,7 +43,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         protected void FillValues(LiveStream liveStream)
         {
-            Logger.Debug($"Fill Values with:\n{liveStream}");
+            // Logger.Debug($"Fill Values with:\n{liveStream}");
             TitleTextBox.Text = liveStream.Title;
             DescriptionTextBox.Text = liveStream.Description;
             CategoryComboBox.SelectedItem =

@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using NLog;
 using YouTubeStreamTemplates.LiveStreaming;
 using YouTubeStreamTemplates.Settings;
 using YouTubeStreamTemplates.Templates;
@@ -13,6 +14,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
     public class EditTemplate : EditComponent, IStyleable
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private Grid _contentGrid = null!;
         private GenericComboBox<Template> _templateComboBox = null!;
         Type IStyleable.StyleKey => typeof(EditComponent);
@@ -91,6 +93,14 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _templateComboBox.SelectionChanged += TemplateComboBox_OnSelectionChanged;
             _templateComboBox.SelectedIndex = 0;
             _contentGrid.Children.Add(_templateComboBox);
+
+            //TODO Remove this Button:
+            var testButton = new Button {Content = "Update Stream"};
+            testButton.Click += async (sender, args) =>
+                                    await Service.LiveStreamService!.UpdateStream(_templateComboBox.SelectedItem!);
+            Grid.SetRow(testButton, 9);
+            Grid.SetColumn(testButton, 1);
+            _contentGrid.Children.Add(testButton);
         }
 
         #endregion
