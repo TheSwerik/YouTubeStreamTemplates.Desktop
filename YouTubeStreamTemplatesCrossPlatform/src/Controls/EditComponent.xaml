@@ -5,7 +5,7 @@
              xmlns:liveStreaming="clr-namespace:YouTubeStreamTemplates.LiveStreaming;assembly=YouTubeStreamTemplates"
              xmlns:controls="clr-namespace:YouTubeStreamTemplatesCrossPlatform.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditStream">
+             x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditComponent">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
           RowDefinitions="*,*,*,10*,*,10*,*,*,*" ColumnDefinitions="*,2*,15*,*"
           x:Name="ContentGrid">
