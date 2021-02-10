@@ -22,7 +22,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Button _saveButton;
         private readonly TagEditor _tagEditor;
         private readonly GenericComboBox<Template> _templateComboBox;
+        private readonly Image _thumbnail;
         private readonly TextBox _titleTextBox;
+        private string _thumbnailPath;
         public Template SelectedTemplate => _templateComboBox.SelectedItem!;
 
         public Template ChangedTemplate()
@@ -32,7 +34,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                        Title = _titleTextBox.Text,
                        Description = _descriptionTextBox.Text,
                        Category = _categoryComboBox.SelectedItem.Key,
-                       Tags = _tagEditor.Tags.ToList()
+                       Tags = _tagEditor.Tags.ToList(),
+                       ThumbnailPath = _thumbnailPath
                    };
         }
 
@@ -76,6 +79,41 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                 OnSaveButtonClicked(null, new RoutedEventArgs());
         }
 
+        private async void ThumbnailImage_OnClick(object? sender, PointerReleasedEventArgs e)
+        {
+            if (e.InitialPressMouseButton == MouseButton.Left) FileContextButton_OnClick(null, new RoutedEventArgs());
+        }
+
+        private async void FileContextButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var fileDialog = new OpenFileDialog
+                             {
+                                 AllowMultiple = false,
+                                 Title = "Select a Thumbnail",
+                                 Filters = new List<FileDialogFilter>
+                                           {
+                                               new()
+                                               {
+                                                   Extensions = new List<string> {"png", "jpg", "jpeg"},
+                                                   Name = "Image"
+                                               }
+                                           }
+                             };
+            var strings = await fileDialog.ShowAsync((Window) Parent.Parent.Parent.Parent.Parent);
+            if (strings == null || strings.Length == 0) return;
+            _thumbnailPath = strings[0];
+            _thumbnail.Source = await ImageHelper.PathToImageAsync(_thumbnailPath, true, SelectedTemplate.Id);
+            OnChanged(null, null);
+        }
+
+        private async void URLContextButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("URl");
+            // TODO Paste Link and get Image
+            // _thumbnailPath = URL;
+            // _thumbnail.Source = await ImageHelper.PathToImageAsync(_thumbnailPath, true, SelectedTemplate.Id);
+        }
+
         #endregion
 
         #region Methods
@@ -110,6 +148,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _tagEditor.RefreshTags();
             SettingsService.Instance.Settings[Settings.CurrentTemplate] = template.Id;
             Task.Run(SettingsService.Instance.Save);
+            _thumbnail.Source = ImageHelper.PathToImage(template.ThumbnailPath, true, template.Id);
+            _thumbnailPath = template.ThumbnailPath;
         }
 
         private bool HasDifference(Template? template = null)
@@ -118,6 +158,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             return !(template.Title.Equals(_titleTextBox.Text) &&
                      template.Description.Equals(_descriptionTextBox.Text) &&
                      template.Category.Equals(_categoryComboBox.SelectedItem.Key) &&
+                     template.ThumbnailPath.Equals(_thumbnailPath) &&
                      template.Tags.Count == _tagEditor.Tags.Count &&
                      template.Tags.All(t => _tagEditor.Tags.Contains(t)));
         }
@@ -132,10 +173,11 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
             InitializeComponent();
             _templateComboBox = this.Find<GenericComboBox<Template>>("TemplateComboBox");
-            _categoryComboBox = this.Find<GenericComboBox<KeyValuePair<string, string>>>("CategoryComboBox");
-            _titleTextBox = this.Find<TextBox>("TitleTextBox");
-            _descriptionTextBox = this.Find<TextBox>("DescriptionTextBox");
             _saveButton = this.Find<Button>("SaveButton");
+            _titleTextBox = this.Find<TextBox>("TitleTextBox");
+            _thumbnail = this.Find<Image>("ThumbnailImage");
+            _descriptionTextBox = this.Find<TextBox>("DescriptionTextBox");
+            _categoryComboBox = this.Find<GenericComboBox<KeyValuePair<string, string>>>("CategoryComboBox");
             AddEventListeners();
             InvokeOnRender(async () => await Init());
         }

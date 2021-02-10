@@ -39,10 +39,15 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                 LiveStream? stream;
                 while ((stream = _viewStream.CurrentLiveStream) == null) await Task.Delay(2000);
                 if (!CheckBoxIsChecked()) return;
-                var template = bool.Parse(SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates])
-                                   ? _editTemplate.SelectedTemplate
-                                   : _editTemplate.ChangedTemplate();
-                if (HasDifference(stream, template)) await Service.LiveStreamService!.UpdateStream(template);
+                var onlySavedTemplate =
+                    bool.Parse(SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates]);
+                var template = onlySavedTemplate ? _editTemplate.SelectedTemplate : _editTemplate.ChangedTemplate();
+                if (HasDifference(stream, template))
+                {
+                    await Service.LiveStreamService!.UpdateStream(template);
+                    if (onlySavedTemplate) await Service.TemplateService!.SaveTemplate(template);
+                }
+
                 await Task.Delay(20000);
             }
         }
@@ -54,6 +59,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             return !(template.Title.Equals(stream.Title) &&
                      template.Description.Equals(stream.Description) &&
                      template.Category.Equals(stream.Category) &&
+                     template.ThumbnailPath.Equals(stream.ThumbnailPath) &&
                      template.Tags.Count == stream.Tags.Count &&
                      template.Tags.All(t => stream.Tags.Contains(t)));
         }
@@ -73,10 +79,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var stream = _viewStream.CurrentLiveStream;
             if (stream == null) return;
             Logger.Debug("Stream Found.");
-            var template = bool.Parse(SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates])
-                               ? _editTemplate.SelectedTemplate
-                               : _editTemplate.ChangedTemplate();
-            if (HasDifference(stream, template)) await Service.LiveStreamService!.UpdateStream(template);
+            var onlySavedTemplate = bool.Parse(SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates]);
+            var template = onlySavedTemplate ? _editTemplate.SelectedTemplate : _editTemplate.ChangedTemplate();
+            if (!HasDifference(stream, template)) return;
+
+            await Service.LiveStreamService!.UpdateStream(template); //TODO split into thumbnail and video change
+            if (onlySavedTemplate) await Service.TemplateService!.SaveTemplate(template);
         }
 
         private void OnlySavedTemplatesCheckBox_OnClick(object sender, RoutedEventArgs routedEventArgs)

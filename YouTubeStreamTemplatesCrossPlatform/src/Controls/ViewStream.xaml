@@ -11,13 +11,18 @@
                        Text="Current LiveStream"
                        FontSize="40" HorizontalAlignment="Center" />
 
-            <TextBlock Grid.Row="3" Grid.Column="1" Text="Title" />
-            <Border Grid.Row="4" Grid.Column="1">
-                <TextBlock x:Name="TitleTextBlock" />
-            </Border>
+            <Grid Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" ColumnDefinitions="5*,*" RowDefinitions="*,*,*">
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Title" />
+                <!-- <TextBox Grid.Row="2" Grid.Column="0" x:Name="TitleTextBox" AcceptsReturn="False" MaxLength="150" -->
+                <!--          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" /> -->
+                <Border Grid.Row="2" Grid.Column="0" Classes="dark">
+                    <TextBlock x:Name="TitleTextBlock" />
+                </Border>
+                <Image x:Name="ThumbnailImage" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" />
+            </Grid>
 
             <TextBlock Grid.Row="6" Grid.Column="1" Text="Description" />
-            <Border Grid.Row="7" Grid.Column="1">
+            <Border Grid.Row="7" Grid.Column="1" Classes="dark">
                 <TextBlock x:Name="DescriptionTextBlock" VerticalAlignment="Top" />
             </Border>
 
@@ -25,7 +30,7 @@
             <!-- TagEditor here Grid.Row="10" Grid.Column="1" -->
 
             <TextBlock Grid.Row="12" Grid.Column="1" Text="Category" />
-            <Border Grid.Row="13" Grid.Column="1">
+            <Border Grid.Row="13" Grid.Column="1" Classes="dark">
                 <TextBlock x:Name="CategoryTextBlock" />
             </Border>
         </Grid>

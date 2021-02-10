@@ -12,35 +12,68 @@
         <Color x:Key="WhiteColor">#ffffff</Color>
         <Color x:Key="BlackColor">#000000</Color>
         <Color x:Key="DarkGrayColor">#222222</Color>
+        <Color x:Key="GrayColor">#333333</Color>
+        <Color x:Key="LighterGrayColor">#383838</Color>
 
-        <Color x:Key="DarkMainBackgroundColor">#1a1816</Color>
-        <Color x:Key="MainBackgroundColor">#272521</Color>
-        <Color x:Key="LightMainBackgroundColor">#383530</Color>
+        <Color x:Key="DarkBackgroundColor">#121212</Color>
+        <Color x:Key="DarkMainBackgroundColor">#181818</Color>
+        <Color x:Key="MainBackgroundColor">#202020</Color>
+        <Color x:Key="ForegroundLowColor">#aaaaaa</Color>
+        <Color x:Key="ForegroundMidColor">#dddddd</Color>
         <Color x:Key="SuccessColor">#bcffbc</Color>
         <Color x:Key="ErrorColor">#a34235</Color>
+        <Color x:Key="DebugRed">#ff0000</Color>
 
         <!-- Avalonia brushes -->
-        <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}" />
-        <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource PurpleColor}" />
-        <SolidColorBrush x:Key="HighlightForegroundBrush" Color="{DynamicResource WhiteColor}" Opacity="0.9" />
-        <SolidColorBrush x:Key="ThemeAccentBrush" Color="{DynamicResource WhiteColor}" Opacity="0.3" />
-        <SolidColorBrush x:Key="ThemeAccentBrush3" Color="{DynamicResource BrightPurpleColor}" />
-        <SolidColorBrush x:Key="ThemeAccentBrush4" Color="{DynamicResource PurpleColor}" />
-        <SolidColorBrush x:Key="ThemeBorderLowBrush" Color="{DynamicResource BlackColor}" Opacity="0.4" />
-        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource WhiteColor}" Opacity="0.4" />
-        <SolidColorBrush x:Key="ThemeControlLowBrush" Color="{DynamicResource BlackColor}" Opacity="0.2" />
-        <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{DynamicResource LightMainBackgroundColor}" />
-        <SolidColorBrush x:Key="ThemeControlMidHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.3" />
-        <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.7" />
-        <SolidColorBrush x:Key="ThemeControlVeryHighBrush" Color="{DynamicResource WhiteColor}" Opacity="0.7" />
-        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource MainBackgroundColor}" />
-        <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{DynamicResource WhiteColor}" Opacity="0.8" />
-        <SolidColorBrush x:Key="ThemeForegroundLowBrush" Color="{DynamicResource WhiteColor}" Opacity="0.3" />
 
-        <SolidColorBrush x:Key="BackgroundMainBackgroundBrush" Color="{DynamicResource DarkMainBackgroundColor}" />
+        <!-- ? -->
+        <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}" />
+        <!-- Checkbox-mark & Selected Text Background -->
+        <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource PurpleColor}" />
+        <!-- Selected Text -->
+        <SolidColorBrush x:Key="HighlightForegroundBrush" Color="{DynamicResource WhiteColor}" />
+        <!-- ? -->
+        <SolidColorBrush x:Key="ThemeAccentBrush" Color="{DynamicResource DebugRed}" />
+        <!-- Focused & Selected & Highlighted Tab -->
+        <SolidColorBrush x:Key="ThemeAccentBrush2" Color="{DynamicResource BrightPurpleColor}" />
+        <!-- Focused & Selected & Not Highlighted Tab -->
+        <SolidColorBrush x:Key="ThemeAccentBrush3" Color="{DynamicResource BrightPurpleColor}" />
+        <!-- Selected Tab / ComboBoxItem / focused TextBox -->
+        <SolidColorBrush x:Key="ThemeAccentBrush4" Color="{DynamicResource BrightPurpleColor}" />
+        <!-- Button Border -->
+        <SolidColorBrush x:Key="ThemeBorderLowBrush" Color="{DynamicResource LighterGrayColor}" />
+        <!-- Default Border, Button pointerover border -->
+        <SolidColorBrush x:Key="ThemeBorderMidBrush" Color="{DynamicResource LighterGrayColor}" />
+        <!-- pointerover/selected Border -->
+        <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{DynamicResource LighterGrayColor}" />
+        <!-- ? -->
+        <SolidColorBrush x:Key="ThemeControlLowBrush" Color="{DynamicResource DebugRed}" />
+        <!-- Button & Scrollbar BackGround -->
+        <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{DynamicResource MainBackgroundColor}" />
+        <!-- Scrollbar -->
+        <SolidColorBrush x:Key="ThemeControlMidHighBrush" Color="{DynamicResource GrayColor}" />
+        <!-- Button OnClick & ComboBox OpenButton OnOpen -->
+        <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{DynamicResource GrayColor}" />
+        <!-- ? -->
+        <SolidColorBrush x:Key="ThemeControlVeryHighBrush" Color="{DynamicResource DebugRed}" />
+        <!-- ? -->
+        <SolidColorBrush x:Key="ThemeControlHighlightLowBrush" Color="{DynamicResource DebugRed}" />
+        <!-- pointerover Controls -->
+        <SolidColorBrush x:Key="ThemeControlHighlightMidBrush" Color="{DynamicResource PurpleColor}" />
+        <!-- ? -->
+        <SolidColorBrush x:Key="ThemeControlHighlightHighBrush" Color="{DynamicResource DebugRed}" />
+        <!-- Background of Everything -->
+        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource MainBackgroundColor}" />
+        <!-- Text -->
+        <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{DynamicResource WhiteColor}" />
+        <!-- Tab-Text -->
+        <SolidColorBrush x:Key="ThemeForegroundLowBrush" Color="{DynamicResource ForegroundLowColor}" />
+
 
         <!-- Custom brushes -->
-        <!-- <SolidColorBrush x:Key="AlternativeThemeBackgroundBrush" Color="{DynamicResource AlternativeMainBackgroundColor}" /> -->
+        <SolidColorBrush x:Key="ThemeBackgroundLowBrush" Color="{DynamicResource DarkMainBackgroundColor}" />
+        <SolidColorBrush x:Key="ThemeBorderLowMidBrush" Color="{DynamicResource GrayColor}" />
+        <SolidColorBrush x:Key="ThemeForegroundMidBrush" Color="{DynamicResource ForegroundMidColor}" />
 
         <!-- Images -->
         <imaging:Bitmap x:Key="SigninImage">
@@ -49,5 +82,10 @@
             </x:Arguments>
         </imaging:Bitmap>
         <ImageBrush Source="/res/Youtube/google_signin_dark.png" x:Key="SigninBrush" />
+        <imaging:Bitmap x:Key="OverlayImage">
+            <x:Arguments>
+                <x:String>res/Overlay.png</x:String>
+            </x:Arguments>
+        </imaging:Bitmap>
     </Style.Resources>
 </Style>
