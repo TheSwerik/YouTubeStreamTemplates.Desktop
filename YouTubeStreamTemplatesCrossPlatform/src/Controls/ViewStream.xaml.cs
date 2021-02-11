@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using NLog;
-using YouTubeStreamTemplates.Exceptions;
+using YouTubeStreamTemplates.Helpers;
 using YouTubeStreamTemplates.LiveStreaming;
 using YouTubeStreamTemplatesCrossPlatform.Exceptions;
 
@@ -21,65 +22,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Grid _noStreamGrid;
         private readonly TagEditor _tagEditor;
         private readonly Image _thumbnail;
+
         private readonly TextBlock _titleTextBlock;
-        public LiveStream? CurrentLiveStream { get; private set; }
-
-        #region Methods
-
-        private async Task CheckForStream(int delay = 1000)
-        {
-            if (Service.LiveStreamService == null) throw new ServiceNotInitializedException(typeof(LiveStreamService));
-            var longDelay = delay * 20;
-            while (true)
-            {
-                await Task.Delay(CurrentLiveStream == null ? delay : longDelay);
-                try
-                {
-                    var stream = await Service.LiveStreamService.GetCurrentStreamAsVideo();
-                    if (CurrentLiveStream == null)
-                        Logger.Debug("Stream Detected:\tid: {0} \tTitle: {1}", stream.Id, stream.Title);
-                    CurrentLiveStream = stream;
-                    InvokeOnRender(() => FillValues(CurrentLiveStream));
-                }
-                catch (NoCurrentStreamException)
-                {
-                    Logger.Debug("Not currently streaming...");
-                    CurrentLiveStream = null;
-                    InvokeOnRender(ClearValues);
-                }
-            }
-        }
-
-        private static void InvokeOnRender(Action action)
-        {
-            Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
-        }
-
-        private void FillValues(LiveStream liveStream)
-        {
-            // Logger.Debug($"Fill Values with:\n{liveStream}");
-            _titleTextBlock.Text = liveStream.Title;
-            _descriptionTextBlock.Text = liveStream.Description;
-            _categoryTextBlock.Text = Service.LiveStreamService!.Category
-                                                                .First(kp => kp.Key.Equals(liveStream.Category))
-                                                                .Value;
-            _tagEditor.Tags = liveStream.Tags.ToHashSet();
-            _tagEditor.RefreshTags();
-            _contentGrid.IsVisible = !(_noStreamGrid.IsVisible = false);
-            _thumbnail.Source = ImageHelper.PathToImage(liveStream.ThumbnailPath, true, liveStream.Id);
-        }
-
-        private void ClearValues()
-        {
-            _contentGrid.IsVisible = !(_noStreamGrid.IsVisible = true);
-            _titleTextBlock.Text = "";
-            _descriptionTextBlock.Text = "";
-            _categoryTextBlock.Text = "";
-            _tagEditor.Tags = new HashSet<string>();
-            _tagEditor.RefreshTags();
-        }
-
-        #endregion
 
         #region Init
 
@@ -109,24 +53,55 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private async Task Init()
         {
-            while (Service.LiveStreamService == null)
+            while (!LiveStreamService.IsInitialized)
             {
                 Logger.Debug("Waiting for LiveStreamService to initialize...");
                 await Task.Delay(100);
-
-                //TODO REMOVE THIS:
-                try
-                {
-                    Service.LiveStreamService ??= await LiveStreamService.Init();
-                }
-                catch (AlreadyInitializingException)
-                {
-                }
-
-                //-------- Until here -------------------
             }
 
             await Task.Run(() => CheckForStream());
+        }
+
+        #endregion
+
+        #region Methods
+
+        private static void InvokeOnRender(Action action)
+        {
+            Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Render);
+        }
+
+        private async Task CheckForStream(int delay = 1000)
+        {
+            if (LiveStreamService.Instance == null) throw new ServiceNotInitializedException(typeof(LiveStreamService));
+            await foreach (var stream in LiveStreamService.Instance.CheckForStream(delay))
+                if (stream == null) InvokeOnRender(ClearValues);
+                else InvokeOnRender(() => FillValues(stream));
+        }
+
+        private async void FillValues(LiveStream liveStream)
+        {
+            // Logger.Debug($"Fill Values with:\n{liveStream}");
+            _titleTextBlock.Text = liveStream.Title;
+            _descriptionTextBlock.Text = liveStream.Description;
+            _categoryTextBlock.Text = LiveStreamService.Instance
+                                                       .Category
+                                                       .First(kp => kp.Key.Equals(liveStream.Category))
+                                                       .Value;
+            _tagEditor.Tags = liveStream.Tags.ToHashSet();
+            _tagEditor.RefreshTags();
+            _contentGrid.IsVisible = !(_noStreamGrid.IsVisible = false);
+            _thumbnail.Source = new Bitmap(await ImageHelper.GetLiveStreamImagePathAsync(liveStream.Id));
+        }
+
+        private void ClearValues()
+        {
+            _contentGrid.IsVisible = !(_noStreamGrid.IsVisible = true);
+            _titleTextBlock.Text = "";
+            _descriptionTextBlock.Text = "";
+            _categoryTextBlock.Text = "";
+            _tagEditor.Tags = new HashSet<string>();
+            _tagEditor.RefreshTags();
         }
 
         #endregion

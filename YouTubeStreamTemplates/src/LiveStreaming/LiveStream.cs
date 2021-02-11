@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using Google.Apis.YouTube.v3.Data;
+using System.Linq;
 
 namespace YouTubeStreamTemplates.LiveStreaming
 {
     //TODO rename
     public record LiveStream : IComparable<LiveStream>
     {
+        public const int MaxThumbnailSize = 2097152;
         public string Id { get; init; } = null!;
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public string ThumbnailPath { get; set; } = null!;
         public List<string> Tags { get; set; } = new();
         public string TextLanguage { get; set; } = "en";
         public string AudioLanguage { get; set; } = "en";
@@ -22,22 +22,18 @@ namespace YouTubeStreamTemplates.LiveStreaming
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-        public int CompareTo(LiveStream? other) { return StartTime.CompareTo(other?.StartTime); }
+        #region Methods
 
-        public LiveBroadcast ToLiveBroadcast()
+        public bool HasDifference(LiveStream other)
         {
-            return new()
-                   {
-                       Id = Id,
-                       Snippet = new LiveBroadcastSnippet
-                                 {
-                                     Title = Title,
-                                     Description = Description,
-                                     ScheduledStartTime = StartTime.ToUniversalTime()
-                                 }
-                       // Kind = 
-                   };
+            return !(Title.Equals(other.Title) &&
+                     Description.Equals(other.Description) &&
+                     Category.Equals(other.Category) &&
+                     Tags.Count == other.Tags.Count &&
+                     Tags.All(t => other.Tags.Contains(t)));
         }
+
+        public int CompareTo(LiveStream? other) { return StartTime.CompareTo(other?.StartTime); }
 
         public override string ToString()
         {
@@ -48,5 +44,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                    StartTime + "\n" +
                    EndTime;
         }
+
+        #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,33 +21,72 @@ namespace YouTubeStreamTemplates.LiveStreaming
 {
     public class LiveStreamService
     {
+        #region Attributes
+
+        #region Static
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static LiveStreamService _instance = null!;
+        private static SettingsService SettingsService => SettingsService.Instance;
+        public static bool IsInitialized { get; private set; }
+
+        public static LiveStreamService Instance
+        {
+            get
+            {
+                if (_instance == null) throw new Exception("INSTANCE IS NULL");
+                return _instance;
+            }
+        }
+
+        #endregion
+
         private readonly YouTubeService _youTubeService;
+        private static CoolDownTimer _coolDownTimer = null!;
+
+        public LiveStream? CurrentLiveStream { get; private set; }
+
+        /// <summary>
+        ///     First string is the Category ID
+        ///     Second string is the Category Name
+        /// </summary>
+        public Dictionary<string, string> Category { get; }
+
+        #endregion
 
         #region Initialisation
 
-        private static bool _isInitializing;
-
-        public static async Task<LiveStreamService> Init()
+        public static async Task Init()
         {
-            if (_isInitializing) throw new AlreadyInitializingException(typeof(LiveStreamService));
-            _isInitializing = true;
-            var ytService =
-                await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly, YouTubeService.Scope.YoutubeForceSsl);
+            _coolDownTimer ??= new CoolDownTimer();
+            if (_coolDownTimer.IsRunning) return;
+            if (_instance != null) throw new AlreadyInitializedException(typeof(LiveStreamService));
+            _coolDownTimer.StartBlock();
+            var ytService = await CreateDefaultYouTubeService();
             if (ytService == null) throw new CouldNotCreateServiceException();
-            var liveStreamService = new LiveStreamService(ytService);
-            await liveStreamService.InitCategories();
-            _isInitializing = false;
-            return liveStreamService;
+            _instance = new LiveStreamService(ytService);
+            await _instance.InitCategories();
+            IsInitialized = true;
+            _coolDownTimer.Reset();
         }
 
-        private LiveStreamService(YouTubeService youTubeService)
+        #region YouTubeService
+
+        private static async Task<YouTubeService> CreateDefaultYouTubeService()
         {
-            _youTubeService = youTubeService;
-            Category = new Dictionary<string, string>();
+            return await CreateYouTubeService(YouTubeService.Scope.YoutubeReadonly,
+                                              YouTubeService.Scope.YoutubeForceSsl);
         }
 
-        ~LiveStreamService() { _youTubeService.Dispose(); }
+        private static async Task<YouTubeService> CreateYouTubeService(params string[] scopes)
+        {
+            return new(new BaseClientService.Initializer
+                       {
+                           HttpClientInitializer = await GetCredentials(scopes),
+                           ApplicationName = "YouTubeStreamTemplates",
+                           ApiKey = await File.ReadAllTextAsync(@"..\..\..\..\apikey.txt")
+                       });
+        }
 
         private static async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
         {
@@ -55,26 +96,24 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        scopes,
                        "user",
                        CancellationToken.None,
-                       new FileDataStore("YouTube.Test2"));
+                       new FileDataStore("YouTubeStreamTemplates.Dev")); //TODO
         }
 
-        private static async Task<YouTubeService> CreateYouTubeService(params string[] scopes)
+        #endregion
+
+        private LiveStreamService(YouTubeService youTubeService)
         {
-            return new(new BaseClientService.Initializer
-                       {
-                           HttpClientInitializer = await GetCredentials(scopes),
-                           ApplicationName = "YouTube Sample",
-                           ApiKey = await File.ReadAllTextAsync(@"..\..\..\..\apikey.txt")
-                       });
+            _youTubeService = youTubeService;
+            Category = new Dictionary<string, string>();
         }
 
         private async Task InitCategories()
         {
             var request = _youTubeService.VideoCategories.List("snippet");
-            request.RegionCode = "DE";
-            request.Hl = bool.Parse(SettingsService.Instance.Settings[Settings.Settings.ForceEnglish])
-                             ? "en_US"
-                             : "de_DE";
+            request.RegionCode = CultureInfo.InstalledUICulture.TwoLetterISOLanguageName;
+            request.Hl = SettingsService.GetBool(Setting.ForceEnglish)
+                             ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
+                             : CultureInfo.InstalledUICulture.IetfLanguageTag;
             var result = await request.ExecuteAsync();
             foreach (var videoCategory in result.Items.Where(v => v.Snippet.Assignable == true))
                 Category.Add(videoCategory.Id, videoCategory.Snippet.Title);
@@ -82,11 +121,15 @@ namespace YouTubeStreamTemplates.LiveStreaming
             Logger.Debug("Found Categories: {0}", string.Join(", ", Category));
         }
 
+        public void Dispose() { _youTubeService.Dispose(); }
+
         #endregion
 
-        #region Public Methods
+        #region Methods
 
-        public async Task<LiveBroadcast> GetCurrentBroadcast()
+        #region Private Methods
+
+        private async Task<LiveBroadcast> GetCurrentBroadcast()
         {
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
@@ -105,6 +148,37 @@ namespace YouTubeStreamTemplates.LiveStreaming
             streams.Sort(LiveBroadcastComparer.ByDateDescPlanned);
             return streams[0];
         }
+
+        private async Task SetThumbnail(string videoId, string filePath)
+        {
+            Stream fileStream;
+            if (filePath.StartsWith("http"))
+            {
+                using var webClient = new WebClient();
+                fileStream = webClient.OpenRead(filePath);
+            }
+            else
+            {
+                fileStream = File.OpenRead(filePath);
+            }
+
+            if (fileStream.Length > LiveStream.MaxThumbnailSize)
+                throw new ThumbnailTooLargeException(fileStream.Length);
+
+            Logger.Debug($"Changing Thumbnail for {videoId} to {filePath}...");
+            var request =
+                _youTubeService.Thumbnails.Set(videoId, fileStream, ExtensionGetter.GetJsonExtension(filePath));
+            var response = await request.UploadAsync();
+            await fileStream.DisposeAsync();
+            Logger.Debug($"Changed Thumbnail for {videoId} to {filePath}.");
+
+            if (response.Exception != null)
+                throw new Exception($"Error happened:\n{response.Exception.Message}"); //TODO
+        }
+
+        #endregion
+
+        #region Public Methods
 
         public async Task<LiveStream> GetCurrentStream() { return (await GetCurrentBroadcast()).ToLiveStream(); }
 
@@ -126,44 +200,74 @@ namespace YouTubeStreamTemplates.LiveStreaming
             var request = _youTubeService.Videos.Update(video, "id,snippet,liveStreamingDetails");
 
             Logger.Debug("Updating Video:\t{0} -> {1}", template.Name, liveStream.Id);
-            var response = await request.ExecuteAsync();
-            if (!liveStream.ThumbnailPath.Equals(template.ThumbnailPath))
-                template.ThumbnailPath = await SetThumbnail(liveStream.Id, template.ThumbnailPath);
+            await request.ExecuteAsync();
             Logger.Debug("Updated Video:\t{0} -> {1}", template.Name, liveStream.Id);
         }
 
-        private async Task<string> SetThumbnail(string videoId, string filePath)
+        public async Task CheckedUpdate(Func<Template> getTemplate, Func<Template> getEditedTemplate)
         {
-            Stream fileStream;
-            if (filePath.StartsWith("http"))
+            if (_coolDownTimer.IsRunning)
             {
-                using var webClient = new WebClient();
-                fileStream = webClient.OpenRead(filePath);
-            }
-            else
-            {
-                fileStream = File.OpenRead(filePath);
+                Logger.Debug("Not Updating Video because of CoolDown.");
+                return;
             }
 
-            var request =
-                _youTubeService.Thumbnails.Set(videoId, fileStream, ExtensionGetter.GetJsonExtension(filePath));
-            await request.UploadAsync();
-            await fileStream.DisposeAsync();
+            _coolDownTimer.StartBlock();
+            if (CurrentLiveStream == null) return;
+            var stream = CurrentLiveStream;
+            var onlySaved = SettingsService.GetBool(Setting.OnlyUpdateSavedTemplates);
+            var template = (onlySaved ? getTemplate : getEditedTemplate).Invoke();
+            if (stream.HasDifference(template)) await UpdateStream(template);
+            if (!template.Thumbnail.HasSameResult(await ImageHelper.GetStreamThumbnailBytesAsync(stream.Id)))
+            {
+                await SetThumbnail(stream.Id, template.Thumbnail.Source);
+                template.Thumbnail.Result = await ImageHelper.GetStreamThumbnailBytesAsync(stream.Id);
+            }
 
-            // Get ThumbnailPath:
-            var videoRequest = _youTubeService.Videos.List("id,snippet");
-            videoRequest.Id = videoId;
-            var video = await videoRequest.ExecuteAsync();
-            if (video?.Items == null || video.Items.Count < 1)
-                throw new OhPleaseNeverHappenException("Can't find Video");
-            return video.Items[0].Snippet.Thumbnails.Maxres.Url;
+            _coolDownTimer.ReStart();
         }
 
-        /// <summary>
-        ///     First string is the Category ID
-        ///     Second string is the Category Name
-        /// </summary>
-        public Dictionary<string, string> Category { get; }
+        #region Looping
+
+        public async IAsyncEnumerable<LiveStream?> CheckForStream(int delay = 1000)
+        {
+            var longDelay = delay * 20;
+            while (true)
+            {
+                await Task.Delay(CurrentLiveStream == null ? delay : longDelay);
+                try
+                {
+                    var stream = await GetCurrentStreamAsVideo();
+                    if (CurrentLiveStream == null)
+                        Logger.Debug("Stream Detected:\tid: {0} \tTitle: {1}", stream.Id, stream.Title);
+                    CurrentLiveStream = stream;
+                }
+                catch (NoCurrentStreamException)
+                {
+                    Logger.Debug("Not currently streaming...");
+                    CurrentLiveStream = null;
+                }
+
+                yield return CurrentLiveStream;
+            }
+        }
+
+        private async Task AutoUpdate(Func<Template> getTemplate, Func<Template> getEditedTemplate) //TODO start this
+        {
+            while (true)
+            {
+                Logger.Debug("Checking If Should Update..");
+                while (CurrentLiveStream == null || !SettingsService.GetBool(Setting.AutoUpdate))
+                    await Task.Delay(300);
+
+                await CheckedUpdate(getTemplate, getEditedTemplate);
+                await Task.Delay(20000);
+            }
+        }
+
+        #endregion
+
+        #endregion
 
         #endregion
     }

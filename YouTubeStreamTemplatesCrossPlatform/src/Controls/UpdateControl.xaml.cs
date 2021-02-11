@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -28,70 +26,31 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             _editTemplate = editTemplate;
             _viewStream = viewStream;
-            _autoUpdateCheckBox.IsChecked = bool.Parse(SettingsService.Instance.Settings[Settings.AutoUpdate]);
+            _autoUpdateCheckBox.IsChecked = bool.Parse(SettingsService.Settings[Setting.AutoUpdate]);
         }
 
-        private async Task CheckIfShouldUpdate()
-        {
-            while (CheckBoxIsChecked())
-            {
-                Logger.Debug("Checking If Should Update..");
-                LiveStream? stream;
-                while ((stream = _viewStream.CurrentLiveStream) == null) await Task.Delay(2000);
-                if (!CheckBoxIsChecked()) return;
-                var onlySavedTemplate =
-                    bool.Parse(SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates]);
-                var template = onlySavedTemplate ? _editTemplate.SelectedTemplate : _editTemplate.ChangedTemplate();
-                if (HasDifference(stream, template))
-                {
-                    await Service.LiveStreamService!.UpdateStream(template);
-                    if (onlySavedTemplate) await Service.TemplateService!.SaveTemplate(template);
-                }
-
-                await Task.Delay(20000);
-            }
-        }
+        private static SettingsService SettingsService => SettingsService.Instance;
 
         private bool CheckBoxIsChecked() { return _autoUpdateCheckBox.IsChecked ?? false; }
-
-        private static bool HasDifference(LiveStream stream, Template template)
-        {
-            return !(template.Title.Equals(stream.Title) &&
-                     template.Description.Equals(stream.Description) &&
-                     template.Category.Equals(stream.Category) &&
-                     template.ThumbnailPath.Equals(stream.ThumbnailPath) &&
-                     template.Tags.Count == stream.Tags.Count &&
-                     template.Tags.All(t => stream.Tags.Contains(t)));
-        }
 
         #region EventListeners
 
         private void AutoUpdateCheckBox_OnChecked(object? sender, RoutedEventArgs e)
         {
-            SettingsService.Instance.Settings[Settings.AutoUpdate] = (_autoUpdateCheckBox.IsChecked ?? false) + "";
-            SettingsService.Instance.Save();
-            if (CheckBoxIsChecked()) Task.Run(CheckIfShouldUpdate);
+            SettingsService.UpdateSetting(Setting.AutoUpdate, CheckBoxIsChecked() + "");
         }
 
         private async void UpdateButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            Logger.Debug("Clicked on Update.");
-            var stream = _viewStream.CurrentLiveStream;
-            if (stream == null) return;
-            Logger.Debug("Stream Found.");
-            var onlySavedTemplate = bool.Parse(SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates]);
-            var template = onlySavedTemplate ? _editTemplate.SelectedTemplate : _editTemplate.ChangedTemplate();
-            if (!HasDifference(stream, template)) return;
-
-            await Service.LiveStreamService!.UpdateStream(template); //TODO split into thumbnail and video change
-            if (onlySavedTemplate) await Service.TemplateService!.SaveTemplate(template);
+            await LiveStreamService.Instance.CheckedUpdate(TemplateService.Instance.GetCurrentTemplate,
+                                                           _editTemplate.ChangedTemplate);
         }
 
         private void OnlySavedTemplatesCheckBox_OnClick(object sender, RoutedEventArgs routedEventArgs)
         {
             var checkBox = (CheckBox) sender;
-            SettingsService.Instance.Settings[Settings.OnlyUpdateSavedTemplates] = "" + (checkBox.IsChecked ?? false);
-            SettingsService.Instance.Save();
+            SettingsService.UpdateSetting(Setting.OnlyUpdateSavedTemplates,
+                                          (checkBox.IsChecked ?? false) + "");
         }
 
         #endregion

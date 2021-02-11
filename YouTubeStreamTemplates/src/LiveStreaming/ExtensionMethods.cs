@@ -13,12 +13,26 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Id = liveBroadcast.Id,
                        Title = liveBroadcast.Snippet.Title,
                        Description = liveBroadcast.Snippet.Description,
-                       ThumbnailPath = liveBroadcast.Snippet.Thumbnails.Maxres.Url,
                        //TODO Change to Actual:
                        StartTime = liveBroadcast.Snippet.ScheduledStartTime ?? DateTime.MinValue,
                        EndTime = liveBroadcast.Snippet.ScheduledEndTime ?? DateTime.MinValue
                        // StartTime = liveBroadcast.Snippet.ActualStartTime ?? DateTime.MinValue,
                        // EndTime = liveBroadcast.Snippet.ActualEndTime ?? DateTime.MinValue
+                   };
+        }
+
+        public static LiveBroadcast ToLiveBroadcast(this LiveStream liveStream)
+        {
+            return new()
+                   {
+                       Id = liveStream.Id,
+                       Kind = "youtube#liveBroadcast",
+                       Snippet = new LiveBroadcastSnippet
+                                 {
+                                     Title = liveStream.Title,
+                                     Description = liveStream.Description,
+                                     ScheduledStartTime = liveStream.StartTime.ToUniversalTime()
+                                 }
                    };
         }
 
@@ -52,7 +66,6 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Title = video.Snippet.Title,
                        Description = video.Snippet.Description,
                        Category = video.Snippet.CategoryId,
-                       ThumbnailPath = video.Snippet.Thumbnails.Maxres.Url,
                        Tags = (List<string>) (video.Snippet.Tags ?? new List<string>()),
                        TextLanguage = video.Snippet.DefaultLanguage,
                        AudioLanguage = video.Snippet.DefaultAudioLanguage,

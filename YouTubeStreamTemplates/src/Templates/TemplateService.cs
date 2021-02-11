@@ -13,15 +13,20 @@ namespace YouTubeStreamTemplates.Templates
     {
         private const string LineSeparator = "■\\n■";
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        private static TemplateService _instance = null!;
+        public readonly List<Template> Templates;
         private List<string> _templatePaths;
 
-        public TemplateService()
+        private TemplateService()
         {
             _templatePaths = new List<string>();
             Templates = new List<Template>();
         }
 
-        public List<Template> Templates { get; }
+        private static SettingsService SettingsService => SettingsService.Instance;
+
+        public static TemplateService Instance => _instance ??= new TemplateService();
 
         #region Helper Methods
 
@@ -43,13 +48,43 @@ namespace YouTubeStreamTemplates.Templates
                           TextLanguage = lines.GetValue("TextLanguage"),
                           AudioLanguage = lines.GetValue("AudioLanguage"),
                           Tags = lines.GetValue("Tags").Split(",").ToList(),
-                          ThumbnailPath = lines.GetValue("ThumbnailPath")
+                          Thumbnail = new Thumbnail {Source = lines.GetValue("ThumbnailPath")}
                       };
         }
 
         #endregion
 
         #region Public Methods
+
+        public Template GetCurrentTemplate()
+        {
+            var id = SettingsService.Settings[Setting.CurrentTemplate];
+            var template = Templates.FirstOrDefault(t => t.Id.Equals(id));
+            if (template != null) return template;
+            if (Templates.Count <= 0) throw new NoTemplateException();
+            return Templates[0];
+        }
+
+        public async Task SaveTemplate(Template template)
+        {
+            var index = Templates.FindIndex(t => t.Id.Equals(template.Id));
+            if (index < 0) Templates.Add(template);
+            else Templates[index] = template;
+
+            var path = SettingsService.Settings[Setting.SavePath] + $"/{template.Id}.tlpt";
+            await using var file = File.CreateText(path);
+
+            await file.WriteLineAsync($"Name: {template.Name}");
+            await file.WriteLineAsync($"Title: {template.Title}");
+            await file.WriteLineAsync($"Category: {template.Category}");
+            await file.WriteLineAsync($"Description: {template.Description.Replace("\n", LineSeparator)}");
+            await file.WriteLineAsync($"StartTime: {template.StartTime}");
+            await file.WriteLineAsync($"EndTime: {template.EndTime}");
+            await file.WriteLineAsync($"TextLanguage: {template.TextLanguage}");
+            await file.WriteLineAsync($"AudioLanguage: {template.AudioLanguage}");
+            await file.WriteLineAsync($"Tags: {string.Join(',', template.Tags)}");
+            await file.WriteLineAsync($"ThumbnailPath: {template.Thumbnail.Source}");
+        }
 
         public async Task LoadAllTemplates(string folderPath)
         {
@@ -72,25 +107,12 @@ namespace YouTubeStreamTemplates.Templates
             return template;
         }
 
-        public async Task SaveTemplate(Template template)
+        public void DeleteTemplate(Template template)
         {
-            var path = SettingsService.Instance.Settings[Settings.Settings.SavePath] + $"/{template.Id}.tlpt";
-            await using var file = File.CreateText(path);
-
-            await file.WriteLineAsync($"Name: {template.Name}");
-            await file.WriteLineAsync($"Title: {template.Title}");
-            await file.WriteLineAsync($"Category: {template.Category}");
-            await file.WriteLineAsync($"Description: {template.Description.Replace("\n", LineSeparator)}");
-            await file.WriteLineAsync($"StartTime: {template.StartTime}");
-            await file.WriteLineAsync($"EndTime: {template.EndTime}");
-            await file.WriteLineAsync($"TextLanguage: {template.TextLanguage}");
-            await file.WriteLineAsync($"AudioLanguage: {template.AudioLanguage}");
-            await file.WriteLineAsync($"Tags: {string.Join(',', template.Tags)}");
-            await file.WriteLineAsync($"ThumbnailPath: {template.ThumbnailPath}");
-
             var index = Templates.FindIndex(t => t.Id.Equals(template.Id));
-            if (index < 0) Templates.Add(template);
-            else Templates[index] = template;
+            if (index >= 0) Templates.Remove(template);
+            var path = SettingsService.Settings[Setting.SavePath] + $"/{template.Id}.tlpt";
+            File.Delete(path);
         }
 
         #endregion
