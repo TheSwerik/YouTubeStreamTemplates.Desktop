@@ -21,6 +21,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public List<string> Playlists { get; set; } = new();
 
         #region Methods
 
@@ -30,7 +31,9 @@ namespace YouTubeStreamTemplates.LiveStreaming
                      Description.Equals(other.Description) &&
                      Category.Equals(other.Category) &&
                      Tags.Count == other.Tags.Count &&
-                     Tags.All(t => other.Tags.Contains(t)));
+                     Tags.All(t => other.Tags.Contains(t)) &&
+                     Playlists.Count == other.Playlists.Count &&
+                     Playlists.All(t => other.Playlists.Contains(t)));
         }
 
         public int CompareTo(LiveStream? other) { return StartTime.CompareTo(other?.StartTime); }
