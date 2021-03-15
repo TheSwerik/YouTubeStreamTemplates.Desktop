@@ -52,6 +52,12 @@ namespace YouTubeStreamTemplates.LiveStreaming
         /// </summary>
         public Dictionary<string, string> Category { get; }
 
+        /// <summary>
+        ///     First string is the Playlist ID
+        ///     Second string is the Playlist Name
+        /// </summary>
+        public Dictionary<string, string> Playlists { get; }
+
         #endregion
 
         #region Initialisation
@@ -66,6 +72,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             if (ytService == null) throw new CouldNotCreateServiceException();
             _instance = new LiveStreamService(ytService);
             await _instance.InitCategories();
+            await _instance.InitPlaylists();
             _instance.AutoUpdate();
             IsInitialized = true;
             _coolDownTimer.Reset();
@@ -106,6 +113,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         {
             _youTubeService = youTubeService;
             Category = new Dictionary<string, string>();
+            Playlists = new Dictionary<string, string>();
         }
 
         private async Task InitCategories()
@@ -120,6 +128,19 @@ namespace YouTubeStreamTemplates.LiveStreaming
                 Category.Add(videoCategory.Id, videoCategory.Snippet.Title);
 
             Logger.Debug("Found Categories: {0}", string.Join(", ", Category));
+        }
+
+        private async Task InitPlaylists()
+        {
+            var request = _youTubeService.Playlists.List("snippet");
+            request.Mine = true;
+            request.Hl = SettingsService.GetBool(Setting.ForceEnglish)
+                             ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
+                             : CultureInfo.InstalledUICulture.IetfLanguageTag;
+            var result = await request.ExecuteAsync();
+            foreach (var playlist in result.Items) Playlists.Add(playlist.Id, playlist.Snippet.Title);
+
+            Logger.Debug("Found Playlists: {0}", string.Join(", ", Playlists));
         }
 
         public void Dispose() { _youTubeService.Dispose(); }
