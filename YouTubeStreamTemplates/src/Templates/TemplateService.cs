@@ -51,7 +51,7 @@ namespace YouTubeStreamTemplates.Templates
                           AudioLanguage = lines.GetValue("AudioLanguage"),
                           Tags = lines.GetValue("Tags").Split(",").ToList(),
                           Thumbnail = new Thumbnail {Source = lines.GetValue("ThumbnailPath")},
-                          Playlists = lines.GetValue("AudioLanguage").Split(',').ToList()
+                          Playlists = lines.GetValue("Playlists").Split(',').ToList()
                       };
         }
 

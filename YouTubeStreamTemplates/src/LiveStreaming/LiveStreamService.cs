@@ -52,11 +52,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         /// </summary>
         public Dictionary<string, string> Category { get; }
 
-        /// <summary>
-        ///     First string is the Playlist ID
-        ///     Second string is the Playlist Name
-        /// </summary>
-        public Dictionary<string, string> Playlists { get; }
+        public List<Playlist> Playlists { get; }
 
         #endregion
 
@@ -113,7 +109,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         {
             _youTubeService = youTubeService;
             Category = new Dictionary<string, string>();
-            Playlists = new Dictionary<string, string>();
+            Playlists = new List<Playlist>();
         }
 
         private async Task InitCategories()
@@ -138,7 +134,13 @@ namespace YouTubeStreamTemplates.LiveStreaming
                              ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
                              : CultureInfo.InstalledUICulture.IetfLanguageTag;
             var result = await request.ExecuteAsync();
-            foreach (var playlist in result.Items) Playlists.Add(playlist.Id, playlist.Snippet.Title);
+            foreach (var playlist in result.Items)
+            {
+                var listRequest = _youTubeService.PlaylistItems.List("id");
+                listRequest.PlaylistId = playlist.Id;
+                var listResult = await listRequest.ExecuteAsync();
+                Playlists.Add(new Playlist(playlist.Id, playlist.Snippet.Title, listResult.Items.Select(t => t.Id)));
+            }
 
             Logger.Debug("Found Playlists: {0}", string.Join(", ", Playlists));
         }
