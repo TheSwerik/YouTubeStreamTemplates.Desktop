@@ -179,6 +179,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         private async Task<LiveBroadcast> GetCurrentBroadcast()
         {
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
+            request.MaxResults = 50; // should never be > 50, should realistically never be > 3
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
             // TODO Change back to Active:
             // request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
