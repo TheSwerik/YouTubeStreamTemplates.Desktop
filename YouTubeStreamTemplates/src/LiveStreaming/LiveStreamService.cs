@@ -134,12 +134,15 @@ namespace YouTubeStreamTemplates.LiveStreaming
                              ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
                              : CultureInfo.InstalledUICulture.IetfLanguageTag;
             var result = await request.ExecuteAsync();
+            Playlists.Clear();
             foreach (var playlist in result.Items)
             {
                 var listRequest = _youTubeService.PlaylistItems.List("id");
                 listRequest.PlaylistId = playlist.Id;
                 var listResult = await listRequest.ExecuteAsync();
-                Playlists.Add(new Playlist(playlist.Id, playlist.Snippet.Title, listResult.Items.Select(t => t.Id)));
+                Playlists.Add(new Playlist(playlist.Id, playlist.Snippet.Title,
+                                           listResult.Items.ToDictionary(i => i.Snippet.ResourceId.VideoId,
+                                                                         i => i.Id)));
             }
 
             Logger.Debug("Found Playlists: {0}", string.Join(", ", Playlists));
@@ -200,6 +203,46 @@ namespace YouTubeStreamTemplates.LiveStreaming
                 throw new YouTubeStreamTemplateException($"Error happened:\n{response.Exception.Message}");
         }
 
+        private async Task AddVideoToPlaylist(string playlistItemId, string playlistId)
+        {
+            Logger.Debug($"Adding {playlistItemId} from PLaylist: {playlistId}...");
+            var newPlaylistItem = new PlaylistItem
+                                  {
+                                      Snippet = new PlaylistItemSnippet
+                                                {
+                                                    PlaylistId = playlistId,
+                                                    ResourceId = new ResourceId
+                                                                 {
+                                                                     Kind = "youtube#video",
+                                                                     VideoId = playlistItemId
+                                                                 }
+                                                }
+                                  };
+            await _youTubeService.PlaylistItems.Insert(newPlaylistItem, "snippet").ExecuteAsync();
+            Logger.Debug($"Added {playlistItemId} from PLaylist: {playlistId}.");
+            await InitPlaylists();
+        }
+
+        private async Task RemoveVideoFromPlaylist(string playlistItemId, string playlistId)
+        {
+            Logger.Debug($"Removing {playlistItemId} from PLaylist: {playlistId}...");
+            var newPlaylistItem = new PlaylistItem
+                                  {
+                                      Snippet = new PlaylistItemSnippet
+                                                {
+                                                    PlaylistId = playlistId,
+                                                    ResourceId = new ResourceId
+                                                                 {
+                                                                     Kind = "youtube#video",
+                                                                     VideoId = playlistItemId
+                                                                 }
+                                                }
+                                  };
+            await _youTubeService.PlaylistItems.Delete(playlistItemId).ExecuteAsync();
+            Logger.Debug($"Removed {playlistItemId} from PLaylist: {playlistId}.");
+            await InitPlaylists();
+        }
+
         #endregion
 
         #region Public Methods
@@ -248,6 +291,15 @@ namespace YouTubeStreamTemplates.LiveStreaming
             {
                 await SetThumbnail(stream.Id, template.Thumbnail.Source);
                 template.Thumbnail.Result = await ImageHelper.GetStreamThumbnailBytesAsync(stream.Id);
+            }
+
+            if (template.Playlists.Count != stream.Playlists.Count ||
+                template.Playlists.Any(p => !stream.Playlists.Contains(p)))
+            {
+                foreach (var playlist in template.Playlists.Where(p => !stream.Playlists.Contains(p)))
+                    await AddVideoToPlaylist(Playlists.Select(p => p.Videos[stream.Id]).First(), playlist);
+                foreach (var playlist in stream.Playlists.Where(p => !template.Playlists.Contains(p)))
+                    await RemoveVideoFromPlaylist(Playlists.Select(p => p.Videos[stream.Id]).First(), playlist);
             }
 
             _coolDownTimer.ReStart();

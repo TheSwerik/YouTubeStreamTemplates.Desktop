@@ -31,9 +31,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                      Description.Equals(other.Description) &&
                      Category.Equals(other.Category) &&
                      Tags.Count == other.Tags.Count &&
-                     Tags.All(t => other.Tags.Contains(t)) &&
-                     Playlists.Count == other.Playlists.Count &&
-                     Playlists.All(t => other.Playlists.Contains(t)));
+                     Tags.All(t => other.Tags.Contains(t)));
         }
 
         public int CompareTo(LiveStream? other) { return StartTime.CompareTo(other?.StartTime); }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace YouTubeStreamTemplates.LiveStreaming
 {
@@ -7,13 +6,18 @@ namespace YouTubeStreamTemplates.LiveStreaming
     {
         public string Id { get; set; }
         public string Title { get; set; }
-        public List<string> VideoIds { get; set; }
 
-        public Playlist(string id, string title, IEnumerable<string> videoIds)
+        /// <summary>
+        ///     Key:    VideoID
+        ///     Value: PlaylistItemID
+        /// </summary>
+        public Dictionary<string, string> Videos { get; set; }
+
+        public Playlist(string id, string title, Dictionary<string, string> videos)
         {
             Id = id;
             Title = title;
-            VideoIds = videoIds.ToList();
+            Videos = videos;
         }
 
         public override string ToString() { return $"{{{Id}, {Title}}}"; }
