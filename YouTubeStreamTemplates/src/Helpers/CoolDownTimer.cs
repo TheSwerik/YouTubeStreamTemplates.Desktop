@@ -7,7 +7,6 @@ namespace YouTubeStreamTemplates.Helpers
     {
         private readonly int _checkSteps;
         private readonly Stopwatch _stopwatch;
-        private Task? _stopTask;
 
         public CoolDownTimer(int checkSteps = 100)
         {
@@ -22,14 +21,10 @@ namespace YouTubeStreamTemplates.Helpers
         public void Start(long runtime = 3000)
         {
             _stopwatch.Start();
-            _stopTask = Task.Run(async () => await StopStopWatch(runtime));
+            Task.Run(async () => await StopStopWatch(runtime));
         }
 
-        public void Reset()
-        {
-            _stopTask?.Dispose();
-            _stopwatch.Reset();
-        }
+        public void Reset() { _stopwatch.Reset(); }
 
         public void ReStart(long runtime = 3000)
         {
