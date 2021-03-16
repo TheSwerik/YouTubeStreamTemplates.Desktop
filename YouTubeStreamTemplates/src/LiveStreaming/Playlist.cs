@@ -20,6 +20,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             Videos = videos;
         }
 
-        public override string ToString() { return $"{{{Id}, {Title}}}"; }
+        // public override string ToString() { return $"{{{Id}, {Title}}}"; }
+        public override string ToString() { return $"{Title}"; }
     }
 }
