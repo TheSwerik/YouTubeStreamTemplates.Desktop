@@ -127,20 +127,42 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         private async Task InitPlaylists()
         {
-            var request = _youTubeService.Playlists.List("snippet");
-            request.Mine = true;
-            request.Hl = SettingsService.GetBool(Setting.ForceEnglish)
-                             ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
-                             : CultureInfo.InstalledUICulture.IetfLanguageTag;
-            var result = await request.ExecuteAsync();
-            Playlists.Clear();
-            foreach (var playlist in result.Items)
+            var playlists = new Dictionary<string, string>();
+            var page = "";
+            while (true)
             {
-                var listRequest = _youTubeService.PlaylistItems.List("id,snippet");
-                listRequest.PlaylistId = playlist.Id;
-                var listResult = await listRequest.ExecuteAsync();
-                Playlists.Add(new Playlist(playlist.Id, playlist.Snippet.Title,
-                                           listResult.Items.ToDistinctDictionary()));
+                var request = _youTubeService.Playlists.List("snippet");
+                request.Mine = true;
+                request.PageToken = page;
+                request.MaxResults = 50;
+                request.Hl = SettingsService.GetBool(Setting.ForceEnglish)
+                                 ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
+                                 : CultureInfo.InstalledUICulture.IetfLanguageTag;
+                var result = await request.ExecuteAsync();
+                foreach (var playlist in result.Items) playlists.Add(playlist.Id, playlist.Snippet.Title);
+                if (result.NextPageToken == null) break;
+                page = result.NextPageToken;
+            }
+
+            Logger.Debug("Found {0} Playlists. Creating Playlist-Objects...", playlists.Count);
+            Playlists.Clear();
+            foreach (var (id, title) in playlists)
+            {
+                var videos = new List<PlaylistItem>();
+                page = "";
+                while (true)
+                {
+                    var listRequest = _youTubeService.PlaylistItems.List("id,snippet");
+                    listRequest.PageToken = page;
+                    listRequest.MaxResults = 50;
+                    listRequest.PlaylistId = id;
+                    var listResult = await listRequest.ExecuteAsync();
+                    videos.AddRange(listResult.Items);
+                    if (listResult.NextPageToken == null) break;
+                    page = listResult.NextPageToken;
+                }
+
+                Playlists.Add(new Playlist(id, title, videos.ToDistinctDictionary()));
             }
 
             Logger.Debug("Found Playlists: {0}", string.Join(", ", Playlists));
@@ -210,7 +232,6 @@ namespace YouTubeStreamTemplates.LiveStreaming
                                   };
             await _youTubeService.PlaylistItems.Insert(newPlaylistItem, "snippet").ExecuteAsync();
             Logger.Debug($"Added {videoId} to PLaylist: {playlistId}.");
-            await InitPlaylists();
         }
 
         private async Task RemoveVideoFromPlaylist(string playlistItemId, string playlistId)
@@ -230,7 +251,6 @@ namespace YouTubeStreamTemplates.LiveStreaming
                                   };
             await _youTubeService.PlaylistItems.Delete(playlistItemId).ExecuteAsync();
             Logger.Debug($"Removed {playlistItemId} from PLaylist: {playlistId}.");
-            await InitPlaylists();
         }
 
         #endregion
@@ -292,6 +312,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                     await AddVideoToPlaylist(stream.Id, playlist);
                 foreach (var playlist in stream.Playlists.Where(p => !template.Playlists.Contains(p)))
                     await RemoveVideoFromPlaylist(Playlists.Select(p => p.Videos[stream.Id]).First(), playlist);
+                await InitPlaylists();
             }
 
             _coolDownTimer.ReStart();
