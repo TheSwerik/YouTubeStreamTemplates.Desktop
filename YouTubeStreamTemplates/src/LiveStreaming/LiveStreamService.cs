@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
@@ -178,16 +177,8 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         private async Task SetThumbnail(string videoId, string filePath)
         {
-            Stream fileStream;
-            if (filePath.StartsWith("http"))
-            {
-                using var webClient = new WebClient();
-                fileStream = webClient.OpenRead(filePath);
-            }
-            else
-            {
-                fileStream = File.OpenRead(filePath);
-            }
+            if (filePath.StartsWith("http")) filePath = await ImageHelper.GetImagePathAsync(filePath, false, videoId);
+            await using var fileStream = File.OpenRead(filePath);
 
             if (fileStream.Length > LiveStream.MaxThumbnailSize)
                 throw new ThumbnailTooLargeException(fileStream.Length);
