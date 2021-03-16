@@ -279,7 +279,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                 return;
             }
 
-            _coolDownTimer.Start();
+            _coolDownTimer.Start(20000);
             if (CurrentLiveStream == null) return;
             var stream = CurrentLiveStream;
             var onlySaved = SettingsService.GetBool(Setting.OnlyUpdateSavedTemplates);
