@@ -137,7 +137,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             Playlists.Clear();
             foreach (var playlist in result.Items)
             {
-                var listRequest = _youTubeService.PlaylistItems.List("id");
+                var listRequest = _youTubeService.PlaylistItems.List("id,snippet");
                 listRequest.PlaylistId = playlist.Id;
                 var listResult = await listRequest.ExecuteAsync();
                 Playlists.Add(new Playlist(playlist.Id, playlist.Snippet.Title,
