@@ -54,5 +54,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         }
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs) { _resultPopup.Open(); }
+
+        private void OnLayoutUpdated(object? sender, EventArgs e)
+        {
+            if (!_resultPopup.IsOpen) return;
+            _resultPopup.Close();
+            _resultPopup.Open();
+        }
     }
 }
