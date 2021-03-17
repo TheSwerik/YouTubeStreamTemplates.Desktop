@@ -21,11 +21,14 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly GenericComboBox<KeyValuePair<string, string>> _categoryComboBox;
         private readonly TextBox _descriptionTextBox;
+        private readonly AutoCompleteBox _playlistComboBox;
         private readonly Button _saveButton;
+        private readonly GenericComboBox<Visibility> _streamVisibilityComboBox;
         private readonly TagEditor _tagEditor;
         private readonly GenericComboBox<Template> _templateComboBox;
         private readonly Image _thumbnailImage;
         private readonly TextBox _titleTextBox;
+        private readonly GenericComboBox<Visibility> _vodVisibilityComboBox;
         private Thumbnail _thumbnail;
         public Template SelectedTemplate => _templateComboBox.SelectedItem!;
 
@@ -54,6 +57,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _thumbnailImage = this.Find<Image>("ThumbnailImage");
             _descriptionTextBox = this.Find<TextBox>("DescriptionTextBox");
             _categoryComboBox = this.Find<GenericComboBox<KeyValuePair<string, string>>>("CategoryComboBox");
+            _streamVisibilityComboBox = this.Find<GenericComboBox<Visibility>>("StreamVisibilityComboBox");
+            _vodVisibilityComboBox = this.Find<GenericComboBox<Visibility>>("VodVisibilityComboBox");
+            _playlistComboBox = this.Find<AutoCompleteBox>("PlaylistComboBox");
             _thumbnail = new Thumbnail();
             TemplateService.Instance.GetEditedTemplate = ChangedTemplate;
             AddEventListeners();
@@ -90,6 +96,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             }
 
             _categoryComboBox.Items = LiveStreamService.Instance.Category;
+            _streamVisibilityComboBox.Items = Enum.GetValues<Visibility>();
+            _vodVisibilityComboBox.Items = Enum.GetValues<Visibility>();
+            _playlistComboBox.Items = LiveStreamService.Instance.Playlists;
             Refresh();
         }
 
