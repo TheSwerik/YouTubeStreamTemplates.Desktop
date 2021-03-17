@@ -21,7 +21,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly GenericComboBox<KeyValuePair<string, string>> _categoryComboBox;
         private readonly TextBox _descriptionTextBox;
-        private readonly AutoCompleteBox _playlistComboBox;
+        private readonly AutoCompleteSelectComboBox _playlistComboBox;
         private readonly Button _saveButton;
         private readonly GenericComboBox<Visibility> _streamVisibilityComboBox;
         private readonly TagEditor _tagEditor;
@@ -59,7 +59,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _categoryComboBox = this.Find<GenericComboBox<KeyValuePair<string, string>>>("CategoryComboBox");
             _streamVisibilityComboBox = this.Find<GenericComboBox<Visibility>>("StreamVisibilityComboBox");
             _vodVisibilityComboBox = this.Find<GenericComboBox<Visibility>>("VodVisibilityComboBox");
-            _playlistComboBox = this.Find<AutoCompleteBox>("PlaylistComboBox");
+            _playlistComboBox = this.Find<AutoCompleteSelectComboBox>("PlaylistComboBox");
             _thumbnail = new Thumbnail();
             TemplateService.Instance.GetEditedTemplate = ChangedTemplate;
             AddEventListeners();
