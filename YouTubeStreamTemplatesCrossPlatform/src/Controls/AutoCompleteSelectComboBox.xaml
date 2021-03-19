@@ -18,8 +18,12 @@
                 <!-- PlacementMode="AnchorAndGravity" PlacementGravity="Top" -->
                 <Popup x:Name="ResultPopup" Topmost="True" Width="{Binding #ComboBoxGrid.Bounds.Width}"
                        IsLightDismissEnabled="False">
-                    <StackPanel>
-                        <TextBlock Text="Test1" />
+                    <StackPanel x:Name="ResultStackPanel">
+                        <Grid ColumnDefinitions="*,Auto" PointerPressed="InputElement_OnPointerPressed"
+                              Background="{DynamicResource ThemeBackgroundLowBrush}">
+                            <TextBlock Text="Test1" HorizontalAlignment="Left" />
+                            <CheckBox Grid.Column="1" x:Name="TETTETETTE" />
+                        </Grid>
                         <TextBlock Text="Test2" />
                         <TextBlock Text="Test3" />
                     </StackPanel>

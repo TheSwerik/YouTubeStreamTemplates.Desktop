@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -18,6 +19,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Grid _comboBoxGrid;
         private readonly Popup _resultPopup;
         private readonly TextBox _searchInputBox;
+        private readonly StackPanel _searchResultPanel;
 
         private readonly Stopwatch _stopwatch;
         private readonly Grid _textGrid;
@@ -29,6 +31,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _comboBoxGrid = this.Find<Grid>("ComboBoxGrid");
             _searchInputBox = this.Find<TextBox>("SearchInputBox");
             _resultPopup = this.Find<Popup>("ResultPopup");
+            _searchResultPanel = this.Find<StackPanel>("ResultStackPanel");
             _stopwatch = new Stopwatch();
             Items = new List<Playlist>();
             OnLostFocus(null, null);
@@ -49,7 +52,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void OnLostFocus(object? sender, RoutedEventArgs e)
         {
-            if (_comboBoxGrid.IsFocused) return;
+            if (_comboBoxGrid.IsFocused || _comboBoxGrid.Children.Any(c => c.IsFocused)) return;
+            var controlList = _searchResultPanel.Children.ToList();
+            while (controlList.Any())
+                if (controlList.Any(c => c.IsPointerOver)) return;
+                else controlList = controlList.Where(c => c is Panel).SelectMany(c => ((Panel) c).Children).ToList();
+
             _textGrid.IsEnabled = true;
             _textGrid.IsVisible = true;
             _comboBoxGrid.IsEnabled = false;
@@ -82,6 +90,13 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _resultPopup.Close();
             _resultPopup.Open();
             _stopwatch.Reset();
+        }
+
+        private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            var grid = (Grid) sender;
+            var checkbox = (CheckBox) grid.Children.First(c => c is CheckBox);
+            checkbox.IsChecked = !checkbox.IsChecked;
         }
     }
 }
