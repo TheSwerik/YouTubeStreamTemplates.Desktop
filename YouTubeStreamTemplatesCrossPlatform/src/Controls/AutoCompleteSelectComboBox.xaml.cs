@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -7,6 +8,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using YouTubeStreamTemplates.LiveStreaming;
 using YouTubeStreamTemplatesCrossPlatform.Windows;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
@@ -28,6 +30,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _searchInputBox = this.Find<TextBox>("SearchInputBox");
             _resultPopup = this.Find<Popup>("ResultPopup");
             _stopwatch = new Stopwatch();
+            Items = new List<Playlist>();
             OnLostFocus(null, null);
             MainWindow.Instance.PositionChanged += OnWindowPositionChanged;
         }
