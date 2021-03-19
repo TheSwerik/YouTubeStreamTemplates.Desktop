@@ -36,6 +36,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             Items = new List<Playlist>();
             OnLostFocus(null, null);
             MainWindow.Instance.PositionChanged += OnWindowPositionChanged;
+
+            _searchResultPanel.Children.Add(new CheckBoxSearchResult("AutoTest"));
         }
 
         public IEnumerable Items { get; set; }
@@ -90,13 +92,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _resultPopup.Close();
             _resultPopup.Open();
             _stopwatch.Reset();
-        }
-
-        private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
-        {
-            var grid = (Grid) sender;
-            var checkbox = (CheckBox) grid.Children.First(c => c is CheckBox);
-            checkbox.IsChecked = !checkbox.IsChecked;
         }
     }
 }
