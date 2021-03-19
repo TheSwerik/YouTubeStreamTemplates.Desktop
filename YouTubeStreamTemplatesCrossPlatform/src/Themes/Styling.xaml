@@ -95,4 +95,8 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
     </Style>
+
+    <Style Selector="Popup > StackPanel">
+        <Setter Property="Background" Value="{DynamicResource ThemeBackgroundLowBrush}" />
+    </Style>
 </Styles>

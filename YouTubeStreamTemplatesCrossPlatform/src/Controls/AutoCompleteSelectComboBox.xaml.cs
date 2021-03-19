@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using YouTubeStreamTemplatesCrossPlatform.Windows;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
@@ -13,6 +16,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Grid _comboBoxGrid;
         private readonly Popup _resultPopup;
         private readonly TextBox _searchInputBox;
+
+        private readonly Stopwatch _stopwatch;
         private readonly Grid _textGrid;
 
         public AutoCompleteSelectComboBox()
@@ -22,7 +27,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _comboBoxGrid = this.Find<Grid>("ComboBoxGrid");
             _searchInputBox = this.Find<TextBox>("SearchInputBox");
             _resultPopup = this.Find<Popup>("ResultPopup");
+            _stopwatch = new Stopwatch();
             OnLostFocus(null, null);
+            MainWindow.Instance.PositionChanged += OnWindowPositionChanged;
         }
 
         public IEnumerable Items { get; set; }
@@ -53,13 +60,25 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             e.Handled = true;
         }
 
-        private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs) { _resultPopup.Open(); }
+        private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)
+        {
+            if (!_resultPopup.IsOpen) _resultPopup.Open();
+        }
 
-        private void OnLayoutUpdated(object? sender, EventArgs e)
+        private async void OnWindowPositionChanged(object? sender, PixelPointEventArgs e)
         {
             if (!_resultPopup.IsOpen) return;
+            var isRunning = _stopwatch.IsRunning;
+            _stopwatch.Restart();
+            if (!isRunning) await ChangePopupPosition();
+        }
+
+        private async Task ChangePopupPosition()
+        {
+            while (_stopwatch.ElapsedMilliseconds < 500) await Task.Delay(50);
             _resultPopup.Close();
             _resultPopup.Open();
+            _stopwatch.Reset();
         }
     }
 }
