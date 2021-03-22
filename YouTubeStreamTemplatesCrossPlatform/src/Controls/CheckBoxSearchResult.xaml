@@ -12,9 +12,12 @@
         <Style Selector="Grid:pointerover">
             <Setter Property="Background" Value="{DynamicResource HighlightBrush}" />
         </Style>
+        <Style Selector="Grid:pointerover > CheckBox">
+            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBrush}" />
+        </Style>
     </UserControl.Styles>
     <Grid ColumnDefinitions="*,Auto" x:Name="Grid" PointerPressed="InputElement_OnPointerPressed">
-        <TextBlock HorizontalAlignment="Left" />
+        <TextBlock HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
         <CheckBox Grid.Column="1" x:Name="CheckBox" Background="{DynamicResource ThemeBackgroundLowBrush}" />
         <!-- TODO fix highlight behind checkbox -->
     </Grid>

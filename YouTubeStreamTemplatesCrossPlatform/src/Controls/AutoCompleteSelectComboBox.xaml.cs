@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -24,6 +23,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Stopwatch _stopwatch;
         private readonly Grid _textGrid;
 
+        private IEnumerable<Playlist> _items;
+
         public AutoCompleteSelectComboBox()
         {
             AvaloniaXamlLoader.Load(this);
@@ -33,14 +34,40 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _resultPopup = this.Find<Popup>("ResultPopup");
             _searchResultPanel = this.Find<StackPanel>("ResultStackPanel");
             _stopwatch = new Stopwatch();
-            Items = new List<Playlist>();
+            _items = new List<Playlist>();
+            SelectedItems = new List<Playlist>();
             OnLostFocus(null, null);
             MainWindow.Instance.PositionChanged += OnWindowPositionChanged;
-
-            _searchResultPanel.Children.Add(new CheckBoxSearchResult("AutoTest"));
         }
 
-        public IEnumerable Items { get; set; }
+        public IEnumerable<Playlist> Items
+        {
+            get => _items;
+            set => AddItems(value);
+        }
+
+        public List<Playlist> SelectedItems { get; set; }
+
+        private List<CheckBoxSearchResult> GetMatchingBoxes()
+        {
+            return _searchResultPanel.Children.OfType<CheckBoxSearchResult>().ToList();
+        }
+
+        private void AddItems(IEnumerable<Playlist> items)
+        {
+            var itemList = new List<Playlist>();
+            foreach (var item in items)
+            {
+                itemList.Add(item);
+                _searchResultPanel.Children.Add(new CheckBoxSearchResult(item));
+            }
+
+            _items = itemList;
+        }
+
+        public void SelectItems(params Playlist[] items) { SelectedItems.AddRange(items); }
+
+        #region EventHandlers
 
         private void OnClick(object? sender, PointerPressedEventArgs e)
         {
@@ -93,5 +120,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _resultPopup.Open();
             _stopwatch.Reset();
         }
+
+        #endregion
     }
 }
