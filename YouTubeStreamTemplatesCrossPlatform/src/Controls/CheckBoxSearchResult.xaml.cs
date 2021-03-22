@@ -38,6 +38,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             var checkbox = (CheckBox) _grid.Children.First(c => c is CheckBox);
             checkbox.IsChecked = !checkbox.IsChecked;
+            // TODO raise event again and add/remove playlist from template
         }
     }
 }
