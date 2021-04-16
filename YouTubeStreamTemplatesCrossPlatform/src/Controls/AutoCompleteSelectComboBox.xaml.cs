@@ -79,7 +79,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var a = new Popup();
         }
 
-        private void OnLostFocus(object? sender, RoutedEventArgs e)
+        private void OnLostFocus(object? sender, RoutedEventArgs? e)
         {
             if (_comboBoxGrid.IsFocused || _comboBoxGrid.Children.Any(c => c.IsFocused)) return;
             var controlList = _searchResultPanel.Children.ToList();
