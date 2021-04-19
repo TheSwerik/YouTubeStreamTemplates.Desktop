@@ -35,7 +35,7 @@
                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                 <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
                     <Image x:Name="ThumbnailImage" />
-                    <Image x:Name="ThumbnailImageOverlay" Source="{DynamicResource OverlayImage}" Classes="overlay"
+                    <Image x:Name="ThumbnailImageOverlay" Source="{DynamicResource OverlayFileImage}" Classes="overlay"
                            PointerReleased="ThumbnailImage_OnClick">
                         <Image.ContextMenu>
                             <ContextMenu>
