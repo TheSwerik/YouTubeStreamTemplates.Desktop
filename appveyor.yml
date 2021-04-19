@@ -58,4 +58,4 @@ for:
         prerelease: false
         force_update: false
         on:
-          branch: master
+          branch: main
