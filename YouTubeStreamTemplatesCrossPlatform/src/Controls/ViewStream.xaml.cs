@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -24,6 +26,17 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Image _thumbnail;
 
         private readonly TextBlock _titleTextBlock;
+
+        private void ThumbnailImage_OnClick(object? sender, PointerReleasedEventArgs e)
+        {
+            if (!LiveStreamService.IsInitialized || LiveStreamService.Instance.CurrentLiveStream == null) return;
+            Process.Start(new ProcessStartInfo
+                          {
+                              UseShellExecute = true,
+                              FileName = "https://www.youtube.com/watch?v=" +
+                                         LiveStreamService.Instance.CurrentLiveStream.Id
+                          })?.Dispose();
+        }
 
         #region Init
 
