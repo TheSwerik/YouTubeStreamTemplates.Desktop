@@ -67,13 +67,15 @@
 
             <Grid Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" ColumnDefinitions="*,*,*" RowDefinitions="*,*">
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Playlist" />
-                <AutoCompleteBox Grid.Row="1" Grid.Column="0" x:Name="PlaylistComboBox" />
+                <!-- x:TypeArguments="liveStreaming:Playlist"  -->
+                <controls:AutoCompleteSelectComboBox Grid.Row="1" Grid.Column="0"
+                                                     x:Name="PlaylistComboBox" />
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="Stream Visibility" />
-                <controls:GenericComboBox Grid.Row="1" Grid.Column="1" x:TypeArguments="liveStreaming:Visibility"
-                                          x:Name="StreamVisibilityComboBox" />
+                <controls:GenericComboBox Grid.Row="1" Grid.Column="1"
+                                          x:TypeArguments="liveStreaming:Visibility" x:Name="StreamVisibilityComboBox" />
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="VOD Visibility" />
-                <controls:GenericComboBox Grid.Row="1" Grid.Column="2" x:TypeArguments="liveStreaming:Visibility"
-                                          x:Name="VodVisibilityComboBox" />
+                <controls:GenericComboBox Grid.Row="1" Grid.Column="2"
+                                          x:TypeArguments="liveStreaming:Visibility" x:Name="VodVisibilityComboBox" />
             </Grid>
         </Grid>
     </Border>

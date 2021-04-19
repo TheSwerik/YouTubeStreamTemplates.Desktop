@@ -24,12 +24,15 @@
         <Compile Update="src\Windows\Tabs\Home.xaml.cs">
             <DependentUpon>Home.xaml</DependentUpon>
         </Compile>
+        <Compile Update="src\Controls\AutoCompleteSelectComboBox.xaml.cs">
+            <DependentUpon>AutoCompleteSelectComboBox.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.10.0"/>
         <PackageReference Include="Avalonia.Desktop" Version="0.10.0"/>
-        <PackageReference Include="NLog" Version="4.7.8"/>
+        <PackageReference Include="NLog" Version="4.7.9"/>
     </ItemGroup>
 
     <ItemGroup>

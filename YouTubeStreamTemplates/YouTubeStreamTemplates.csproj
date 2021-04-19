@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Apis" Version="1.50.0"/>
-        <PackageReference Include="Google.Apis.Auth" Version="1.50.0"/>
-        <PackageReference Include="Google.Apis.Core" Version="1.50.0"/>
-        <PackageReference Include="Google.Apis.Discovery.v1" Version="1.50.0"/>
-        <PackageReference Include="Google.Apis.YouTube.v3" Version="1.50.0.2238"/>
-        <PackageReference Include="NLog" Version="4.7.8"/>
+        <PackageReference Include="Google.Apis" Version="1.51.0"/>
+        <PackageReference Include="Google.Apis.Auth" Version="1.51.0"/>
+        <PackageReference Include="Google.Apis.Core" Version="1.51.0"/>
+        <PackageReference Include="Google.Apis.Discovery.v1" Version="1.51.0"/>
+        <PackageReference Include="Google.Apis.YouTube.v3" Version="1.51.0.2294"/>
+        <PackageReference Include="NLog" Version="4.7.9"/>
+        <PackageReference Include="NLog.Schema" Version="4.7.9"/>
     </ItemGroup>
 
     <ItemGroup>

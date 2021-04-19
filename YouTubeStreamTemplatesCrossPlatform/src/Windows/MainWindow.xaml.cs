@@ -11,10 +11,13 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows
     {
         public MainWindow()
         {
+            Instance = this;
             InitAPI(); //TODO remove
             AvaloniaXamlLoader.Load(this);
             Closing += Dispose;
         }
+
+        public static MainWindow Instance { get; private set; } = null!;
 
         private void Dispose(object? sender, CancelEventArgs e) { LiveStreamService.Instance.Dispose(); }
 

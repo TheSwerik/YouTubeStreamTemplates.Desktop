@@ -21,7 +21,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly GenericComboBox<KeyValuePair<string, string>> _categoryComboBox;
         private readonly TextBox _descriptionTextBox;
-        private readonly AutoCompleteBox _playlistComboBox;
+        private readonly AutoCompleteSelectComboBox _playlistComboBox;
         private readonly Button _saveButton;
         private readonly GenericComboBox<Visibility> _streamVisibilityComboBox;
         private readonly TagEditor _tagEditor;
@@ -40,7 +40,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                        Description = _descriptionTextBox.Text,
                        Category = _categoryComboBox.SelectedItem.Key,
                        Tags = _tagEditor.Tags.ToList(),
-                       Thumbnail = _thumbnail
+                       Thumbnail = _thumbnail,
+                       PlaylistIDs = _playlistComboBox.SelectedItems.Select(p => p.Id).ToList()
                    };
         }
 
@@ -59,7 +60,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _categoryComboBox = this.Find<GenericComboBox<KeyValuePair<string, string>>>("CategoryComboBox");
             _streamVisibilityComboBox = this.Find<GenericComboBox<Visibility>>("StreamVisibilityComboBox");
             _vodVisibilityComboBox = this.Find<GenericComboBox<Visibility>>("VodVisibilityComboBox");
-            _playlistComboBox = this.Find<AutoCompleteBox>("PlaylistComboBox");
+            _playlistComboBox = this.Find<AutoCompleteSelectComboBox>("PlaylistComboBox");
             _thumbnail = new Thumbnail();
             TemplateService.Instance.GetEditedTemplate = ChangedTemplate;
             AddEventListeners();
@@ -85,6 +86,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _descriptionTextBox.KeyUp += OnChanged;
             _descriptionTextBox.LostFocus += OnChanged;
             _tagEditor.OnChanged += OnChanged;
+            _playlistComboBox.OnChanged += OnChanged;
         }
 
         private async Task Init()
@@ -136,6 +138,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                     new Bitmap(await ImageHelper.GetImagePathAsync(template.Thumbnail.Source, true, template.Id));
                 _thumbnail = template.Thumbnail with { };
             }
+
+            if (LiveStreamService.IsInitialized)
+                _playlistComboBox.SetSelectedItems(LiveStreamService.Instance
+                                                                    .Playlists
+                                                                    .Where(p => template.PlaylistIDs.Contains(p.Id))
+                                                                    .ToList());
         }
 
         private bool HasDifference(Template? template = null)

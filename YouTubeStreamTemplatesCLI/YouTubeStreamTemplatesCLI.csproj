@@ -14,4 +14,8 @@
         <Folder Include="obj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="NLog.Schema" Version="4.7.9"/>
+    </ItemGroup>
+
 </Project>
