@@ -23,9 +23,7 @@ namespace YouTubeStreamTemplatesCrossPlatform
 
         public override void OnFrameworkInitializationCompleted()
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                // desktop.MainWindow = new LoginWindow();
-                desktop.MainWindow = new MainWindow();
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) desktop.MainWindow = new LoginWindow();
             base.OnFrameworkInitializationCompleted();
         }
     }

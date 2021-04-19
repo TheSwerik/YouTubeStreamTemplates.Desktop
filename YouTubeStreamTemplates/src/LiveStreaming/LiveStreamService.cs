@@ -99,7 +99,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        scopes,
                        "user",
                        CancellationToken.None,
-                       new FileDataStore("YouTubeStreamTemplates.Dev")); //TODO
+                       new FileDataStore("YouTubeStreamTemplates"));
         }
 
         #endregion
@@ -181,9 +181,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
             request.MaxResults = 50; // should never be > 50, should realistically never be > 3
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
-            // TODO Change back to Active:
-            // request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
-            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Upcoming;
+            request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
 
             var response = await request.ExecuteAsync();
             if (response.Items == null || response.Items.Count <= 0) throw new NoCurrentStreamException();
@@ -191,9 +189,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
             // Get the latest Stream if there is more than one:
             var streams = response.Items.ToList();
-            // TODO Change back to Actual (not Planned):
-            // streams.Sort(LiveBroadcastComparer.ByDateDesc);
-            streams.Sort(LiveBroadcastComparer.ByDateDescPlanned);
+            streams.Sort(LiveBroadcastComparer.ByDateDesc);
             return streams[0];
         }
 
