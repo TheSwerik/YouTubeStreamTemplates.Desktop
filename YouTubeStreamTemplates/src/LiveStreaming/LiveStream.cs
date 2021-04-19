@@ -21,7 +21,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public List<string> Playlists { get; set; } = new();
+        public List<string> PlaylistIDs { get; set; } = new();
 
         #region Methods
 

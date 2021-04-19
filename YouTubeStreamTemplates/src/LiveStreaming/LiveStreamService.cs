@@ -268,7 +268,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             var videos = await videoRequest.ExecuteAsync();
             if (videos.Items == null || videos.Items.Count <= 0) throw new NoVideoFoundException(liveStream.Id);
             var result = videos.Items[0].ToLiveStream();
-            result.Playlists = Playlists.Where(p => p.Videos.ContainsKey(result.Id)).Select(p => p.Id).ToList();
+            result.PlaylistIDs = Playlists.Where(p => p.Videos.ContainsKey(result.Id)).Select(p => p.Id).ToList();
             return result;
         }
 
@@ -306,12 +306,12 @@ namespace YouTubeStreamTemplates.LiveStreaming
                 template.Thumbnail.Result = await ImageHelper.GetStreamThumbnailBytesAsync(stream.Id);
             }
 
-            if (template.Playlists.Count != stream.Playlists.Count ||
-                template.Playlists.Any(p => !stream.Playlists.Contains(p)))
+            if (template.PlaylistIDs.Count != stream.PlaylistIDs.Count ||
+                template.PlaylistIDs.Any(p => !stream.PlaylistIDs.Contains(p)))
             {
-                foreach (var playlist in template.Playlists.Where(p => !stream.Playlists.Contains(p)))
+                foreach (var playlist in template.PlaylistIDs.Where(p => !stream.PlaylistIDs.Contains(p)))
                     await AddVideoToPlaylist(stream.Id, playlist);
-                foreach (var playlist in stream.Playlists.Where(p => !template.Playlists.Contains(p)))
+                foreach (var playlist in stream.PlaylistIDs.Where(p => !template.PlaylistIDs.Contains(p)))
                     await RemoveVideoFromPlaylist(Playlists.Select(p => p.Videos[stream.Id]).First(), playlist);
                 await InitPlaylists();
             }

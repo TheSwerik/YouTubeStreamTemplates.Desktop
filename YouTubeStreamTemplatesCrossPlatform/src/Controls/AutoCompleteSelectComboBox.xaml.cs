@@ -43,10 +43,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         public IEnumerable<Playlist> Items
         {
             get => _items;
-            set => AddItems(value);
+            set => SetItems(value);
         }
 
-        public List<Playlist> SelectedItems { get; set; }
+        public List<Playlist> SelectedItems { get; init; }
+
+        public event EventHandler<EventArgs> OnChanged;
 
         private (List<CheckBoxSearchResult>, int) GetSortedResults()
         {
@@ -68,7 +70,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             return (allResults, results.Distinct().Count());
         }
 
-        private void AddItems(IEnumerable<Playlist> items)
+        private void SetItems(IEnumerable<Playlist> items)
         {
             var itemList = new List<Playlist>();
             foreach (var item in items)
@@ -76,13 +78,24 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                 itemList.Add(item);
                 var checkBoxSearchResult = new CheckBoxSearchResult(item);
                 _searchResultPanel.Children.Add(checkBoxSearchResult);
-                checkBoxSearchResult.OnChange += SearchResult_OnClick;
+                checkBoxSearchResult.OnChanged += SearchResult_OnClick;
             }
 
             _items = itemList;
         }
 
-        public void SelectItems(params Playlist[] items) { SelectedItems.AddRange(items); }
+        public void SetSelectedItems(IEnumerable<Playlist> items)
+        {
+            SelectedItems.Clear();
+            foreach (var item in items)
+            {
+                SelectedItems.Add(item);
+                foreach (var checkBoxSearchResult in _searchResultPanel.Children
+                                                                       .OfType<CheckBoxSearchResult>()
+                                                                       .Where(c => c.Playlist.Equals(item)))
+                    checkBoxSearchResult.Check();
+            }
+        }
 
         #region EventHandlers
 
@@ -118,7 +131,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             if (checkBoxSearchResult.IsChecked) SelectedItems.Add(playlist);
             else SelectedItems.Remove(playlist);
             _searchInputBox.Focus();
-            Console.WriteLine("Selected Playlists: " + string.Join(", ", SelectedItems.Select(p => p.Title)));
+            OnChanged.Invoke(this, null);
+            Console.WriteLine("Selected PlaylistIDs: " + string.Join(", ", SelectedItems.Select(p => p.Title)));
         }
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)

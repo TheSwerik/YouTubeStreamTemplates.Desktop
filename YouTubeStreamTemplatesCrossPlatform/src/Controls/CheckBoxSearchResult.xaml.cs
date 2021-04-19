@@ -30,17 +30,18 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _checkBox = this.Find<CheckBox>("CheckBox");
         }
 
-        private Playlist Playlist { get; }
+        public Playlist Playlist { get; }
         public bool IsChecked => _checkBox.IsChecked ?? false;
-        public event EventHandler<Playlist> OnChange;
+        public event EventHandler<Playlist> OnChanged;
 
         private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
         {
-            var checkbox = (CheckBox) _grid.Children.First(c => c is CheckBox);
-            checkbox.IsChecked = !checkbox.IsChecked;
-            OnChange.Invoke(this, Playlist);
+            _checkBox.IsChecked = !_checkBox.IsChecked;
+            OnChanged.Invoke(this, Playlist);
         }
 
-        private void CheckBox_OnClick(object sender, RoutedEventArgs e) { OnChange.Invoke(this, Playlist); }
+        public void Check() { _checkBox.IsChecked = true; }
+
+        private void CheckBox_OnClick(object sender, RoutedEventArgs e) { OnChanged.Invoke(this, Playlist); }
     }
 }

@@ -85,6 +85,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _descriptionTextBox.KeyUp += OnChanged;
             _descriptionTextBox.LostFocus += OnChanged;
             _tagEditor.OnChanged += OnChanged;
+            _playlistComboBox.OnChanged += OnChanged;
         }
 
         private async Task Init()
@@ -136,6 +137,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                     new Bitmap(await ImageHelper.GetImagePathAsync(template.Thumbnail.Source, true, template.Id));
                 _thumbnail = template.Thumbnail with { };
             }
+
+            if (LiveStreamService.IsInitialized)
+                _playlistComboBox.SetSelectedItems(LiveStreamService.Instance
+                                                                    .Playlists
+                                                                    .Where(p => template.PlaylistIDs.Contains(p.Id))
+                                                                    .ToList());
         }
 
         private bool HasDifference(Template? template = null)
