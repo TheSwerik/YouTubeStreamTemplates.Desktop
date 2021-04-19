@@ -20,7 +20,7 @@ build:
 for:
   - branches:
       only:
-        - master
+        - main
 
     dotnet_csproj:
       patch: true
