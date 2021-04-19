@@ -48,7 +48,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         public List<Playlist> SelectedItems { get; set; }
 
-        private List<CheckBoxSearchResult> GetSortedResults()
+        private (List<CheckBoxSearchResult>, int) GetSortedResults()
         {
             var allResults = _searchResultPanel.Children
                                                .OfType<CheckBoxSearchResult>()
@@ -65,7 +65,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                                 if (c1Count == c2Count) return string.CompareOrdinal(c1.Text, c2.Text);
                                 return c2Count - c1Count;
                             });
-            return allResults;
+            return (allResults, results.Distinct().Count());
         }
 
         private void AddItems(IEnumerable<Playlist> items)
@@ -119,11 +119,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             Console.WriteLine("HALLO TES TEST");
             if (!_resultPopup.IsOpen) _resultPopup.Open();
-            var sortedResults = GetSortedResults();
+            var (sortedResults, matching) = GetSortedResults();
             _searchResultPanel.Children.Clear();
             _searchResultPanel.Children.AddRange(sortedResults);
-            foreach (var checkBoxSearchResult in sortedResults.Take(10)) checkBoxSearchResult.IsVisible = true;
-            foreach (var checkBoxSearchResult in sortedResults.Skip(10)) checkBoxSearchResult.IsVisible = false;
+            if (matching > 20) matching = 20;
+            foreach (var checkBoxSearchResult in sortedResults.Take(matching)) checkBoxSearchResult.IsVisible = true;
+            foreach (var checkBoxSearchResult in sortedResults.Skip(matching)) checkBoxSearchResult.IsVisible = false;
         }
 
         private void SearchInputBox_OnGotFocus(object? sender, GotFocusEventArgs e)
