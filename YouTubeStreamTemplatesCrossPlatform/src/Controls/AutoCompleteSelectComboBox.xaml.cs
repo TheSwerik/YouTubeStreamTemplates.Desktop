@@ -48,9 +48,24 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         public List<Playlist> SelectedItems { get; set; }
 
-        private List<CheckBoxSearchResult> GetMatchingBoxes()
+        private List<CheckBoxSearchResult> GetSortedResults()
         {
-            return _searchResultPanel.Children.OfType<CheckBoxSearchResult>().ToList();
+            var allResults = _searchResultPanel.Children
+                                               .OfType<CheckBoxSearchResult>()
+                                               .ToList();
+            var results = new List<CheckBoxSearchResult>();
+            foreach (var token in _searchInputBox.Text.Split(' '))
+                results.AddRange(allResults
+                                     .Where(c => c.Text.Contains(token, StringComparison.InvariantCultureIgnoreCase)));
+
+            allResults.Sort((c1, c2) =>
+                            {
+                                var c2Count = results.Count(r => r.Equals(c2));
+                                var c1Count = results.Count(r => r.Equals(c1));
+                                if (c1Count == c2Count) return string.CompareOrdinal(c1.Text, c2.Text);
+                                return c2Count - c1Count;
+                            });
+            return allResults;
         }
 
         private void AddItems(IEnumerable<Playlist> items)
@@ -102,7 +117,25 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)
         {
+            Console.WriteLine("HALLO TES TEST");
             if (!_resultPopup.IsOpen) _resultPopup.Open();
+            var sortedResults = GetSortedResults();
+            _searchResultPanel.Children.Clear();
+            _searchResultPanel.Children.AddRange(sortedResults);
+            foreach (var checkBoxSearchResult in sortedResults.Take(10)) checkBoxSearchResult.IsVisible = true;
+            foreach (var checkBoxSearchResult in sortedResults.Skip(10)) checkBoxSearchResult.IsVisible = false;
+        }
+
+        private void SearchInputBox_OnGotFocus(object? sender, GotFocusEventArgs e)
+        {
+            // _searchInputBox.CaretIndex = int.MaxValue;
+            _searchInputBox.SelectAll();
+            SearchInputBox_OnTextInput(null, new KeyEventArgs());
+        }
+
+        private void SearchInputBox_OnLostFocus(object? sender, RoutedEventArgs e)
+        {
+            if (_resultPopup.IsOpen) _resultPopup.Close();
         }
 
         private async void OnWindowPositionChanged(object? sender, PixelPointEventArgs e)

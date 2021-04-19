@@ -10,18 +10,15 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
     {
         private readonly CheckBox _checkBox;
         private readonly Grid _grid;
+        public readonly string Text;
 
         public CheckBoxSearchResult(string text) : this()
         {
             ((TextBlock) _grid.Children.First(c => c is TextBlock)).Text = text;
+            Text = text;
         }
 
-        public CheckBoxSearchResult(Playlist playlist) : this()
-        {
-            Playlist = playlist;
-
-            ((TextBlock) _grid.Children.First(c => c is TextBlock)).Text = playlist.Title;
-        }
+        public CheckBoxSearchResult(Playlist playlist) : this(playlist.Title) { Playlist = playlist; }
 
         // ReSharper disable once MemberCanBePrivate.Global
         public CheckBoxSearchResult()
