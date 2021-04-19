@@ -74,7 +74,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             foreach (var item in items)
             {
                 itemList.Add(item);
-                _searchResultPanel.Children.Add(new CheckBoxSearchResult(item));
+                var checkBoxSearchResult = new CheckBoxSearchResult(item);
+                _searchResultPanel.Children.Add(checkBoxSearchResult);
+                checkBoxSearchResult.OnChange += SearchResult_OnClick;
             }
 
             _items = itemList;
@@ -86,6 +88,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void OnClick(object? sender, PointerPressedEventArgs e)
         {
+            if (_comboBoxGrid.IsEnabled && !_textGrid.IsEnabled) return;
             _textGrid.IsEnabled = false;
             _textGrid.IsVisible = false;
             _comboBoxGrid.IsEnabled = true;
@@ -96,11 +99,11 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void OnLostFocus(object? sender, RoutedEventArgs? e)
         {
-            if (_comboBoxGrid.IsFocused || _comboBoxGrid.Children.Any(c => c.IsFocused)) return;
-            var controlList = _searchResultPanel.Children.ToList();
-            while (controlList.Any())
-                if (controlList.Any(c => c.IsPointerOver)) return;
-                else controlList = controlList.Where(c => c is Panel).SelectMany(c => ((Panel) c).Children).ToList();
+            if (_textGrid.IsEnabled && !_comboBoxGrid.IsEnabled ||
+                _searchResultPanel.Children.OfType<CheckBoxSearchResult>().Any(c => c.IsPointerOver) ||
+                _comboBoxGrid.IsFocused || _comboBoxGrid.Children.Any(c => c.IsFocused))
+                return;
+
 
             _textGrid.IsEnabled = true;
             _textGrid.IsVisible = true;
@@ -109,10 +112,13 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _resultPopup.Close();
         }
 
-        private void SearchResult_OnClick(object? sender, PointerPressedEventArgs e)
+        private void SearchResult_OnClick(object sender, Playlist playlist)
         {
-            Console.WriteLine(sender + " clicked");
-            e.Handled = true;
+            var checkBoxSearchResult = (CheckBoxSearchResult) sender;
+            if (checkBoxSearchResult.IsChecked) SelectedItems.Add(playlist);
+            else SelectedItems.Remove(playlist);
+            _searchInputBox.Focus();
+            Console.WriteLine("Selected Playlists: " + string.Join(", ", SelectedItems.Select(p => p.Title)));
         }
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)
@@ -131,11 +137,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         {
             _searchInputBox.SelectAll();
             SearchInputBox_OnTextInput(null, new KeyEventArgs());
-        }
-
-        private void SearchInputBox_OnLostFocus(object? sender, RoutedEventArgs e)
-        {
-            if (_resultPopup.IsOpen) _resultPopup.Close();
         }
 
         private async void OnWindowPositionChanged(object? sender, PixelPointEventArgs e)

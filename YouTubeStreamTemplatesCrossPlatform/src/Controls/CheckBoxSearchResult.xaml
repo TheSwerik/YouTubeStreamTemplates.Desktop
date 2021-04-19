@@ -18,7 +18,8 @@
     </UserControl.Styles>
     <Grid ColumnDefinitions="*,Auto" x:Name="Grid" PointerPressed="InputElement_OnPointerPressed">
         <TextBlock HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
-        <CheckBox Grid.Column="1" x:Name="CheckBox" Background="{DynamicResource ThemeBackgroundLowBrush}" />
+        <CheckBox Grid.Column="1" x:Name="CheckBox" Background="{DynamicResource ThemeBackgroundLowBrush}"
+                  Click="CheckBox_OnClick" />
         <!-- TODO fix highlight behind checkbox -->
     </Grid>
 </UserControl>

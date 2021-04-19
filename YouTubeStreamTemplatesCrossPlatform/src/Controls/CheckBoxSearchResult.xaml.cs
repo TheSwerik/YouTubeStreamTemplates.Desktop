@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using YouTubeStreamTemplates.LiveStreaming;
 
@@ -30,12 +32,15 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private Playlist Playlist { get; }
         public bool IsChecked => _checkBox.IsChecked ?? false;
+        public event EventHandler<Playlist> OnChange;
 
         private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
         {
             var checkbox = (CheckBox) _grid.Children.First(c => c is CheckBox);
             checkbox.IsChecked = !checkbox.IsChecked;
-            // TODO raise event again and add/remove playlist from template
+            OnChange.Invoke(this, Playlist);
         }
+
+        private void CheckBox_OnClick(object sender, RoutedEventArgs e) { OnChange.Invoke(this, Playlist); }
     }
 }

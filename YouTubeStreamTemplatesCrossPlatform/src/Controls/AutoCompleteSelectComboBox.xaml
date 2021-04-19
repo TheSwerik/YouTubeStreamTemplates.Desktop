@@ -14,8 +14,7 @@
             <Grid x:Name="ComboBoxGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   LostFocus="OnLostFocus">
                 <TextBox x:Name="SearchInputBox" Text="Ass" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                         TextAlignment="Left" KeyUp="SearchInputBox_OnTextInput"
-                         GotFocus="SearchInputBox_OnGotFocus" LostFocus="SearchInputBox_OnLostFocus" />
+                         TextAlignment="Left" KeyUp="SearchInputBox_OnTextInput" GotFocus="SearchInputBox_OnGotFocus" />
                 <Popup x:Name="ResultPopup" Topmost="True" Width="{Binding #ComboBoxGrid.Bounds.Width}"
                        PlacementMode="AnchorAndGravity"
                        PlacementGravity="TopRight"
