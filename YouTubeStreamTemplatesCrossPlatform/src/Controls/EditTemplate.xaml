@@ -8,10 +8,11 @@
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Runtime"
              xmlns:templates="clr-namespace:YouTubeStreamTemplates.Templates;assembly=YouTubeStreamTemplates"
+             xmlns:liveStreaming="clr-namespace:YouTubeStreamTemplates.LiveStreaming;assembly=YouTubeStreamTemplates"
              KeyUp="OnHotKeyPressed">
     <Border BorderThickness="0,0,1,0" CornerRadius="0">
         <Grid x:Name="ContentGrid" Margin="0,0,50,0"
-              RowDefinitions="*,*,*,*,*,*,*,*,10*,*,*,10*,*,*,*,2*" ColumnDefinitions="*,10*,*">
+              RowDefinitions="*,*,*,*,*,*,*,*,10*,*,*,10*,*,*,*,*,*,*,2*" ColumnDefinitions="*,10*,*">
             <TextBlock Grid.Row="1" Grid.Column="1" Text="Template" />
             <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="5*,*">
                 <controls:GenericComboBox x:TypeArguments="templates:Template"
@@ -62,6 +63,20 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </controls:GenericComboBox>
+
+
+            <Grid Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" ColumnDefinitions="*,*,*" RowDefinitions="*,*">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Playlist" />
+                <!-- x:TypeArguments="liveStreaming:Playlist"  -->
+                <controls:AutoCompleteSelectComboBox Grid.Row="1" Grid.Column="0"
+                                                     x:Name="PlaylistComboBox" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Stream Visibility" />
+                <controls:GenericComboBox Grid.Row="1" Grid.Column="1"
+                                          x:TypeArguments="liveStreaming:Visibility" x:Name="StreamVisibilityComboBox" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="VOD Visibility" />
+                <controls:GenericComboBox Grid.Row="1" Grid.Column="2"
+                                          x:TypeArguments="liveStreaming:Visibility" x:Name="VodVisibilityComboBox" />
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

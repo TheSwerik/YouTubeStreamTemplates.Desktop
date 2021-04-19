@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
@@ -52,6 +51,8 @@ namespace YouTubeStreamTemplates.LiveStreaming
         /// </summary>
         public Dictionary<string, string> Category { get; }
 
+        public List<Playlist> Playlists { get; }
+
         #endregion
 
         #region Initialisation
@@ -66,6 +67,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             if (ytService == null) throw new CouldNotCreateServiceException();
             _instance = new LiveStreamService(ytService);
             await _instance.InitCategories();
+            await _instance.InitPlaylists();
             _instance.AutoUpdate();
             IsInitialized = true;
             _coolDownTimer.Reset();
@@ -106,6 +108,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         {
             _youTubeService = youTubeService;
             Category = new Dictionary<string, string>();
+            Playlists = new List<Playlist>();
         }
 
         private async Task InitCategories()
@@ -122,6 +125,49 @@ namespace YouTubeStreamTemplates.LiveStreaming
             Logger.Debug("Found Categories: {0}", string.Join(", ", Category));
         }
 
+        private async Task InitPlaylists()
+        {
+            var playlists = new Dictionary<string, string>();
+            var page = "";
+            while (true)
+            {
+                var request = _youTubeService.Playlists.List("snippet");
+                request.Mine = true;
+                request.PageToken = page;
+                request.MaxResults = 50;
+                request.Hl = SettingsService.GetBool(Setting.ForceEnglish)
+                                 ? CultureInfo.GetCultureInfo("en_us").IetfLanguageTag
+                                 : CultureInfo.InstalledUICulture.IetfLanguageTag;
+                var result = await request.ExecuteAsync();
+                foreach (var playlist in result.Items) playlists.Add(playlist.Id, playlist.Snippet.Title);
+                if (result.NextPageToken == null) break;
+                page = result.NextPageToken;
+            }
+
+            Logger.Debug("Found {0} Playlists. Creating Playlist-Objects...", playlists.Count);
+            Playlists.Clear();
+            foreach (var (id, title) in playlists)
+            {
+                var videos = new List<PlaylistItem>();
+                page = "";
+                while (true)
+                {
+                    var listRequest = _youTubeService.PlaylistItems.List("id,snippet");
+                    listRequest.PageToken = page;
+                    listRequest.MaxResults = 50;
+                    listRequest.PlaylistId = id;
+                    var listResult = await listRequest.ExecuteAsync();
+                    videos.AddRange(listResult.Items);
+                    if (listResult.NextPageToken == null) break;
+                    page = listResult.NextPageToken;
+                }
+
+                Playlists.Add(new Playlist(id, title, videos.ToDistinctDictionary()));
+            }
+
+            Logger.Debug("Found Playlists: {0}", string.Join(", ", Playlists));
+        }
+
         public void Dispose() { _youTubeService.Dispose(); }
 
         #endregion
@@ -133,6 +179,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         private async Task<LiveBroadcast> GetCurrentBroadcast()
         {
             var request = _youTubeService.LiveBroadcasts.List("id,snippet,contentDetails,status");
+            request.MaxResults = 50; // should never be > 50, should realistically never be > 3
             request.BroadcastType = LiveBroadcastsResource.ListRequest.BroadcastTypeEnum.All;
             // TODO Change back to Active:
             // request.BroadcastStatus = LiveBroadcastsResource.ListRequest.BroadcastStatusEnum.Active;
@@ -152,16 +199,8 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         private async Task SetThumbnail(string videoId, string filePath)
         {
-            Stream fileStream;
-            if (filePath.StartsWith("http"))
-            {
-                using var webClient = new WebClient();
-                fileStream = webClient.OpenRead(filePath);
-            }
-            else
-            {
-                fileStream = File.OpenRead(filePath);
-            }
+            if (filePath.StartsWith("http")) filePath = await ImageHelper.GetImagePathAsync(filePath, false, videoId);
+            await using var fileStream = File.OpenRead(filePath);
 
             if (fileStream.Length > LiveStream.MaxThumbnailSize)
                 throw new ThumbnailTooLargeException(fileStream.Length);
@@ -177,6 +216,44 @@ namespace YouTubeStreamTemplates.LiveStreaming
                 throw new YouTubeStreamTemplateException($"Error happened:\n{response.Exception.Message}");
         }
 
+        private async Task AddVideoToPlaylist(string videoId, string playlistId)
+        {
+            Logger.Debug($"Adding {videoId} to PLaylist: {playlistId}...");
+            var newPlaylistItem = new PlaylistItem
+                                  {
+                                      Snippet = new PlaylistItemSnippet
+                                                {
+                                                    PlaylistId = playlistId,
+                                                    ResourceId = new ResourceId
+                                                                 {
+                                                                     Kind = "youtube#video",
+                                                                     VideoId = videoId
+                                                                 }
+                                                }
+                                  };
+            await _youTubeService.PlaylistItems.Insert(newPlaylistItem, "snippet").ExecuteAsync();
+            Logger.Debug($"Added {videoId} to PLaylist: {playlistId}.");
+        }
+
+        private async Task RemoveVideoFromPlaylist(string playlistItemId, string playlistId)
+        {
+            Logger.Debug($"Removing {playlistItemId} from PLaylist: {playlistId}...");
+            var newPlaylistItem = new PlaylistItem
+                                  {
+                                      Snippet = new PlaylistItemSnippet
+                                                {
+                                                    PlaylistId = playlistId,
+                                                    ResourceId = new ResourceId
+                                                                 {
+                                                                     Kind = "youtube#video",
+                                                                     VideoId = playlistItemId
+                                                                 }
+                                                }
+                                  };
+            await _youTubeService.PlaylistItems.Delete(playlistItemId).ExecuteAsync();
+            Logger.Debug($"Removed {playlistItemId} from PLaylist: {playlistId}.");
+        }
+
         #endregion
 
         #region Public Methods
@@ -190,7 +267,9 @@ namespace YouTubeStreamTemplates.LiveStreaming
             videoRequest.Id = liveStream.Id;
             var videos = await videoRequest.ExecuteAsync();
             if (videos.Items == null || videos.Items.Count <= 0) throw new NoVideoFoundException(liveStream.Id);
-            return videos.Items[0].ToLiveStream();
+            var result = videos.Items[0].ToLiveStream();
+            result.PlaylistIDs = Playlists.Where(p => p.Videos.ContainsKey(result.Id)).Select(p => p.Id).ToList();
+            return result;
         }
 
         public async Task UpdateStream(Template template)
@@ -213,7 +292,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                 return;
             }
 
-            _coolDownTimer.StartBlock();
+            _coolDownTimer.Start(20000);
             if (CurrentLiveStream == null) return;
             var stream = CurrentLiveStream;
             var onlySaved = SettingsService.GetBool(Setting.OnlyUpdateSavedTemplates);
@@ -225,6 +304,16 @@ namespace YouTubeStreamTemplates.LiveStreaming
             {
                 await SetThumbnail(stream.Id, template.Thumbnail.Source);
                 template.Thumbnail.Result = await ImageHelper.GetStreamThumbnailBytesAsync(stream.Id);
+            }
+
+            if (template.PlaylistIDs.Count != stream.PlaylistIDs.Count ||
+                template.PlaylistIDs.Any(p => !stream.PlaylistIDs.Contains(p)))
+            {
+                foreach (var playlist in template.PlaylistIDs.Where(p => !stream.PlaylistIDs.Contains(p)))
+                    await AddVideoToPlaylist(stream.Id, playlist);
+                foreach (var playlist in stream.PlaylistIDs.Where(p => !template.PlaylistIDs.Contains(p)))
+                    await RemoveVideoFromPlaylist(Playlists.Select(p => p.Videos[stream.Id]).First(), playlist);
+                await InitPlaylists();
             }
 
             _coolDownTimer.ReStart();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Google.Apis.YouTube.v3.Data;
 
 namespace YouTubeStreamTemplates.LiveStreaming
@@ -72,6 +73,13 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        StartTime = video.LiveStreamingDetails?.ScheduledStartTime ?? DateTime.MinValue,
                        EndTime = video.LiveStreamingDetails?.ScheduledEndTime ?? DateTime.MinValue
                    };
+        }
+
+        public static Dictionary<string, string> ToDistinctDictionary(this IEnumerable<PlaylistItem> items)
+        {
+            return items.GroupBy(p => p.Snippet.ResourceId.VideoId)
+                        .Select(g => g.First())
+                        .ToDictionary(i => i.Snippet.ResourceId.VideoId, i => i.Id);
         }
     }
 }
