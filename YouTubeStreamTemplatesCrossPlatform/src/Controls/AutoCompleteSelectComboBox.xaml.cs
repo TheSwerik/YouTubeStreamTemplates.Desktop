@@ -132,7 +132,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             else SelectedItems.Remove(playlist);
             _searchInputBox.Focus();
             OnChanged.Invoke(this, null);
-            Console.WriteLine("Selected PlaylistIDs: " + string.Join(", ", SelectedItems.Select(p => p.Title)));
         }
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)
