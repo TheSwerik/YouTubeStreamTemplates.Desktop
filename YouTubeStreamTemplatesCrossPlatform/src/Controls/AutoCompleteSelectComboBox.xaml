@@ -8,12 +8,12 @@
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*" ColumnDefinitions="*">
             <Grid x:Name="TextGrid" Cursor="Hand" PointerPressed="OnClick" RowDefinitions="*,10*,*"
                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <TextBlock Grid.Row="1" Text="2 Selected"
+                <TextBlock Grid.Row="1" x:Name="SelectedNumberText"
                            HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Left" />
             </Grid>
             <Grid x:Name="ComboBoxGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   LostFocus="OnLostFocus">
-                <TextBox x:Name="SearchInputBox" Text="Ass" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                <TextBox x:Name="SearchInputBox" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                          TextAlignment="Left" KeyUp="SearchInputBox_OnTextInput" GotFocus="SearchInputBox_OnGotFocus" />
                 <Popup x:Name="ResultPopup" Topmost="True" Width="{Binding #ComboBoxGrid.Bounds.Width}"
                        PlacementMode="AnchorAndGravity"

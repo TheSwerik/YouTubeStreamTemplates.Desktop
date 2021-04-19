@@ -19,6 +19,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly Popup _resultPopup;
         private readonly TextBox _searchInputBox;
         private readonly StackPanel _searchResultPanel;
+        private readonly TextBlock _selectedNumberText;
 
         private readonly Stopwatch _stopwatch;
         private readonly Grid _textGrid;
@@ -33,6 +34,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _searchInputBox = this.Find<TextBox>("SearchInputBox");
             _resultPopup = this.Find<Popup>("ResultPopup");
             _searchResultPanel = this.Find<StackPanel>("ResultStackPanel");
+            _selectedNumberText = this.Find<TextBlock>("SelectedNumberText");
             _stopwatch = new Stopwatch();
             _items = new List<Playlist>();
             SelectedItems = new List<Playlist>();
@@ -55,6 +57,13 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var allResults = _searchResultPanel.Children
                                                .OfType<CheckBoxSearchResult>()
                                                .ToList();
+
+            if (string.IsNullOrWhiteSpace(_searchInputBox.Text))
+            {
+                allResults.Sort((c1, c2) => string.CompareOrdinal(c1.Text, c2.Text));
+                return (allResults, allResults.Count);
+            }
+
             var results = new List<CheckBoxSearchResult>();
             foreach (var token in _searchInputBox.Text.Split(' '))
                 results.AddRange(allResults
@@ -95,6 +104,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                                                                        .Where(c => c.Playlist.Equals(item)))
                     checkBoxSearchResult.Check();
             }
+
+            _selectedNumberText.Text = SelectedItems.Count + " Selected";
         }
 
         #region EventHandlers
@@ -131,6 +142,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             if (checkBoxSearchResult.IsChecked) SelectedItems.Add(playlist);
             else SelectedItems.Remove(playlist);
             _searchInputBox.Focus();
+            _selectedNumberText.Text = SelectedItems.Count + " Selected";
             OnChanged.Invoke(this, null);
         }
 
