@@ -309,10 +309,12 @@ namespace YouTubeStreamTemplates.LiveStreaming
             if (template.PlaylistIDs.Count != stream.PlaylistIDs.Count ||
                 template.PlaylistIDs.Any(p => !stream.PlaylistIDs.Contains(p)))
             {
-                foreach (var playlist in template.PlaylistIDs.Where(p => !stream.PlaylistIDs.Contains(p)))
-                    await AddVideoToPlaylist(stream.Id, playlist);
-                foreach (var playlist in stream.PlaylistIDs.Where(p => !template.PlaylistIDs.Contains(p)))
-                    await RemoveVideoFromPlaylist(Playlists.Select(p => p.Videos[stream.Id]).First(), playlist);
+                foreach (var playlistID in template.PlaylistIDs.Where(p => !stream.PlaylistIDs.Contains(p)))
+                    await AddVideoToPlaylist(stream.Id, playlistID);
+                foreach (var playlistID in stream.PlaylistIDs.Where(p => !template.PlaylistIDs.Contains(p)))
+                    await RemoveVideoFromPlaylist(Playlists.Where(p => p.Id.Equals(playlistID))
+                                                           .Select(p => p.Videos[stream.Id]).Single(),
+                                                  playlistID);
                 await InitPlaylists();
             }
 
