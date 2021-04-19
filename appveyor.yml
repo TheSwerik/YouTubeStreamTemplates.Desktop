@@ -15,7 +15,7 @@ before_build:
 
 build:
   verbosity: minimal
-  project: $(project_name).sln
+  project: $(application_name).sln
 
 for:
   - branches:
