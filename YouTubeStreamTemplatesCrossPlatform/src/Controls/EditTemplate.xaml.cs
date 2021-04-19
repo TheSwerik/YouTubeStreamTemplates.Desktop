@@ -40,7 +40,8 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                        Description = _descriptionTextBox.Text,
                        Category = _categoryComboBox.SelectedItem.Key,
                        Tags = _tagEditor.Tags.ToList(),
-                       Thumbnail = _thumbnail
+                       Thumbnail = _thumbnail,
+                       PlaylistIDs = _playlistComboBox.SelectedItems.Select(p => p.Id).ToList()
                    };
         }
 
