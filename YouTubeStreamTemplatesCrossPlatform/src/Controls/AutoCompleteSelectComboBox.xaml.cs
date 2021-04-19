@@ -117,7 +117,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)
         {
-            Console.WriteLine("HALLO TES TEST");
             if (!_resultPopup.IsOpen) _resultPopup.Open();
             var (sortedResults, matching) = GetSortedResults();
             _searchResultPanel.Children.Clear();
