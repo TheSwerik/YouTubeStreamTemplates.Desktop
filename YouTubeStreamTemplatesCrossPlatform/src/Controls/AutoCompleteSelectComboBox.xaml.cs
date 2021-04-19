@@ -121,14 +121,14 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             var (sortedResults, matching) = GetSortedResults();
             _searchResultPanel.Children.Clear();
             _searchResultPanel.Children.AddRange(sortedResults);
-            if (matching > 20) matching = 20;
+            if (matching > 40) matching = 40;
             foreach (var checkBoxSearchResult in sortedResults.Take(matching)) checkBoxSearchResult.IsVisible = true;
             foreach (var checkBoxSearchResult in sortedResults.Skip(matching)) checkBoxSearchResult.IsVisible = false;
+            if (matching <= 0) _resultPopup.Close();
         }
 
         private void SearchInputBox_OnGotFocus(object? sender, GotFocusEventArgs e)
         {
-            // _searchInputBox.CaretIndex = int.MaxValue;
             _searchInputBox.SelectAll();
             SearchInputBox_OnTextInput(null, new KeyEventArgs());
         }
