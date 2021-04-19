@@ -76,7 +76,7 @@ namespace YouTubeStreamTemplates.Templates
             if (index < 0) Templates.Add(template);
             else Templates[index] = template;
 
-            var path = SettingsService.Settings[Setting.SavePath] + $"/{template.Id}.tlpt";
+            var path = SettingsService.Settings[Setting.SavePath] + $"/{template.Id}.tplt";
             await using var file = File.CreateText(path);
 
             await file.WriteLineAsync($"Name: {template.Name}");
