@@ -1,23 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using YouTubeStreamTemplatesCrossPlatform.Entities;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
-    public class TagEditor : UserControl, IDisposable
+    public class TagEditor : UserControl
     {
         private readonly TextBox _inputTextBox;
-        private readonly IDisposable _subscription = null!;
+        private readonly bool _isReadOnly;
         private readonly WrapPanel _tagsPanel;
-        private ObservableLiveStream SelectedLivestream { get; } = null!;
+        public EventHandler OnChanged;
 
-        private void InputTextBox_OnTextInput(object? sender, TextInputEventArgs e) { Console.WriteLine(e.Text); }
+        public List<TagCard> TagCards => _tagsPanel.Children.OfType<TagCard>().ToList();
+        public HashSet<string> Tags { get; set; }
 
         #region EventListener
 
@@ -29,26 +29,24 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             InvokeOnRender(_inputTextBox.Focus);
         }
 
-        private void InputTextBox_OnTextEntered(object? sender, AvaloniaPropertyChangedEventArgs e)
+        public void Remove(TagCard tagCard)
         {
-            if (!e.Property.Name.Equals("Text") || e.NewValue.ToString() == null) return;
-            var tags = e.NewValue.ToString()!.Split(",");
-            for (var i = 0; i < tags.Length - 1; i++) InputTextBox_FinishWriting(tags[i]);
-            _inputTextBox.Text = tags[^1];
-            InvokeOnRender(_inputTextBox.Focus);
+            Tags.Remove(tagCard.Text);
+            OnChanged.Invoke(this, new EventArgs());
+            RefreshTags();
         }
 
         private void InputTextBox_FinishWriting(string? text = null)
         {
+            if (_inputTextBox.Text == null) return;
             text ??= _inputTextBox.Text.Replace(",", "");
-            if (string.IsNullOrWhiteSpace(text) || SelectedLivestream.CurrentLiveStream == null) return;
+            if (string.IsNullOrWhiteSpace(text)) return;
             if (text.Length > 100) throw new ArgumentException("text is too long");
-            if (string.Join(",", SelectedLivestream.CurrentLiveStream.Tags).Length + text.Length + 1 > 500)
-                throw new ArgumentException("tags are too long");
-
-            SelectedLivestream.CurrentLiveStream.Tags.Add(text);
-            SelectedLivestream.OnNext();
+            if (string.Join(",", Tags).Length + text.Length >= 500) throw new ArgumentException("tags are too long");
+            Tags.Add(text);
             _inputTextBox.Text = "";
+            OnChanged.Invoke(this, new EventArgs());
+            RefreshTags();
         }
 
         #endregion
@@ -61,47 +59,33 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             AvaloniaXamlLoader.Load(this);
             _tagsPanel = this.Find<WrapPanel>("TagsPanel")!;
             _inputTextBox = this.Find<TextBox>("InputTextBox")!;
-            _inputTextBox.PropertyChanged += InputTextBox_OnTextEntered;
+            Tags = new HashSet<string>();
         }
 
-        public TagEditor(ObservableLiveStream selectedLivestream) : this()
+        public TagEditor(bool isReadOnly = false) : this()
         {
-            SelectedLivestream = selectedLivestream;
-            _subscription = SelectedLivestream.Subscribe(_ => RefreshTags());
+            _isReadOnly = isReadOnly;
+            _inputTextBox.IsVisible = !isReadOnly;
         }
 
-        private void RefreshTags()
-
+        public void RefreshTags()
         {
-            var stream = SelectedLivestream.CurrentLiveStream;
-            if (stream == null) return;
-
-            var controls = _tagsPanel.Children;
+            var tags = Tags.ToHashSet();
             InvokeOnRender(() =>
                            {
+                               var controls = _tagsPanel.Children;
                                controls.Clear();
-                               controls.AddRange(stream.Tags.Select(tag => new TagCard(tag, SelectedLivestream)));
+                               controls.AddRange(tags.Select(tag => new TagCard(this, tag, _isReadOnly)));
                                InvokeOnRender(ResizeInputBox);
                                controls.Add(_inputTextBox);
                            });
         }
 
-        #region Dispose
-
-        public void Dispose()
+        public void RefreshTags(IEnumerable<string> tags)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Tags = tags.ToHashSet();
+            RefreshTags();
         }
-
-        private void Dispose(bool disposing)
-        {
-            Console.WriteLine("TEST");
-            if (!disposing) return;
-            _subscription.Dispose();
-        }
-
-        #endregion
 
         #endregion
 
@@ -110,9 +94,10 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private void ResizeInputBox()
         {
             var maxWidth = _tagsPanel.Bounds.Width;
-            var allWithoutTextBox = _tagsPanel.Children.Where(c => c is not TextBox).ToList();
-            var highestY = allWithoutTextBox.Max(c => c.Bounds.Y);
-            var lineWidth = allWithoutTextBox.Where(c => Math.Abs(c.Bounds.Y - highestY) < 1).Sum(c => c.Bounds.Width);
+            var allTags = _tagsPanel.Children.Where(c => c is not TextBox).ToList();
+            var highestY = allTags.Max(c => c.Bounds.Y);
+            var lineWidth = allTags.Where(c => Math.Abs(c.Bounds.Y - highestY) < 1)
+                                   .Sum(c => c.Bounds.Width + c.Margin.Left + c.Margin.Right);
             var desiredWidth = maxWidth - lineWidth;
             _inputTextBox.Width = desiredWidth < _inputTextBox.MinWidth ? maxWidth : desiredWidth;
         }

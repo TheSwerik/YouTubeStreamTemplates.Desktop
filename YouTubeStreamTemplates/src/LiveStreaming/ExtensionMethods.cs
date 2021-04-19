@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
+using System.Linq;
 using Google.Apis.YouTube.v3.Data;
 
 namespace YouTubeStreamTemplates.LiveStreaming
@@ -13,13 +14,26 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Id = liveBroadcast.Id,
                        Title = liveBroadcast.Snippet.Title,
                        Description = liveBroadcast.Snippet.Description,
-                       Thumbnails = liveBroadcast.Snippet.Thumbnails,
-                       StartTime = liveBroadcast.Snippet.ActualStartTime == null
-                                       ? DateTime.MinValue
-                                       : DateTime.Parse(liveBroadcast.Snippet.ActualStartTime),
-                       EndTime = liveBroadcast.Snippet.ActualEndTime == null
-                                     ? DateTime.MinValue
-                                     : DateTime.Parse(liveBroadcast.Snippet.ActualEndTime)
+                       //TODO Change to Actual:
+                       StartTime = liveBroadcast.Snippet.ScheduledStartTime ?? DateTime.MinValue,
+                       EndTime = liveBroadcast.Snippet.ScheduledEndTime ?? DateTime.MinValue
+                       // StartTime = liveBroadcast.Snippet.ActualStartTime ?? DateTime.MinValue,
+                       // EndTime = liveBroadcast.Snippet.ActualEndTime ?? DateTime.MinValue
+                   };
+        }
+
+        public static LiveBroadcast ToLiveBroadcast(this LiveStream liveStream)
+        {
+            return new()
+                   {
+                       Id = liveStream.Id,
+                       Kind = "youtube#liveBroadcast",
+                       Snippet = new LiveBroadcastSnippet
+                                 {
+                                     Title = liveStream.Title,
+                                     Description = liveStream.Description,
+                                     ScheduledStartTime = liveStream.StartTime.ToUniversalTime()
+                                 }
                    };
         }
 
@@ -32,21 +46,40 @@ namespace YouTubeStreamTemplates.LiveStreaming
                                  {
                                      Title = liveStream.Title,
                                      Description = liveStream.Description,
-                                     CategoryId = liveStream.Category.ToString(),
-                                     Thumbnails = liveStream.Thumbnails,
+                                     CategoryId = liveStream.Category,
                                      Tags = liveStream.Tags,
-                                     DefaultLanguage = liveStream.Language,
-                                     DefaultAudioLanguage = liveStream.Language
+                                     DefaultLanguage = liveStream.TextLanguage,
+                                     DefaultAudioLanguage = liveStream.AudioLanguage
                                  },
-                       Localizations = liveStream.Localizations,
                        LiveStreamingDetails = new VideoLiveStreamingDetails
                                               {
-                                                  ScheduledStartTime = liveStream.StartTime.ToUniversalTime()
-                                                      .ToString(CultureInfo.InvariantCulture),
+                                                  ScheduledStartTime = liveStream.StartTime.ToUniversalTime(),
                                                   ScheduledEndTime = liveStream.EndTime.ToUniversalTime()
-                                                                               .ToString(CultureInfo.InvariantCulture)
                                               }
                    };
+        }
+
+        public static LiveStream ToLiveStream(this Video video)
+        {
+            return new()
+                   {
+                       Id = video.Id,
+                       Title = video.Snippet.Title,
+                       Description = video.Snippet.Description,
+                       Category = video.Snippet.CategoryId,
+                       Tags = (List<string>) (video.Snippet.Tags ?? new List<string>()),
+                       TextLanguage = video.Snippet.DefaultLanguage,
+                       AudioLanguage = video.Snippet.DefaultAudioLanguage,
+                       StartTime = video.LiveStreamingDetails?.ScheduledStartTime ?? DateTime.MinValue,
+                       EndTime = video.LiveStreamingDetails?.ScheduledEndTime ?? DateTime.MinValue
+                   };
+        }
+
+        public static Dictionary<string, string> ToDistinctDictionary(this IEnumerable<PlaylistItem> items)
+        {
+            return items.GroupBy(p => p.Snippet.ResourceId.VideoId)
+                        .Select(g => g.First())
+                        .ToDictionary(i => i.Snippet.ResourceId.VideoId, i => i.Id);
         }
     }
 }

@@ -1,0 +1,61 @@
+﻿environment:
+  my_version_number: 0.9.0          # DONT FORGET TO CHANGE IS IN THE ISS FILE
+  application_name: YouTubeStreamTemplates         # DONT FORGET TO CHANGE IS IN THE ISS FILE
+  project_name: YouTubeStreamTemplatesCrossPlatform
+
+version: $(my_version_number).{build}
+
+skip_tags: true
+
+configuration: Release
+
+before_build:
+  - 'curl -H "Authorization: token %download_token%" -H "Accept: application/vnd.github.v3.raw" -O -L "%download_link%/developer-certificate.pfx"'
+  - ps: nuget restore -Verbosity quiet
+
+build:
+  verbosity: minimal
+  project: $(project_name).sln
+
+for:
+  - branches:
+      only:
+        - master
+
+    dotnet_csproj:
+      patch: true
+      file: '**\*.csproj'
+      version: '$(my_version_number)'
+      package_version: '$(my_version_number)'
+      assembly_version: '$(my_version_number)'
+      file_version: '$(my_version_number)'
+      informational_version: '$(my_version_number)'
+
+    after_test:
+      - ps: dotnet publish "$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64   --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      - ps: dotnet publish "$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86   --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      - ps: dotnet publish "$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\linux -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      - ps: dotnet publish "$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\osx   -v:m -r:osx-x64   --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      - '"C:\Program Files (x86)\Inno Setup 6\iscc.exe" "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe$q sign /f %APPVEYOR_BUILD_FOLDER%/developer-certificate.pfx /t http://timestamp.comodoca.com/authenticode /p %cert_password% /fd sha256 $f" /qp "Inno Config.iss"'
+      - ps: tar -C Publish --exclude='bin/64bit' --exclude=bin/32bit --exclude=bin/osx -czf "Installer\$($env:application_name) Linux.tar.gz" bin
+      - ps: 7z a "Installer\$($env:application_name) MacOS.zip" .\Publish\* -xr!bin\64bit -xr!bin\32bit -xr!bin\linux
+
+    artifacts:
+      - path: /Installer/$(application_name).exe
+        name: WinInstaller
+      - path: /Installer/$(application_name) MacOS.zip
+        name: MacInstaller
+      - path: /Installer/$(application_name) Linux.tar.gz
+        name: LinuxInstaller
+
+    deploy:
+      - provider: GitHub
+        release: $(my_version_number)
+        auth_token: # encrypted token:
+          secure: HESVuhwKdUbPpbBsQrWslB7GYNy5r03/MN/enpu7UWbY886bOE+EpbEFwAVMrtLO #REPLACE WITH TOKEN
+        artifact: WinInstaller, MacInstaller, LinuxInstaller
+        draft: false
+        prerelease: false
+        force_update: false
+        on:
+          branch: master

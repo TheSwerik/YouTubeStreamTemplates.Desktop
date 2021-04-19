@@ -3,16 +3,16 @@ using YouTubeStreamTemplates.LiveStreaming;
 
 namespace YouTubeStreamTemplates.Templates
 {
-    public class Template : LiveStream
+    public record Template : LiveStream
     {
         public Template(string name)
         {
             Id = Guid.NewGuid().ToString();
             Name = name;
-            ThumbnailsPath = "";
+            Thumbnail = new Thumbnail();
         }
 
         public string Name { get; set; }
-        public string ThumbnailsPath { get; set; }
+        public Thumbnail Thumbnail { get; set; }
     }
 }

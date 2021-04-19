@@ -5,6 +5,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
         <!--        <TargetFramework>net5.0-windows</TargetFramework>-->
+        <ProjectGuid>{FFEEFFF0-611A-4302-A17C-5F38A8D163B1}</ProjectGuid>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,14 +24,23 @@
         <Compile Update="src\Windows\Tabs\Home.xaml.cs">
             <DependentUpon>Home.xaml</DependentUpon>
         </Compile>
+        <Compile Update="src\Controls\AutoCompleteSelectComboBox.xaml.cs">
+            <DependentUpon>AutoCompleteSelectComboBox.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.9.12"/>
-        <PackageReference Include="Avalonia.Desktop" Version="0.9.12"/>
+        <PackageReference Include="Avalonia" Version="0.10.0"/>
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.0"/>
+        <PackageReference Include="NLog" Version="4.7.9"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\YouTubeStreamTemplates\YouTubeStreamTemplates.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
+        <None Include="nlog.release.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Release' " Link="nlog.config"/>
     </ItemGroup>
 </Project>
