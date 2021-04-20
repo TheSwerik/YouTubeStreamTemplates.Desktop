@@ -35,7 +35,7 @@ jobs:
       run: |
         echo $env.PROJECT_NAME
         echo ${{ env.PROJECT_NAME }}
-        echo "$($env.PROJECT_NAME)\$env.PROJECT_NAME.csproj"
+        echo ${{ env.PROJECT_NAME }}"\${{ env.PROJECT_NAME }}.csproj"
 #      run: echo $env:FILENAME)
       
 #    - name: Publish 64bit
