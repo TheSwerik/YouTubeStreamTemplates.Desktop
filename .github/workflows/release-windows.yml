@@ -21,7 +21,7 @@ jobs:
       - name: Environment Variables
         run: |
           echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
+          echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
 
       - name: Change Project Variables
         run: |
@@ -66,4 +66,4 @@ jobs:
           prerelease: false
           #        automatic_release_tag: "latest"
           title: $VERSION
-          files: Installer/YouTube StreamTemplates.exe
+          files: Installer/$FILENAME.exe
