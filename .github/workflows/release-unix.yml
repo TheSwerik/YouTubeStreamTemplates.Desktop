@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
+      FILENAME: YouTubeStreamTemplates
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +22,7 @@ jobs:
       - name: Environment Variables
         run: |
           echo "VERSION_NUMBER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
+          echo "FILENAME=${{ env.FILENAME }}" >> $GITHUB_ENV
 
       - name: Change Project Variables
         run: |
@@ -33,13 +34,13 @@ jobs:
       #TODO create/ copy Makefile
 
       - name: Zip Linux
-        run: tar -C Publish/linux --exclude=osx -czf "Installer/$FILENAME.tar.gz" .
+        run: tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Publish MacOS
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: Zip MacOS
-        run: 7z a "Installer/$FILENAME.zip" ./Publish/* -xr!linux
+        run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux
 
       - name: Test
         run: |
@@ -77,5 +78,5 @@ jobs:
           #        automatic_release_tag: "latest"
           title: $VERSION_NUMBER
           files: |
-            ./Installer/$FILENAME mac.zip
-            ./Installer/$FILENAME linux.tar.gz
+            ./Installer/$FILENAME.zip
+            ./Installer/$FILENAME.tar.gz
