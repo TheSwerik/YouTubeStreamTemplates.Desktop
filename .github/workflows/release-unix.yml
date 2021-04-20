@@ -35,14 +35,16 @@ jobs:
 
       - name: Zip Linux
         run: |
-          mkdir Installer
+          mkdir -d Installer
           tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Publish MacOS
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: Zip MacOS
-        run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux
+        run: |
+          mkdir -d Installer
+          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
 
       - name: Test
         run: |
