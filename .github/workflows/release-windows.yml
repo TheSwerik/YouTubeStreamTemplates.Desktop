@@ -31,7 +31,7 @@ jobs:
 #        Get-Content -Path "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
               
     - name: Test
-      run: echo PROJECT_NAME
+      run: echo $PROJECT_NAME
 #      run: echo "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
 #      run: echo $env:FILENAME)
       
