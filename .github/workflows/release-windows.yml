@@ -2,12 +2,13 @@ name: release windows
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
+    branches: [ main ]
+#    tags:
+#      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
 jobs:      
   release:
-    if: github.event.base_ref == 'refs/heads/main'
+#    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
@@ -20,9 +21,16 @@ jobs:
       run: |
         echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "FILENAME=de.swerik.template.universal-${VERSION}.tgz" >> $GITHUB_ENV
+        echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
               
     - name: Publish 64bit
-      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj;OutputType=WinExe;DisableWinExeOutputInference=false" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      run: |
+#        sed -i 's/original/new/g' file.txt
+             Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
+             (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
+             (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
+             Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
+             dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj;OutputType=WinExe;DisableWinExeOutputInference=false" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
     
     - name: Publish 32bit
       run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj;OutputType=WinExe;DisableWinExeOutputInference=false" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
