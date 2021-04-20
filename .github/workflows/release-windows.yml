@@ -21,7 +21,7 @@ jobs:
       run: |
         echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
-        $env:PROJECT_NAME="YouTubeStreamTemplatesCrossPlatform"
+        echo "PROJECT_NAME_ABC=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
 
 #    - name: Change Project Variables
 #      run: |
@@ -32,8 +32,8 @@ jobs:
               
     - name: Test
       run: |
-        echo $env:PROJECT_NAME
-        echo "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+        echo $PROJECT_NAME_ABC
+        echo "$($PROJECT_NAME_ABC)\$PROJECT_NAME_ABC.csproj"
 #      run: echo $env:FILENAME)
       
 #    - name: Publish 64bit
