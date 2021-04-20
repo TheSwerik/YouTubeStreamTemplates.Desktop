@@ -64,5 +64,4 @@ jobs:
         prerelease: false
         automatic_release_tag: "latest"
         title: ${{ github.ref }}
-        files: |
-          ./Installer/YouTube StreamTemplate.exe
+        files: Installer/YouTube StreamTemplates.exe
