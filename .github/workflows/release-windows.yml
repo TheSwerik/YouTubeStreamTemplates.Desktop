@@ -32,7 +32,7 @@ jobs:
               
     - name: Test
       run: |
-      echo $PROJECT_NAME
+      echo $env:PROJECT_NAME
       echo "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
 #      run: echo $env:FILENAME)
       
