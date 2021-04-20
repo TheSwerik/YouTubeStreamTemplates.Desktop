@@ -21,7 +21,7 @@ jobs:
       run: |
         echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
-        $env:PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform
+        $env:PROJECT_NAME="YouTubeStreamTemplatesCrossPlatform"
 
 #    - name: Change Project Variables
 #      run: |
