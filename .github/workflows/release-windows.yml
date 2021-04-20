@@ -20,7 +20,7 @@ jobs:
     - name: Environment Variables
       run: |
         echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-        echo "FILENAME=de.swerik.template.universal-${VERSION}.tgz" >> $GITHUB_ENV
+        echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
 #        echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
 
 #    - name: Change Project Variables
@@ -38,11 +38,6 @@ jobs:
 
     - name: Create Installer
       run: iscc /qp "Inno Config.iss"
-      
-    - name: Test
-      run: |
-        ls
-        ls ./Installer
 
 #     - name: Create Release
 #       id: create_release
