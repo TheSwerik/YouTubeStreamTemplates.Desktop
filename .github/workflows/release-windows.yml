@@ -6,74 +6,67 @@ on:
 #    tags:
 #      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
-jobs:      
+jobs:
   release:
-#    if: github.event.base_ref == 'refs/heads/main'
+    #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
       PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
 
-    - name: Environment Variables
-      run: |
-        echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-        echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
+      - name: Environment Variables
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
 
-#    - name: Change Project Variables
-#      run: |
-#        Get-Content -Path "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
-#        (gc "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
-#        (gc "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
-#        Get-Content -Path "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
-              
-    - name: Test
-      run: |
-        echo $env.PROJECT_NAME
-        echo ${{ env.PROJECT_NAME }}
-        echo ${{ env.PROJECT_NAME }}"\${{ env.PROJECT_NAME }}.csproj"
-#      run: echo $env:FILENAME)
-      
-#    - name: Publish 64bit
-#      run: dotnet publish "-p:PublishProfile=$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
-    
-#    - name: Publish 32bit
-#      run: dotnet publish "-p:PublishProfile=$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      - name: Change Project Variables
+        run: |
+          Get-Content -Path "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
+          (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
+          (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
+          Get-Content -Path "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
 
-    - name: Create Installer
-      run: iscc /qp "Inno Config.iss"
+      - name: Publish 64bit
+        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+   
+      - name: Publish 32bit
+        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
-#     - name: Create Release
-#       id: create_release
-#       uses: actions/create-release@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         tag_name: ${{ github.ref }}
-#         release_name: Release ${{ github.ref }}
-#         draft: false
-#         prerelease: false
-    
-#     - name: Upload Release Asset
-#       id: upload-release-asset
-#       uses: actions/upload-release-asset@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         upload_url: ${{ steps.create_release.outputs.upload_url }}  
-#         asset_path: ./Installer/RedEye.exe
-#         asset_name: RedEye.exe
-#         asset_content_type: application/exe
-      
-    - name: Test Other Release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        prerelease: false
-#        automatic_release_tag: "latest"
-        title: $VERSION
-        files: Installer/YouTube StreamTemplates.exe
+      - name: Create Installer
+        run: iscc /qp "Inno Config.iss"
+
+        #     - name: Create Release
+        #       id: create_release
+        #       uses: actions/create-release@v1
+        #       env:
+        #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #       with:
+        #         tag_name: ${{ github.ref }}
+        #         release_name: Release ${{ github.ref }}
+        #         draft: false
+        #         prerelease: false
+
+        #     - name: Upload Release Asset
+        #       id: upload-release-asset
+        #       uses: actions/upload-release-asset@v1
+        #       env:
+        #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #       with:
+        #         upload_url: ${{ steps.create_release.outputs.upload_url }}  
+        #         asset_path: ./Installer/RedEye.exe
+        #         asset_name: RedEye.exe
+        #         asset_content_type: application/exe
+
+      - name: Test Other Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          #        automatic_release_tag: "latest"
+          title: $VERSION
+          files: Installer/YouTube StreamTemplates.exe
