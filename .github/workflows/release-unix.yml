@@ -84,3 +84,5 @@ jobs:
           files: |
             ./Installer/${{ env.FILENAME }}.zip
             ./Installer/${{ env.FILENAME }}.tar.gz
+
+#TODO fix release conflict
