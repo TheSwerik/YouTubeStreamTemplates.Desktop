@@ -21,20 +21,23 @@ jobs:
       run: |
         echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "FILENAME=YouTubeStreamTemplates" >> $GITHUB_ENV
-#        echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
+        echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
 
 #    - name: Change Project Variables
 #      run: |
-#        Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
-#        (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
-#        (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
-#        Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
+#        Get-Content -Path "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+#        (gc "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+#        (gc "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+#        Get-Content -Path "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
               
-    - name: Publish 64bit
-      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+    - name: Test
+      run: echo "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+      
+#    - name: Publish 64bit
+#      run: dotnet publish "-p:PublishProfile=$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
     
-    - name: Publish 32bit
-      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+#    - name: Publish 32bit
+#      run: dotnet publish "-p:PublishProfile=$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
     - name: Create Installer
       run: iscc /qp "Inno Config.iss"
