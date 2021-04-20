@@ -34,8 +34,9 @@ jobs:
       #TODO create/ copy Makefile
 
       - name: Zip Linux
-#        run: tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
-        run: sudo tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
+        run: |
+          mkdir Installer
+          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Publish MacOS
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
