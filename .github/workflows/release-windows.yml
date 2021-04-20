@@ -31,7 +31,9 @@ jobs:
 #        Get-Content -Path "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
               
     - name: Test
-      run: echo "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+      run: echo $env:PROJECT_NAME
+#      run: echo "$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj"
+#      run: echo $env:FILENAME)
       
 #    - name: Publish 64bit
 #      run: dotnet publish "-p:PublishProfile=$($env:PROJECT_NAME)\$($env:PROJECT_NAME).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
