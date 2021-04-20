@@ -22,6 +22,13 @@ jobs:
         echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
         echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
+
+    - name: Change Project Variables
+      run: |
+        head "$PROJECT_NAME/$PROJECT_NAME.csproj"
+        sed -i 's/<DisableWinExeOutputInference>true</DisableWinExeOutputInference>/<DisableWinExeOutputInference>false</DisableWinExeOutputInference>/g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
+        sed -i 's/<OutputType>Exe</OutputType>/<OutputType>WinExe</OutputType>/g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
+        head "$PROJECT_NAME/$PROJECT_NAME.csproj"
               
     - name: Publish Linux
       run: dotnet publish "-p:PublishProfile=$PROJECT_NAME/$PROJECT_NAME.csproj;OutputType=WinExe;DisableWinExeOutputInference=false" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
