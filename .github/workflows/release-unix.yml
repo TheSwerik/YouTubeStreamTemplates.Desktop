@@ -35,7 +35,7 @@ jobs:
 
       - name: Zip Linux
         run: |
-          mkdir -d Installer
+          mkdir -p Installer
           tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Publish MacOS
@@ -43,7 +43,7 @@ jobs:
 
       - name: Zip MacOS
         run: |
-          mkdir -d Installer
+          mkdir -p Installer
           7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
 
       - name: Test
@@ -82,5 +82,5 @@ jobs:
           #        automatic_release_tag: "latest"
           title: $VERSION_NUMBER
           files: |
-            ./Installer/$FILENAME.zip
-            ./Installer/$FILENAME.tar.gz
+            ./Installer/${{ env.FILENAME }}.zip
+            ./Installer/${{ env.FILENAME }}.tar.gz
