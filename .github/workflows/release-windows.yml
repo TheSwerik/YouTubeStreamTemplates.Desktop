@@ -31,10 +31,10 @@ jobs:
         Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
               
     - name: Publish 64bit
-      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj;OutputType=WinExe;DisableWinExeOutputInference=false" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
     
     - name: Publish 32bit
-      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj;OutputType=WinExe;DisableWinExeOutputInference=false" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
     - name: Create Installer
       run: iscc /qp "Inno Config.iss"
