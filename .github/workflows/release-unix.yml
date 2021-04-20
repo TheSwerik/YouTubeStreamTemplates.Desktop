@@ -19,7 +19,7 @@ jobs:
 
     - name: Environment Variables
       run: |
-        echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        echo "VERSION_NUMBER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
         echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
 
@@ -76,7 +76,7 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: false
 #        automatic_release_tag: "latest"
-        title: $VERSION
+        title: $VERSION_NUMBER
         files: |
           ./Installer/$FILENAME mac.zip
           ./Installer/$FILENAME linux.tar.gz
