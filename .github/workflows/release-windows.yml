@@ -23,12 +23,12 @@ jobs:
         echo "FILENAME=de.swerik.template.universal-${VERSION}.tgz" >> $GITHUB_ENV
         echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
 
-    - name: Change Project Variables
-      run: |
-        Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
-        (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
-        (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
-        Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
+#    - name: Change Project Variables
+#      run: |
+#        Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
+#        (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
+#        (gc "$($env:project_name)\$($env:project_name).csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "$($env:project_name)\$($env:project_name).csproj"
+#        Get-Content -Path "$($env:project_name)\$($env:project_name).csproj"
               
     - name: Publish 64bit
       run: dotnet publish "-p:PublishProfile=$($env:project_name)\$($env:project_name).csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
