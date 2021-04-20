@@ -5,76 +5,76 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
-jobs:      
+jobs:
   release:
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
 
-    - name: Environment Variables
-      run: |
-        echo "VERSION_NUMBER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-        echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
-        echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
+      - name: Environment Variables
+        run: |
+          echo "VERSION_NUMBER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
+          echo "PROJECT_NAME=YouTubeStreamTemplatesCrossPlatform" >> $GITHUB_ENV
 
-    - name: Change Project Variables
-      run: |
-        sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
-        sed -i 's+<OutputType>Exe</OutputType>+<OutputType>WinExe</OutputType>+g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
-              
-    - name: Publish Linux
-      run: dotnet publish "-p:PublishProfile=$PROJECT_NAME/$PROJECT_NAME.csproj" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
-#TODO create/ copy Makefile
+      - name: Change Project Variables
+        run: |
+          sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
+          sed -i 's+<OutputType>Exe</OutputType>+<OutputType>WinExe</OutputType>+g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
 
-    - name: Zip Linux
-      run: tar -C Publish/linux --exclude=osx -czf "Installer/$FILENAME.tar.gz" .
-      
-    - name: Publish MacOS
-      run: dotnet publish "-p:PublishProfile=$PROJECT_NAME/$PROJECT_NAME.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      - name: Publish Linux
+        run: dotnet publish "-p:PublishProfile=$PROJECT_NAME/$PROJECT_NAME.csproj" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      #TODO create/ copy Makefile
 
-    - name: Zip MacOS
-      run: 7z a "Installer/$FILENAME.zip" ./Publish/* -xr!linux 
-        
-    - name: Test
-      run: |
-        ls
-        ls ./Installer
-        ls ./Publish
+      - name: Zip Linux
+        run: tar -C Publish/linux --exclude=osx -czf "Installer/$FILENAME.tar.gz" .
 
-#     - name: Create Release
-#       id: create_release
-#       uses: actions/create-release@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         tag_name: ${{ github.ref }}
-#         release_name: Release ${{ github.ref }}
-#         draft: false
-#         prerelease: false
-    
-#     - name: Upload Release Asset
-#       id: upload-release-asset
-#       uses: actions/upload-release-asset@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         upload_url: ${{ steps.create_release.outputs.upload_url }}  
-#         asset_path: ./Installer/RedEye.exe
-#         asset_name: RedEye.exe
-#         asset_content_type: application/exe
-      
-    - name: Test Other Release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        prerelease: false
-#        automatic_release_tag: "latest"
-        title: $VERSION_NUMBER
-        files: |
-          ./Installer/$FILENAME mac.zip
-          ./Installer/$FILENAME linux.tar.gz
+      - name: Publish MacOS
+        run: dotnet publish "-p:PublishProfile=$PROJECT_NAME/$PROJECT_NAME.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+
+      - name: Zip MacOS
+        run: 7z a "Installer/$FILENAME.zip" ./Publish/* -xr!linux
+
+      - name: Test
+        run: |
+          ls
+          ls ./Installer
+          ls ./Publish
+
+        #     - name: Create Release
+        #       id: create_release
+        #       uses: actions/create-release@v1
+        #       env:
+        #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #       with:
+        #         tag_name: ${{ github.ref }}
+        #         release_name: Release ${{ github.ref }}
+        #         draft: false
+        #         prerelease: false
+
+        #     - name: Upload Release Asset
+        #       id: upload-release-asset
+        #       uses: actions/upload-release-asset@v1
+        #       env:
+        #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #       with:
+        #         upload_url: ${{ steps.create_release.outputs.upload_url }}  
+        #         asset_path: ./Installer/RedEye.exe
+        #         asset_name: RedEye.exe
+        #         asset_content_type: application/exe
+
+      - name: Test Other Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          #        automatic_release_tag: "latest"
+          title: $VERSION_NUMBER
+          files: |
+            ./Installer/$FILENAME mac.zip
+            ./Installer/$FILENAME linux.tar.gz
