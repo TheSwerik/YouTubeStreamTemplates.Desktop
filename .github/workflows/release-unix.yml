@@ -26,8 +26,8 @@ jobs:
     - name: Change Project Variables
       run: |
         head "$PROJECT_NAME/$PROJECT_NAME.csproj"
-        sed -i 's/\<DisableWinExeOutputInference\>true\<\/DisableWinExeOutputInference\>/\<DisableWinExeOutputInference\>false\<\/DisableWinExeOutputInference\>/g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
-        sed -i 's/\<OutputType\>Exe\<\/OutputType\>/\<OutputType\>WinExe\<\/OutputType\>/g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
+        sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
+        sed -i 's+<OutputType>Exe</OutputType>+<OutputType>WinExe</OutputType>+g' "$PROJECT_NAME/$PROJECT_NAME.csproj"
         head "$PROJECT_NAME/$PROJECT_NAME.csproj"
               
     - name: Publish Linux
