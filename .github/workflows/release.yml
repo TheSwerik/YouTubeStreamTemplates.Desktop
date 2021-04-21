@@ -20,11 +20,6 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Environment Variables
-        run: |
-          echo "VERSION_NUMBER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo "FILENAME=${{ env.FILENAME }}" >> $GITHUB_ENV
-
       - name: Change Project Variables
         run: |
           sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
@@ -59,17 +54,13 @@ jobs:
     runs-on: windows-latest
     env:
       PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
+      FILENAME: YouTube StreamTemplates
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
-
-      - name: Environment Variables
-        run: |
-          echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo "FILENAME=YouTube StreamTemplates" >> $GITHUB_ENV
 
       - name: Change Project Variables
         run: |
@@ -107,7 +98,6 @@ jobs:
     
       - name: Display structure of downloaded files
         run: |
-          ls -R
           cd Installer
           ls -R
 
