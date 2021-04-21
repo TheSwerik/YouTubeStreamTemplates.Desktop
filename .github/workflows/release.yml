@@ -100,4 +100,4 @@ jobs:
           #        automatic_release_tag: "latest"
           title: $VERSION
           files: |
-          Installer/${{ env.FILENAME }}.exe
+            Installer/${{ env.FILENAME }}.exe
