@@ -46,11 +46,13 @@ jobs:
         run: |
           mkdir -p Installer
           7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
-
-      - name: Test
-        run: |
-          ls
-          pwd
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          name: unix-artifact
+          path: |
+            Installer/${{ env.FILENAME }}.tar.gz
+            Installer/${{ env.FILENAME }}.zip
 
   build-windows:
     #    if: github.event.base_ref == 'refs/heads/main'
@@ -83,22 +85,31 @@ jobs:
       - name: Create Installer
         run: iscc /qp "Inno Config.iss"
 
-      - name: Test
-        run: |
-          ls
-          pwd
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows-artifact
+          path: Installer/${{ env.FILENAME }}.exe
 
   create-release:
     needs: [ build-unix, build-windows ]
     #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    env:
+      FILENAME_WIN: YouTube StreamTemplates
+      FILENAME_UNIX: YouTubeStreamTemplates
+      
     steps:
-      - name: Test
+      - uses: actions/checkout@v2
+    
+      - uses: actions/download-artifact@v2
+        with:
+          path: Installer
+    
+      - name: Display structure of downloaded files
         run: |
-          ls
-          echo ${{ env.FILENAME }}
-          echo ${{ env.VERSION }}
-          echo ${{ env.PROJECT_NAME }}
+          ls -R
+          cd Installer
+          ls -R
 
       - name: Test Other Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -108,4 +119,6 @@ jobs:
           #        automatic_release_tag: "latest"
           title: $VERSION
           files: |
-            Installer/${{ env.FILENAME }}.exe
+            Installer/${{ env.FILENAME_WIN }}.exe
+            Installer/${{ env.FILENAME_UNIX }}.tar.gz
+            Installer/${{ env.FILENAME_UNIX }}.zip
