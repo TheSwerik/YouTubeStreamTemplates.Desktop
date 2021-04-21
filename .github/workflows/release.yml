@@ -6,13 +6,17 @@ on:
 #    tags:
 #      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
+env:
+  PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
+  FILENAME_WIN: YouTube StreamTemplates
+  FILENAME_UNIX: YouTubeStreamTemplates
+  ARTIFACT_WIN: windows-artifact
+  ARTIFACT_UNIX: unix-artifact
+  
 jobs:
   build-unix:
     #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    env:
-      PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
-      FILENAME: YouTubeStreamTemplates
 
     steps:
       - uses: actions/checkout@v2
@@ -32,7 +36,7 @@ jobs:
       - name: Zip Linux
         run: |
           mkdir -p Installer
-          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
+          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME_UNIX }}.tar.gz" .
 
       - name: Publish MacOS
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
@@ -40,21 +44,18 @@ jobs:
       - name: Zip MacOS
         run: |
           mkdir -p Installer
-          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
+          7z a "Installer/${{ env.FILENAME_UNIX }}.zip" ./Publish/* -xr!linux 
           
       - uses: actions/upload-artifact@v2
         with:
-          name: unix-artifact
+          name: ${{ env.ARTIFACT_UNIX }}
           path: |
-            Installer/${{ env.FILENAME }}.tar.gz
-            Installer/${{ env.FILENAME }}.zip
+            Installer/${{ env.FILENAME_UNIX }}.tar.gz
+            Installer/${{ env.FILENAME_UNIX }}.zip
 
   build-windows:
     #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
-    env:
-      PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
-      FILENAME: YouTube StreamTemplates
 
     steps:
       - uses: actions/checkout@v2
@@ -78,16 +79,13 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: windows-artifact
-          path: Installer/${{ env.FILENAME }}.exe
+          name: ${{ env.ARTIFACT_WIN }}
+          path: Installer/${{ env.FILENAME_WIN }}.exe
 
   create-release:
     needs: [ build-unix, build-windows ]
     #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    env:
-      FILENAME_WIN: YouTube StreamTemplates
-      FILENAME_UNIX: YouTubeStreamTemplates
       
     steps:
       - uses: actions/checkout@v2
@@ -109,6 +107,6 @@ jobs:
           #        automatic_release_tag: "latest"
           title: $VERSION
           files: |
-            Installer/${{ env.FILENAME_WIN }}.exe
-            Installer/${{ env.FILENAME_UNIX }}.tar.gz
-            Installer/${{ env.FILENAME_UNIX }}.zip
+            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe
+            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.zip
+            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.tar.gz
