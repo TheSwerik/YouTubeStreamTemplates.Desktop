@@ -2,9 +2,8 @@ name: release
 
 on:
   push:
-    branches: [ main ]
-#    tags:
-#      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
 env:
   PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
@@ -12,10 +11,10 @@ env:
   FILENAME_UNIX: YouTubeStreamTemplates
   ARTIFACT_WIN: windows-artifact
   ARTIFACT_UNIX: unix-artifact
-  
+
 jobs:
   build-unix:
-    #    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -45,7 +44,7 @@ jobs:
         run: |
           mkdir -p Installer
           7z a "Installer/${{ env.FILENAME_UNIX }}.zip" ./Publish/* -xr!linux 
-          
+
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ env.ARTIFACT_UNIX }}
@@ -54,7 +53,7 @@ jobs:
             Installer/${{ env.FILENAME_UNIX }}.zip
 
   build-windows:
-    #    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
@@ -84,29 +83,26 @@ jobs:
 
   create-release:
     needs: [ build-unix, build-windows ]
-    #    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-      
+
     steps:
       - uses: actions/checkout@v2
-    
-      - uses: actions/download-artifact@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
         with:
           path: Installer
-    
-      - name: Display structure of downloaded files
-        run: |
-          cd Installer
-          ls -R
-
-      - name: Test Other Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+          
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_unmatched_files: true
           prerelease: false
-          #        automatic_release_tag: "latest"
-          title: $VERSION
+          draft: false
           files: |
             Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe
             Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.zip
             Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
