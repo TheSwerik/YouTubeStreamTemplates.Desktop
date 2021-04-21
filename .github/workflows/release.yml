@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-unix:
-#    if: github.event.base_ref == 'refs/heads/main'
+    #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
@@ -46,12 +46,14 @@ jobs:
         run: |
           mkdir -p Installer
           7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
-          
+
       - name: Test
-        run: ls
+        run: |
+          ls
+          pwd
 
   build-windows:
-#    if: github.event.base_ref == 'refs/heads/main'
+    #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
       PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
@@ -81,9 +83,14 @@ jobs:
       - name: Create Installer
         run: iscc /qp "Inno Config.iss"
 
+      - name: Test
+        run: |
+          ls
+          pwd
+
   create-release:
     needs: [ build-unix, build-windows ]
-#    if: github.event.base_ref == 'refs/heads/main'
+    #    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Test
