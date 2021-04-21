@@ -46,6 +46,9 @@ jobs:
         run: |
           mkdir -p Installer
           7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
+          
+      - name: Test
+        run: ls
 
   build-windows:
 #    if: github.event.base_ref == 'refs/heads/main'
@@ -78,6 +81,9 @@ jobs:
       - name: Create Installer
         run: iscc /qp "Inno Config.iss"
 
+      - name: Test
+        run: ls
+
   create-release:
     needs: [ build-unix, build-windows ]
 #    if: github.event.base_ref == 'refs/heads/main'
@@ -86,11 +92,11 @@ jobs:
       - name: Test
         run: |
           ls
-          ls ./Installer
-          ls ./Publish
           echo ${{ env.FILENAME }}
           echo ${{ env.VERSION }}
           echo ${{ env.PROJECT_NAME }}
+      #          ls ./Installer
+      #          ls ./Publish
 
       - name: Test Other Release
         uses: "marvinpinto/action-automatic-releases@latest"
