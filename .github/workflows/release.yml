@@ -92,8 +92,6 @@ jobs:
           echo ${{ env.FILENAME }}
           echo ${{ env.VERSION }}
           echo ${{ env.PROJECT_NAME }}
-      #          ls ./Installer
-      #          ls ./Publish
 
       - name: Test Other Release
         uses: "marvinpinto/action-automatic-releases@latest"
