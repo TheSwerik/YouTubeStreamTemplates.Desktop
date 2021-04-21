@@ -2,8 +2,9 @@ name: release unix
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
+    branches: [ main ]
+#    tags:
+#      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
 jobs:
   build-unix:
@@ -80,7 +81,7 @@ jobs:
   create-release:
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: [unix-build, windows-build]
+    needs: [ unix-build, windows-build ]
     steps:
       - name: Test
         run: |
@@ -90,7 +91,7 @@ jobs:
           echo ${{ env.FILENAME }}
           echo ${{ env.VERSION }}
           echo ${{ env.PROJECT_NAME }}
-          
+
       - name: Test Other Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
