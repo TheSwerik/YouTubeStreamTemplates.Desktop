@@ -41,7 +41,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
         #endregion
 
         private readonly YouTubeService _youTubeService;
-        private static CoolDownTimer _coolDownTimer = null!;
+        private static readonly CoolDownTimer _coolDownTimer = new();
 
         public LiveStream? CurrentLiveStream { get; private set; }
 
@@ -59,7 +59,6 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         public static async Task Init()
         {
-            _coolDownTimer ??= new CoolDownTimer();
             if (_coolDownTimer.IsRunning) return;
             if (_instance != null) throw new AlreadyInitializedException(typeof(LiveStreamService));
             _coolDownTimer.StartBlock();
@@ -86,8 +85,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             return new(new BaseClientService.Initializer
                        {
                            HttpClientInitializer = await GetCredentials(scopes),
-                           ApplicationName = "YouTubeStreamTemplates",
-                           ApiKey = await File.ReadAllTextAsync(@"..\..\..\..\apikey.txt")
+                           ApplicationName = "YouTubeStreamTemplates"
                        });
         }
 

@@ -10,6 +10,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="bin\Debug\net5.0\Templates\694d9ea7-59da-4811-a935-e24a9e512345.tplt"/>
+        <None Include="bin\Debug\net5.0\Templates\694d9ea7-59da-4811-a935-e24a9e591736.tplt"/>
+        <None Include="bin\Debug\net5.0\Templates\DD62B219-1F76-4B1F-8520-C718D0575C6E.tplt"/>
         <None Include="res\**\*.*" CopyToOutputDirectory="PreserveNewest"/>
         <AvaloniaResource Include="res\**"/>
         <!--        <EmbeddedResource Include="res\*"/>-->
@@ -22,12 +25,6 @@
         <AvaloniaResource Include="**\*.xaml">
             <SubType>Designer</SubType>
         </AvaloniaResource>
-        <Compile Update="src\Windows\Tabs\Home.xaml.cs">
-            <DependentUpon>Home.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="src\Controls\AutoCompleteSelectComboBox.xaml.cs">
-            <DependentUpon>AutoCompleteSelectComboBox.xaml</DependentUpon>
-        </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -43,5 +40,9 @@
     <ItemGroup>
         <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
         <None Include="nlog.release.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Release' " Link="nlog.config"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="bin\Debug\Templates"/>
     </ItemGroup>
 </Project>
