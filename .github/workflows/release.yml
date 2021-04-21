@@ -1,4 +1,4 @@
-name: release unix
+name: release
 
 on:
   push:
@@ -81,7 +81,7 @@ jobs:
   create-release:
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: [ unix-build, windows-build ]
+    needs: [ build-unix, build-windows ]
     steps:
       - name: Test
         run: |
