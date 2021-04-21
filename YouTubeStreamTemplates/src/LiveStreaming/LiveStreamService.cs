@@ -89,11 +89,19 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        });
         }
 
+        private const string ClientId = "CLIENT_ID";
+        private const string ClientSecret = "CLIENT_SECRET";
+
         private static async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
         {
-            await using var stream = new FileStream(@"..\..\..\..\client_id.json", FileMode.Open, FileAccess.Read);
+            var secrets = new ClientSecrets {ClientId = ClientId, ClientSecret = ClientSecret};
+            #if DEBUG
+            await using var stream = new FileStream(@"client_id.json", FileMode.Open, FileAccess.Read);
+            secrets = GoogleClientSecrets.Load(stream).Secrets;
+            #endif
+            Console.WriteLine(secrets.ClientId);
             return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                       GoogleClientSecrets.Load(stream).Secrets,
+                       secrets,
                        scopes,
                        "user",
                        CancellationToken.None,
