@@ -1,4 +1,4 @@
-name: release windows
+name: release unix
 
 on:
   push:
@@ -6,7 +6,47 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
 jobs:
-  release:
+  build-unix:
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
+      FILENAME: YouTubeStreamTemplates
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Environment Variables
+        run: |
+          echo "VERSION_NUMBER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo "FILENAME=${{ env.FILENAME }}" >> $GITHUB_ENV
+
+      - name: Change Project Variables
+        run: |
+          sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+          sed -i 's+<OutputType>Exe</OutputType>+<OutputType>WinExe</OutputType>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+
+      - name: Publish Linux
+        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+      #TODO create/copy Makefile
+
+      - name: Zip Linux
+        run: |
+          mkdir -p Installer
+          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
+
+      - name: Publish MacOS
+        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+
+      - name: Zip MacOS
+        run: |
+          mkdir -p Installer
+          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
+
+  build-windows:
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
@@ -37,6 +77,30 @@ jobs:
       - name: Create Installer
         run: iscc /qp "Inno Config.iss"
 
+  create-release:
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [unix-build, windows-build]
+    steps:
+      - name: Test
+        run: |
+          ls
+          ls ./Installer
+          ls ./Publish
+          echo ${{ env.FILENAME }}
+          echo ${{ env.VERSION }}
+          echo ${{ env.PROJECT_NAME }}
+          
+      - name: Test Other Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          #        automatic_release_tag: "latest"
+          title: $VERSION
+          files: |
+          Installer/${{ env.FILENAME }}.exe
+
         #     - name: Create Release
         #       id: create_release
         #       uses: actions/create-release@v1
@@ -58,12 +122,3 @@ jobs:
         #         asset_path: ./Installer/RedEye.exe
         #         asset_name: RedEye.exe
         #         asset_content_type: application/exe
-
-      - name: Test Other Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: false
-          #        automatic_release_tag: "latest"
-          title: $VERSION
-          files: Installer/${{ env.FILENAME }}.exe
