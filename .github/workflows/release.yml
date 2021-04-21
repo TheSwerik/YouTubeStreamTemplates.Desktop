@@ -81,9 +81,6 @@ jobs:
       - name: Create Installer
         run: iscc /qp "Inno Config.iss"
 
-      - name: Test
-        run: ls
-
   create-release:
     needs: [ build-unix, build-windows ]
 #    if: github.event.base_ref == 'refs/heads/main'
