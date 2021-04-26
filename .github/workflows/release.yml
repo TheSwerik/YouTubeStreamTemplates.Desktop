@@ -89,9 +89,14 @@ jobs:
 
       - name: Publish 32bit
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        
+      - name: Get Certificate
+        run: |
+          $bytes = [Convert]::FromBase64String(${{ BASE64_ENCODED_PFX }})
+          [IO.File]::WriteAllBytes('Installer/developer-certificate.pfx', $bytes)
 
       - name: Create Installer
-        run: iscc /qp "Inno Config.iss"
+        run: iscc "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe$q sign /f Installer/developer-certificate.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
 
       - uses: actions/upload-artifact@v2
         with:

@@ -4,7 +4,7 @@
 #define MyAppPublisher "Swerik"
 #define MyAppURL "https://github.com/TheSwerik"   
 #define MyAppExeName "YouTubeStreamTemplatesCrossPlatform.exe"
-#define MyAppIconName "{#MyAppName}.ico"
+#define MyAppIconName "YouTubeStreamTemplates.ico"
 
 [Setup]
 AppId={{EC05A9AE-6CC2-489D-871A-0C48884201C6}
