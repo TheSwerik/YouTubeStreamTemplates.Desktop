@@ -8,24 +8,7 @@
         <Nullable>enable</Nullable>
         <ProjectGuid>{FFEEFFF0-611A-4302-A17C-5F38A8D163B1}</ProjectGuid>
         <ApplicationIcon>..\YouTubeStreamTemplates.ico</ApplicationIcon>
-        <AssemblyOriginatorKeyFile>../developer_cert.pfx</AssemblyOriginatorKeyFile>
-        <DelaySign>false</DelaySign>
     </PropertyGroup>
-
-    <!--    <Choose>-->
-    <!--        <When Condition=" '$(Configuration)'=='Debug' ">-->
-    <!--            <PropertyGroup>-->
-    <!--                <SignAssembly>true</SignAssembly>-->
-    <!--            </PropertyGroup>-->
-    <!--        </When>-->
-    <!--        <When Condition=" '$(Configuration)'=='Release' ">-->
-    <!--            <PropertyGroup>-->
-    <!--                <SignAssembly>true</SignAssembly>-->
-    <!--                <DelaySign>false</DelaySign>-->
-    <!--                <AssemblyOriginatorKeyFile>../developer-certificate.snk</AssemblyOriginatorKeyFile>-->
-    <!--            </PropertyGroup>-->
-    <!--        </When>-->
-    <!--    </Choose>-->
 
     <ItemGroup>
         <None Include="bin\Debug\net5.0\Templates\694d9ea7-59da-4811-a935-e24a9e512345.tplt"/>
@@ -58,9 +41,5 @@
     <ItemGroup>
         <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
         <None Include="nlog.release.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Release' " Link="nlog.config"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="bin\Debug\net5.0\client_id.json"/>
     </ItemGroup>
 </Project>
