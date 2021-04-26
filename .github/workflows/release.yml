@@ -41,7 +41,7 @@ jobs:
           args: '-H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" -O -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"'
 
       - name: Publish Linux
-        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
       #TODO create/copy Makefile
 
       - name: Zip Linux
@@ -50,7 +50,7 @@ jobs:
           tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME_UNIX }}.tar.gz" .
 
       - name: Publish MacOS
-        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: Zip MacOS
         run: |
@@ -96,10 +96,10 @@ jobs:
           curl -H @{"Authorization" = "token ${{ secrets.GITHUB_TOKEN }}"; "Accept" ="application/vnd.github.v3.raw"} -O ./developer-certificate.snk -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"
           
       - name: Publish 64bit
-        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: Publish 32bit
-        run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
         
       - name: Create Installer
         run: iscc "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe$q sign /f developer-certificate.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
