@@ -32,8 +32,8 @@ jobs:
 
       - name: Change constants
         run: |
-          - sed -i 's+"CLIENT_ID"+"${{ env.CLIENT_ID }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
-          - sed -i 's+"CLIENT_SECRET"+"${{ env.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
+          sed -i 's+"CLIENT_ID"+"${{ env.CLIENT_ID }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
+          sed -i 's+"CLIENT_SECRET"+"${{ env.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
 
       - name: Publish Linux
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
@@ -76,8 +76,8 @@ jobs:
 
       - name: Change constants
         run: |
-          - (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '\"CLIENT_ID\"', '\"${{ env.CLIENT_ID }}\"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
-          - (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '\"CLIENT_SECRET\"', '\"${{ env.CLIENT_SECRET }}\"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
+          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '\"CLIENT_ID\"', '\"${{ env.CLIENT_ID }}\"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
+          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '\"CLIENT_SECRET\"', '\"${{ env.CLIENT_SECRET }}\"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
 
       - name: Publish 64bit
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
