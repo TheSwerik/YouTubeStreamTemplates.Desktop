@@ -20,10 +20,7 @@ jobs:
       run: nuget restore
 
     - name: Get Certificates
-#      uses: wei/curl@master
-#      with:
-#        args: '-H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" -O -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"'
-      run: echo ${{ secrets.BASE64_ENCODED_SNK }} | base64 -d > developer-certificate.snk
+      run: echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
       
     - name: Build
       run: dotnet build --configuration Release --no-restore

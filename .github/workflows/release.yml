@@ -35,10 +35,8 @@ jobs:
           sed -i 's+"CLIENT_ID"+"${{ secrets.CLIENT_ID }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
           sed -i 's+"CLIENT_SECRET"+"${{ secrets.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
 
-      - name: Get SNK-Cert
-        uses: wei/curl@master
-        with:
-          args: '-H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" -O -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"'
+      - name: Get Cert
+        run: echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
 
       - name: Publish Linux
         run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
@@ -92,8 +90,7 @@ jobs:
       - name: Get PFX-Cert
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-          [IO.File]::WriteAllBytes('developer-certificate.pfx', $bytes)
-          curl -H @{"Authorization" = "token ${{ secrets.GITHUB_TOKEN }}"; "Accept" ="application/vnd.github.v3.raw"} -O ./developer-certificate.snk -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"
+          [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           
       - name: Publish 64bit
         run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
@@ -102,7 +99,7 @@ jobs:
         run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\32bit -v:m -r:win-x86 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
         
       - name: Create Installer
-        run: iscc "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe$q sign /f developer-certificate.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
+        run: iscc "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe$q sign /f developer-cert.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
 
       - uses: actions/upload-artifact@v2
         with:
