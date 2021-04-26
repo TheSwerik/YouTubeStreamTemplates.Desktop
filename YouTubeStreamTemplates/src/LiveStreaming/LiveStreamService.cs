@@ -91,17 +91,17 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         private static async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
         {
-            var secrets = new ClientSecrets {ClientId = "CLIENT_ID", ClientSecret = "CLIENT_SECRET"};
-            if (!File.Exists("client_id.json"))
-                return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                           secrets,
-                           scopes,
-                           "user",
-                           CancellationToken.None,
-                           new FileDataStore("YouTubeStreamTemplates"));
+            ClientSecrets secrets;
+            if (File.Exists("client_id.json"))
+            {
+                await using var stream = new FileStream("client_id.json", FileMode.Open, FileAccess.Read);
+                secrets = GoogleClientSecrets.Load(stream).Secrets;
+            }
+            else
+            {
+                secrets = new ClientSecrets {ClientId = "CLIENT_ID", ClientSecret = "CLIENT_SECRET"};
+            }
 
-            await using var stream = new FileStream("client_id.json", FileMode.Open, FileAccess.Read);
-            secrets = GoogleClientSecrets.Load(stream).Secrets;
             return await GoogleWebAuthorizationBroker.AuthorizeAsync(
                        secrets,
                        scopes,
