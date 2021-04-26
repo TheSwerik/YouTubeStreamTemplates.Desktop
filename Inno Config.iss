@@ -1,10 +1,10 @@
 ; Variables:
-#define MyAppName "YouTube StreamTemplates"
-#define MyAppVersion "0.9.0"
+#define MyAppName "YouTubeStreamTemplates"
+#define MyAppVersion "0.0.0"
 #define MyAppPublisher "Swerik"
 #define MyAppURL "https://github.com/TheSwerik"   
-#define MyAppExeName "YouTubeStreamTemplates.exe"
-;#define MyAppIconName "YouTubeStreamTemplates.ico"
+#define MyAppExeName "YouTubeStreamTemplatesCrossPlatform.exe"
+;#define MyAppIconName "{#MyAppName}.ico"
 
 [Setup]
 AppId={{EC05A9AE-6CC2-489D-871A-0C48884201C6}
@@ -31,7 +31,7 @@ OutputDir=Installer
 ;SourceDir=..\       
 ; will use x64 folder on 64bit PC
 ArchitecturesInstallIn64BitMode=x64  
-; will show a checkbox for making star menu folder optional
+; will show a checkbox for making start menu folder optional
 AllowNoIcons=yes  
 ; Skips the Language Selection if the current PCs language is listed in [Languages]
 ShowLanguageDialog=auto
@@ -71,13 +71,13 @@ CloseApplicationsFilter=*.*
 ; Lets the user choose the Privileges (other option "console")
 ;PrivilegesRequiredOverridesAllowed=dialog
 ; Determines if uninstaller should be included
-;Uninstallable=not IsTaskSelected('portablemode')
+Uninstallable=true
 ; Determines if "uninstall" should be Displayed under Programs section
-;CreateUninstallRegKey=not IsTaskSelected('portablemode')
+CreateUninstallRegKey=true
 ; specifies a different Icon for the Unsintaller (can be from .ico or .exe)
 ;UninstallDisplayIcon={app}\{#MyAppIconName}   
 ; specify Icon for Setup
-;SetupIconFile={#MyAppIconName}
+SetupIconFile={#MyAppIconName}
 
 ; Makes you select install-Types for [Components]
 ; is optional, default Types will be created if left empty
@@ -119,8 +119,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 ; Specifies all files that will be installed, see https://jrsoftware.org/ishelp/index.php?topic=filessection
 [Files]
-Source: "Publish\bin\64bit\*"; DestDir: "{app}\bin\64bit"; Excludes:"*.pdb"; Check: Is64BitInstallMode;     Flags: ignoreversion recursesubdirs
-Source: "Publish\bin\32bit\*"; DestDir: "{app}\bin\32bit"; Excludes:"*.pdb"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs solidbreak    
+Source: "Publish\bin\64bit\*"; DestDir: "{app}\bin"; Excludes:"*.pdb"; Check: Is64BitInstallMode;     Flags: ignoreversion recursesubdirs
+Source: "Publish\bin\32bit\*"; DestDir: "{app}\bin"; Excludes:"*.pdb"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs solidbreak    
 ; Place all common files here, first one should be marked 'solidbreak'
 ;Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme solidbreak
 
@@ -129,26 +129,26 @@ Source: "Publish\bin\32bit\*"; DestDir: "{app}\bin\32bit"; Excludes:"*.pdb"; Che
 ; common Shortcut Folderconstants:  autoprograms (Prorgams Folder on Start Menu) | autoappdata | uninstallexe | autodocs (Documents Folder) | usersavedgames | autostartup | group | autodesktop
 [Icons]
 ; creates Start Menu Shortcut (64 bit on x64 and 32bit on x86)
-Name: "{group}\{#MyAppName}"; Filename: "{app}\bin\64bit\{#MyAppExeName}"; Flags: createonlyiffileexists;
-Name: "{group}\{#MyAppName}"; Filename: "{app}\bin\32bit\{#MyAppExeName}"; Flags: createonlyiffileexists; 
+Name: "{group}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Flags: createonlyiffileexists;
+Name: "{group}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Flags: createonlyiffileexists; 
 ; creates Desktop Shortcut (64 bit on x64 and 32bit on x86) 
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\bin\64bit\{#MyAppExeName}"; Tasks: desktopicon; Flags: createonlyiffileexists;
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\bin\32bit\{#MyAppExeName}"; Tasks: desktopicon; Flags: createonlyiffileexists; 
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon; Flags: createonlyiffileexists;
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon; Flags: createonlyiffileexists; 
 ; creates Shortcut in Pragrams Root Folder (64 bit on x64 and 32bit on x86) 
-Name: "{app}\{#MyAppName}"; Filename: "{app}\bin\64bit\{#MyAppExeName}"; Flags: createonlyiffileexists;
-Name: "{app}\{#MyAppName}"; Filename: "{app}\bin\32bit\{#MyAppExeName}"; Flags: createonlyiffileexists; 
+Name: "{app}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Flags: createonlyiffileexists;
+Name: "{app}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Flags: createonlyiffileexists; 
 
 ; Specifies Programs that are run after installation but before the final page of the Setup  
 ; use Flag "shellexec" when file is not directly runnable (for example .txt or a folder)
 [Run] 
 ; in this example the main exe (dependent on Platform):
-Filename: "{app}\bin\64bit\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Check: IsWin64; Flags: nowait postinstall skipifsilent
-Filename: "{app}\bin\32bit\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Check: not IsWin64; Flags: nowait postinstall skipifsilent
+Filename: "{app}\bin\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Check: IsWin64; Flags: nowait postinstall skipifsilent
+Filename: "{app}\bin\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Check: not IsWin64; Flags: nowait postinstall skipifsilent
 
 ; Specifies Programs that are run before uninstallation
 ; use Flag "shellexec" when file is not directly runnable (for example .txt or a folder)
 ;[UninstallRun] 
 
 ; Defines any Files or Folders that should be deleted when uninstalling
-;[UninstallDelete]
-;Type: filesandordirs; Name: "{autodocs}\savefile.sav"
+[UninstallDelete]
+Type: filesandordirs; Name: "{userappdata}\{#MyAppName}"

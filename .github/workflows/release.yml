@@ -69,10 +69,15 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
+          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.get_version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
 
       - name: Change constants
         run: |
