@@ -105,12 +105,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: Installer
-          
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+              
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
-          prerelease: false
+          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
           draft: false
           files: |
             Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe
