@@ -25,6 +25,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         // ReSharper disable once MemberCanBePrivate.Global
         public CheckBoxSearchResult()
         {
+            Text = "";
             AvaloniaXamlLoader.Load(this);
             _grid = this.Find<Grid>("Grid");
             _checkBox = this.Find<CheckBox>("CheckBox");
@@ -32,7 +33,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         public Playlist Playlist { get; }
         public bool IsChecked => _checkBox.IsChecked ?? false;
-        public event EventHandler<Playlist> OnChanged;
+        public event EventHandler<Playlist> OnChanged = null!;
 
         private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
         {

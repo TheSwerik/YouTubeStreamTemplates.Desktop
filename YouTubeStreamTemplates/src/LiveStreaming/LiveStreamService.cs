@@ -67,7 +67,9 @@ namespace YouTubeStreamTemplates.LiveStreaming
             _instance = new LiveStreamService(ytService);
             await _instance.InitCategories();
             await _instance.InitPlaylists();
+#pragma warning disable 4014
             _instance.AutoUpdate();
+#pragma warning restore 4014
             IsInitialized = true;
             _coolDownTimer.Reset();
         }
