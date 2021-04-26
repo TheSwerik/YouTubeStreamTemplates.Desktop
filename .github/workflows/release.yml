@@ -11,6 +11,8 @@ env:
   FILENAME_UNIX: YouTubeStreamTemplates
   ARTIFACT_WIN: windows-artifact
   ARTIFACT_UNIX: unix-artifact
+  
+#TODO Confuscate dll
 
 jobs:
   build-unix:
@@ -27,6 +29,11 @@ jobs:
         run: |
           sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
           sed -i 's+<OutputType>Exe</OutputType>+<OutputType>WinExe</OutputType>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+
+      - name: Change constants
+        run: |
+          - sed -i 's+"CLIENT_ID"+"${{ env.CLIENT_ID }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
+          - sed -i 's+"CLIENT_SECRET"+"${{ env.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
 
       - name: Publish Linux
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
@@ -67,6 +74,11 @@ jobs:
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
 
+      - name: Change constants
+        run: |
+          - (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '\"CLIENT_ID\"', '\"${{ env.CLIENT_ID }}\"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
+          - (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '\"CLIENT_SECRET\"', '\"${{ env.CLIENT_SECRET }}\"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
+
       - name: Publish 64bit
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
@@ -93,12 +105,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: Installer
-          
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+              
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
-          prerelease: false
+          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
           draft: false
           files: |
             Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe

@@ -163,9 +163,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private bool _ignoreDifferenceCheck;
 
-        private void OnChanged(object? sender, EventArgs e) { _saveButton.IsEnabled = HasDifference(); }
+        private void OnChanged(object? sender, EventArgs? e) { _saveButton.IsEnabled = HasDifference(); }
 
-        private async void TemplateComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private void TemplateComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (_ignoreDifferenceCheck)
             {
@@ -207,7 +207,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         #region Thumbnail
 
-        private async void ThumbnailImage_OnClick(object? sender, PointerReleasedEventArgs e)
+        private void ThumbnailImage_OnClick(object? sender, PointerReleasedEventArgs e)
         {
             if (e.InitialPressMouseButton == MouseButton.Left) FileContextButton_OnClick(null, new RoutedEventArgs());
         }
@@ -241,6 +241,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             // TODO Paste Link and get Image
             // _thumbnailPath = URL;
             // _thumbnailImage.Source = await ImageHelper.GetImagePathAsync(_thumbnailPath, true, SelectedTemplate.Id);
+            _thumbnailImage.Source = new Bitmap(await ImageHelper.GetImagePathAsync("", true, SelectedTemplate.Id));
         }
 
         #endregion

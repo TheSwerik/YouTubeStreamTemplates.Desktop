@@ -44,13 +44,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         public IEnumerable<Playlist> Items
         {
-            get => _items;
             set => SetItems(value);
         }
 
-        public List<Playlist> SelectedItems { get; init; }
+        public List<Playlist> SelectedItems { get; }
 
-        public event EventHandler<EventArgs> OnChanged;
+        public event EventHandler<EventArgs> OnChanged = null!;
 
         private (List<CheckBoxSearchResult>, int) GetSortedResults()
         {
@@ -136,14 +135,14 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             _resultPopup.Close();
         }
 
-        private void SearchResult_OnClick(object sender, Playlist playlist)
+        private void SearchResult_OnClick(object? sender, Playlist playlist)
         {
-            var checkBoxSearchResult = (CheckBoxSearchResult) sender;
+            var checkBoxSearchResult = (CheckBoxSearchResult) sender!;
             if (checkBoxSearchResult.IsChecked) SelectedItems.Add(playlist);
             else SelectedItems.Remove(playlist);
             _searchInputBox.Focus();
             _selectedNumberText.Text = SelectedItems.Count + " Selected";
-            OnChanged.Invoke(this, null);
+            OnChanged.Invoke(this, null!);
         }
 
         private void SearchInputBox_OnTextInput(object? sender, KeyEventArgs keyEventArgs)

@@ -67,7 +67,9 @@ namespace YouTubeStreamTemplates.LiveStreaming
             _instance = new LiveStreamService(ytService);
             await _instance.InitCategories();
             await _instance.InitPlaylists();
+#pragma warning disable 4014
             _instance.AutoUpdate();
+#pragma warning restore 4014
             IsInitialized = true;
             _coolDownTimer.Reset();
         }
@@ -91,9 +93,19 @@ namespace YouTubeStreamTemplates.LiveStreaming
 
         private static async Task<UserCredential> GetCredentials(IEnumerable<string> scopes)
         {
-            await using var stream = new FileStream(@"..\..\..\..\client_id.json", FileMode.Open, FileAccess.Read);
+            ClientSecrets secrets;
+            if (File.Exists("client_id.json"))
+            {
+                await using var stream = new FileStream("client_id.json", FileMode.Open, FileAccess.Read);
+                secrets = GoogleClientSecrets.Load(stream).Secrets;
+            }
+            else
+            {
+                secrets = new ClientSecrets {ClientId = "CLIENT_ID", ClientSecret = "CLIENT_SECRET"};
+            }
+
             return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                       GoogleClientSecrets.Load(stream).Secrets,
+                       secrets,
                        scopes,
                        "user",
                        CancellationToken.None,

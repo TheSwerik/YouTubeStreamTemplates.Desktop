@@ -14,10 +14,10 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
         private readonly TextBox _inputTextBox;
         private readonly bool _isReadOnly;
         private readonly WrapPanel _tagsPanel;
-        public EventHandler OnChanged;
 
         public List<TagCard> TagCards => _tagsPanel.Children.OfType<TagCard>().ToList();
         public HashSet<string> Tags { get; set; }
+        public event EventHandler OnChanged = null!;
 
         #region EventListener
 
@@ -25,7 +25,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void InputTextBox_OnKeyUp(object? sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter || e.Key == Key.OemComma) InputTextBox_FinishWriting();
+            if (e.Key is Key.Enter or Key.OemComma) InputTextBox_FinishWriting();
             InvokeOnRender(_inputTextBox.Focus);
         }
 
