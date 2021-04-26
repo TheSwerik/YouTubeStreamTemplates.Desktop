@@ -20,7 +20,7 @@
             <PropertyGroup>
                 <SignAssembly>true</SignAssembly>
                 <DelaySign>false</DelaySign>
-                <AssemblyOriginatorKeyFile>developer-certificate.pfx</AssemblyOriginatorKeyFile>
+                <AssemblyOriginatorKeyFile>developer-certificate.snk</AssemblyOriginatorKeyFile>
             </PropertyGroup>
         </When>
     </Choose>

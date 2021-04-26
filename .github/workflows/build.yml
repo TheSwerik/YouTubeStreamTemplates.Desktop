@@ -18,6 +18,11 @@ jobs:
       
     - name: Install dependencies
       run: nuget restore
+
+    - name: Get Certificates
+      uses: wei/curl@master
+      with:
+        args: '-H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" -O -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"'
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
