@@ -35,7 +35,7 @@ jobs:
           sed -i 's+"CLIENT_ID"+"${{ secrets.CLIENT_ID }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
           sed -i 's+"CLIENT_SECRET"+"${{ secrets.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
 
-      - name: Get Certificates
+      - name: Get SNK-Cert
         uses: wei/curl@master
         with:
           args: '-H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" -O -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"'
@@ -89,11 +89,11 @@ jobs:
           (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_ID"', '"${{ secrets.CLIENT_ID }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
           (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_SECRET"', '"${{ secrets.CLIENT_SECRET }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
 
-      - name: Get Certificates
+      - name: Get PFX-Cert
         run: |
-          $bytes = [Convert]::FromBase64String(${{ secrets.BASE64_ENCODED_PFX }})
+          $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-certificate.pfx', $bytes)
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" -O -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"
+          curl -H @{"Authorization" = "token ${{ secrets.GITHUB_TOKEN }}"; "Accept" ="application/vnd.github.v3.raw"} -O ./developer-certificate.snk -L "${{ secrets.CERT_DOWNLOAD_LINK }}/developer-certificate.snk"
           
       - name: Publish 64bit
         run: dotnet publish "-p:PublishProfile=${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj" -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
