@@ -2,6 +2,7 @@ name: release
 
 on:
   push:
+    branches: [ main ]
     tags:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
@@ -80,13 +81,15 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo ::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}
+#        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.get_version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
+          Get-Content "Inno Config.iss" | select -First 10
 
       - name: Paste Client Id and Secret
         run: |
@@ -135,32 +138,32 @@ jobs:
           name: ${{ env.ARTIFACT_WIN }}
           path: Installer/${{ env.FILENAME_WIN }}.exe
 
-  create-release:
-    needs: [ build-unix, build-windows ]
-    if: github.event.base_ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: Installer
-
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          fail_on_unmatched_files: true
-          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
-          draft: false
-          files: |
-            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe
-            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.zip
-            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#  create-release:
+#    needs: [ build-unix, build-windows ]
+#    if: github.event.base_ref == 'refs/heads/main'
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - name: Download Artifacts
+#        uses: actions/download-artifact@v2
+#        with:
+#          path: Installer
+#
+#      - name: Get the version
+#        id: get_version
+#        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+#
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          fail_on_unmatched_files: true
+#          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
+#          draft: false
+#          files: |
+#            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe
+#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.zip
+#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.tar.gz
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
