@@ -98,7 +98,10 @@ jobs:
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
-          
+
+      - name: Install dependencies
+        run: nuget restore
+
       - name: Publish 64bit
         run: msbuild /t:publish /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\64bit
 #        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
