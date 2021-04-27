@@ -82,17 +82,14 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo ::set-env name=VERSION::0.9.2
-#        run: echo ::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}
-#        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
-          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ env.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
+          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.get_version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
           Get-Content "Inno Config.iss" | select -First 10
-#          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.get_version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
 
       - name: Paste Client Id and Secret
         run: |
