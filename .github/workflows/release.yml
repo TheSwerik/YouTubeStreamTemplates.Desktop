@@ -106,6 +106,10 @@ jobs:
         run: msbuild /t:clean,restore,build,publish /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
 #        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
+      - name: clean
+        run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
+
+
       - name: Publish 32bit
         run: msbuild /t:clean,restore,build,publish /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
         
