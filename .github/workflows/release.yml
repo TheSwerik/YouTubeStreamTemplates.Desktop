@@ -77,11 +77,6 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Test2
-        run: |
-          ping github.com
-          ping ${{ secrets.TEST }}
-
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
@@ -102,6 +97,7 @@ jobs:
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '${{ secrets.BASE64_ENCODED_KEY }}' -AsPlainText -Force)
+#          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '${{ secrets.BASE64_ENCODED_KEY }}' -AsPlainText -Force)
 #          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '123456' -AsPlainText -Force)
           
       - name: Publish 64bit
