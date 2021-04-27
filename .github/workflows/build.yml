@@ -12,7 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: microsoft/setup-msbuild@v1.0.2
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
@@ -25,10 +24,3 @@ jobs:
       
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-
-
-    - name: Publish 64bit
-      run: msbuild /t:clean,restore,build,publish /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\32bit -property:RuntimeIdentifiers=win-x64
-
-    - name: Publish 32bit
-      run: msbuild /t:clean,restore,build,publish /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86
