@@ -110,6 +110,9 @@ jobs:
         run: |
           get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
           get-childitem -Include bin -Recurse -force | Remove-Item -Force -Recurse
+          
+      - name: Change Project Variables
+        run: (gc "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml") -replace 'win-x64', 'win-x86' | Out-File -encoding ASCII "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml"
 
 
       - name: Publish 32bit
