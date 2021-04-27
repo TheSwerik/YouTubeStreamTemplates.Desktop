@@ -39,7 +39,7 @@ jobs:
         run: |
           echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
           echo ${{ secrets.BASE64_ENCODED_CRT }} | base64 -d > developer-cert.crt
-          mkdir /usr/local/share/ca-certificates/dev
+          sudo mkdir /usr/local/share/ca-certificates/dev
           cp developer-cert.crt /usr/local/share/ca-certificates/dev/developer-cert.crt
           sudo update-ca-certificates
 
