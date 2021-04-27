@@ -11,7 +11,7 @@ env:
   FILENAME_UNIX: YouTubeStreamTemplates
   ARTIFACT_WIN: windows-artifact
   ARTIFACT_UNIX: unix-artifact
-  
+
 #TODO Confuscate dll
 
 jobs:
@@ -103,16 +103,17 @@ jobs:
         run: nuget restore
 
       - name: Publish 64bit
-        run: msbuild /t:clean,restore,build,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\binary\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
-#        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        run: msbuild /t:clean,restore,build,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
+      #        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: clean
         run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
-#          get-childitem -Include bin -Recurse -force | Remove-Item -Force -Recurse
-          
+
       - name: Change Project Variables
         run: (gc "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml") -replace 'win-x64', 'win-x86' | Out-File -encoding ASCII "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml"
 
+      #TODO cleanup unneeded steps
+      #TODO put unix in here too
 
       - name: Publish 32bit 1
         run: msbuild /t:clean    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
@@ -124,8 +125,8 @@ jobs:
         run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
       - name: Publish 32bit 4
-        run: msbuild /t:clean    -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\binary\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
-        
+        run: msbuild /t:clean    -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+
       - name: Create Installer
         run: iscc "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe$q sign /f developer-cert.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
 
@@ -150,7 +151,7 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-              
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
