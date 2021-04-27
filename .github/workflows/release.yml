@@ -96,7 +96,7 @@ jobs:
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
-          Import-PfxCertificate -FilePath .\Certificate.cer -CertStoreLocation Cert:\LocalMachine\My
+          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My
           
       - name: Publish 64bit
         run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
