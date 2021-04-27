@@ -12,7 +12,6 @@ env:
   FILENAME_UNIX: YouTubeStreamTemplates
   ARTIFACT_WIN: windows-artifact
   ARTIFACT_UNIX: unix-artifact
-#  VERSION: 0.0.187
 
 #TODO Confuscate dll
 
@@ -76,19 +75,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.0.2
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.x
+#      - uses: actions/setup-dotnet@v1
+#        with:
+#          dotnet-version: 5.0.x
 
       - name: Get the version
-        id: get_version
+        id: version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
-          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.get_version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
+          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
           Get-Content "Inno Config.iss" | select -First 10
 
       - name: Paste Client Id and Secret
