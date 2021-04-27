@@ -96,7 +96,7 @@ jobs:
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
-          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '${{ secrets.BASE64_ENCODED_KEY }}' -AsPlainText -Force)
+          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 #          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '${{ secrets.BASE64_ENCODED_KEY }}' -AsPlainText -Force)
 #          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String '123456' -AsPlainText -Force)
           
