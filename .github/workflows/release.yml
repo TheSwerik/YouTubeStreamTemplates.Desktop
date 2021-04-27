@@ -69,7 +69,7 @@ jobs:
             Installer/${{ env.FILENAME_UNIX }}.zip
 
   build-windows:
-    if: github.event.base_ref == 'refs/heads/main'
+#    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
