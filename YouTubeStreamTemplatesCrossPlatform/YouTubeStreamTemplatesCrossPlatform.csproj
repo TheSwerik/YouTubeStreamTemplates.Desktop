@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
         <TargetFramework>net5.0</TargetFramework>
+        <RuntimeIdentifiers>win-x64;win-x86;osx-x64;linux-x64</RuntimeIdentifiers>
         <!--        <TargetFramework>net5.0-windows</TargetFramework>-->
         <Nullable>enable</Nullable>
         <ProjectGuid>{FFEEFFF0-611A-4302-A17C-5F38A8D163B1}</ProjectGuid>
@@ -11,9 +12,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="bin\Debug\net5.0\Templates\694d9ea7-59da-4811-a935-e24a9e512345.tplt"/>
-        <None Include="bin\Debug\net5.0\Templates\694d9ea7-59da-4811-a935-e24a9e591736.tplt"/>
-        <None Include="bin\Debug\net5.0\Templates\DD62B219-1F76-4B1F-8520-C718D0575C6E.tplt"/>
         <None Include="res\**\*.*" CopyToOutputDirectory="PreserveNewest"/>
         <AvaloniaResource Include="res\**"/>
         <!--        <EmbeddedResource Include="res\*"/>-->
