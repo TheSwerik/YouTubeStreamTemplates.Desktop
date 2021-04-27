@@ -115,12 +115,17 @@ jobs:
         run: (gc "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml") -replace 'win-x64', 'win-x86' | Out-File -encoding ASCII "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml"
 
 
-      - name: Publish 32bit
-        run: |
-          msbuild /t:clean    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
-          msbuild /t:restore  -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
-          msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
-          msbuild /t:publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\binary\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+      - name: Publish 32bit 1
+        run: msbuild /t:clean    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+
+      - name: Publish 32bit 2
+        run: msbuild /t:restore  -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+
+      - name: Publish 32bit 3
+        run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+
+      - name: Publish 32bit 4
+        run: msbuild /t:clean    -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\binary\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
         
       - name: Create Installer
         run: iscc "/ssigntool=$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe$q sign /f developer-cert.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
