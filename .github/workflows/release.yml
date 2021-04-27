@@ -12,6 +12,7 @@ env:
   FILENAME_UNIX: YouTubeStreamTemplates
   ARTIFACT_WIN: windows-artifact
   ARTIFACT_UNIX: unix-artifact
+  VERSION: 0.0.187
 
 #TODO Confuscate dll
 
