@@ -36,7 +36,12 @@ jobs:
           sed -i 's+"CLIENT_SECRET"+"${{ secrets.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
 
       - name: Get Cert
-        run: echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
+        run: |
+          echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
+          echo ${{ secrets.BASE64_ENCODED_CRT }} | base64 -d > developer-cert.crt
+          mkdir /usr/local/share/ca-certificates/dev
+          cp developer-cert.crt /usr/local/share/ca-certificates/dev/developer-cert.crt
+          sudo update-ca-certificates
 
       - name: Publish Linux
         run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true

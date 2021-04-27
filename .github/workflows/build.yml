@@ -18,9 +18,6 @@ jobs:
       
     - name: Install dependencies
       run: nuget restore
-
-    - name: Get Certificates
-      run: echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
