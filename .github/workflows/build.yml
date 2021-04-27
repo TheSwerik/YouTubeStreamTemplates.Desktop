@@ -24,3 +24,13 @@ jobs:
       
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      
+    - name: Ass
+      run: |
+        echo du ass
+        echo bis n ass
+      
+    - name: Ass
+      run: |
+        echo du ass \
+        echo bis n ass
