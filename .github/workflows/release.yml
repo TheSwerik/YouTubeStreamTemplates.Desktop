@@ -116,13 +116,13 @@ jobs:
       #TODO cleanup unneeded steps
       #TODO put unix in here too
 
-#      - name: Publish 32bit 2
-#        run: msbuild /t:restore  -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+      - name: Restore 32bit
+        run: msbuild /t:restore  -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
-      - name: Publish 32bit 3
-        run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+#      - name: Build 32bit
+#        run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
-      - name: Publish 32bit 4
+      - name: Publish 32bit
         run: msbuild /t:publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
         
       - name: Create Installer
