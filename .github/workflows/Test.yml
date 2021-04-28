@@ -47,7 +47,8 @@ jobs:
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSignedRegular /p:PublishDir=..\Publish\bin\regular -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
 
       - name: Regular
-        run: "{0} MB" -f ((Get-ChildItem Publish/bin/regular -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
-
-      - name: Trimmed
-        run: "{0} MB" -f ((Get-ChildItem Publish/bin/trimmed -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
+        run: echo ass
+#        run: "{0} MB" -f ((Get-ChildItem Publish/bin/regular -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
+#
+#      - name: Trimmed
+#        run: "{0} MB" -f ((Get-ChildItem Publish/bin/trimmed -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
