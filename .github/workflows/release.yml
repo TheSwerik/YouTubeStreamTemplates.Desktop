@@ -38,20 +38,21 @@ jobs:
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
       - name: Publish Linux
-        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublisUnixSigned /p:PublishDir=..\Publish\bin\linux -property:RuntimeIdentifiers=linux-x64 -property:RuntimeIdentifier=linux-x64
+        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublisUnixSigned /p:PublishDir=..\Publish\linux -property:RuntimeIdentifiers=linux-x64 -property:RuntimeIdentifier=linux-x64
 
       - name: Clean obj
         run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
 
       - name: Publish MacOS
-        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublisUnixSigned /p:PublishDir=..\Publish\bin\mac -property:RuntimeIdentifiers=osx-x64 -property:RuntimeIdentifier=osx-x64
+        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublisUnixSigned /p:PublishDir=..\Publish\mac -property:RuntimeIdentifiers=osx-x64 -property:RuntimeIdentifier=osx-x64
 
       #TODO create/copy Makefile
       - name: Zip Linux
         run: |
           New-Item -Path . -Name "Installer" -ItemType "directory"
-          cd Publish/linux
-          tar --exclude=osx -zf "../../Installer/${{ env.FILENAME }}.tar.gz" .
+          tar -C Publish/linux --exclude=osx -zf "../../Installer/${{ env.FILENAME }}.tar.gz" .
+#          cd Publish/linux
+#          tar --exclude=osx -zf "../../Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Zip MacOS
         run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
