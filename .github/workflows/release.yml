@@ -111,23 +111,23 @@ jobs:
           name: ${{ env.ARTIFACT_WIN }}
           path: Installer/${{ env.FILENAME }}.exe
 
-#  create-release:
-#    needs: [ build-unix, build-windows ]
+  create-release:
+    needs: [ build-unix, build-windows ]
 #    if: github.event.base_ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Download Artifacts
-#        uses: actions/download-artifact@v2
-#        with:
-#          path: Installer
-#
-#      - name: Get the version
-#        id: get_version
-#        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-#
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: Installer
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
 #      - name: Release
 #        uses: softprops/action-gh-release@v1
 #        with:
