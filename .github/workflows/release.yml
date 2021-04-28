@@ -50,7 +50,7 @@ jobs:
       - name: Zip Linux
         run: |
           New-Item -Path . -Name "Installer" -ItemType "directory"
-          tar -C Publish/linux --exclude=osx -czf "../../Installer/${{ env.FILENAME }}.tar.gz" .
+          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Zip MacOS
         run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
