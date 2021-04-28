@@ -126,7 +126,7 @@ jobs:
         run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
       - name: Publish 32bit 4
-        run: msbuild /t:clean    -v:d /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+        run: msbuild /t:publish    -v:d /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
       - name: See Files
         run: |
