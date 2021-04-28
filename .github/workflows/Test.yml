@@ -18,7 +18,7 @@ jobs:
       - name: Get the version
         id: version
         run: echo ::set-output name=VERSION::1.8.7
-#        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      #        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Change Project Variables
         run: |
@@ -45,9 +45,9 @@ jobs:
 
       - name: Publish Regular
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSignedRegular /p:PublishDir=..\Publish\bin\regular -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
-        
+
       - name: Get Size regular
         run: "{0} MB" -f ((Get-ChildItem Publish/bin/regular -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
-        
+
       - name: Get Size trimmed
         run: "{0} MB" -f ((Get-ChildItem Publish/bin/trimmed -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
