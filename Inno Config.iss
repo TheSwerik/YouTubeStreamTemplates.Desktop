@@ -119,8 +119,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 ; Specifies all files that will be installed, see https://jrsoftware.org/ishelp/index.php?topic=filessection
 [Files]
-Source: "..\Publish\bin\64bit\*"; DestDir: "{app}\bin"; Excludes:"*.pdb"; Check: Is64BitInstallMode;     Flags: ignoreversion recursesubdirs
-Source: "..\Publish\bin\32bit\*"; DestDir: "{app}\bin"; Excludes:"*.pdb"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs solidbreak    
+Source: "Publish\bin\64bit\*"; DestDir: "{app}\bin"; Excludes:"*.pdb"; Check: Is64BitInstallMode;     Flags: ignoreversion recursesubdirs
+Source: "Publish\bin\32bit\*"; DestDir: "{app}\bin"; Excludes:"*.pdb"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs solidbreak    
 ; Place all common files here, first one should be marked 'solidbreak'
 ;Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme solidbreak
 
