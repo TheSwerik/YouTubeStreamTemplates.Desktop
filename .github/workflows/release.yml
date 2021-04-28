@@ -14,49 +14,48 @@ env:
 
 jobs:
   build-unix:
-    if: github.event.base_ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+#    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.x
+      - uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Change Project Variables
         run: |
-          sed -i 's+<DisableWinExeOutputInference>true</DisableWinExeOutputInference>+<DisableWinExeOutputInference>false</DisableWinExeOutputInference>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
-          sed -i 's+<OutputType>Exe</OutputType>+<OutputType>WinExe</OutputType>+g' "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+          (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
+          (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
 
       - name: Paste Client Id and Secret
         run: |
-          sed -i 's+"CLIENT_ID"+"${{ secrets.CLIENT_ID }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
-          sed -i 's+"CLIENT_SECRET"+"${{ secrets.CLIENT_SECRET }}"+g' "YouTubeStreamTemplates/src/LiveStreaming/LiveStreamService.cs"
+          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_ID"', '"${{ secrets.CLIENT_ID }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
+          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_SECRET"', '"${{ secrets.CLIENT_SECRET }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
 
-      - name: Get Cert
+      - name: Get PFX-Cert
         run: |
-          echo ${{ secrets.BASE64_ENCODED_PFX }} | base64 -d > developer-cert.pfx
-          echo ${{ secrets.BASE64_ENCODED_CRT }} | base64 -d > developer-cert.crt
-          sudo mkdir /usr/local/share/ca-certificates/dev
-          sudo cp developer-cert.crt /usr/local/share/ca-certificates/dev/developer-cert.crt
-          sudo update-ca-certificates
+          $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+          [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
+          Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
       - name: Publish Linux
-        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/linux  -v:m -r:linux-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
-      #TODO create/copy Makefile
+        run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\linux -property:RuntimeIdentifiers=linux-x64 -property:RuntimeIdentifier=linux-x64
 
-      - name: Zip Linux
-        run: |
-          mkdir -p Installer
-          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
+      - name: Clean obj
+        run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
 
       - name: Publish MacOS
-        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
+        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\mac -property:RuntimeIdentifiers=osx-x64 -property:RuntimeIdentifier=osx-x64
+
+      #TODO create/copy Makefile
+      - name: Zip Linux
+#        run: |
+#          mkdir -p Installer
+#          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Zip MacOS
-        run: |
-          mkdir -p Installer
-          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
+#        run: |
+#          mkdir -p Installer
+#          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
 
       - uses: actions/upload-artifact@v2
         with:
