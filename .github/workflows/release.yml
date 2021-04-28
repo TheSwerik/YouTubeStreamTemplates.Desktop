@@ -104,7 +104,7 @@ jobs:
         run: nuget restore
 
       - name: Publish 64bit
-        run: msbuild /t:clean,restore,build,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
+        run: msbuild /t:clean,restore,build,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
       #        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: clean
@@ -126,7 +126,7 @@ jobs:
         run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
       - name: Publish 32bit 4
-        run: msbuild /t:clean    -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+        run: msbuild /t:clean    -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
       - name: See Files
         run: |
