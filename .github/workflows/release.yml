@@ -47,12 +47,12 @@ jobs:
         run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\mac -property:RuntimeIdentifiers=osx-x64 -property:RuntimeIdentifier=osx-x64
 
       #TODO create/copy Makefile
-      - name: Zip Linux
+#      - name: Zip Linux
 #        run: |
 #          mkdir -p Installer
 #          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
-      - name: Zip MacOS
+#      - name: Zip MacOS
 #        run: |
 #          mkdir -p Installer
 #          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
