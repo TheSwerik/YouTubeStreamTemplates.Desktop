@@ -128,6 +128,13 @@ jobs:
       - name: Publish 32bit 4
         run: msbuild /t:clean    -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=.\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
+      - name: See Files
+        run: |
+          pwd
+          ls
+          ls Publish
+          ls Publish\bin
+        
       - name: Create Installer
         run: iscc "/ssigntool=`$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe`$q sign /f developer-cert.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
 
