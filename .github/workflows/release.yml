@@ -102,6 +102,12 @@ jobs:
 
       - name: Publish 32bit
         run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
+
+      - name: Clean obj
+        run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
+
+      - name: Publish Linux
+        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\linux -property:RuntimeIdentifiers=linux-x64 -property:RuntimeIdentifier=linux-x64
         
       - name: Create Installer
         run: iscc "/ssigntool=`$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe`$q sign /f developer-cert.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
