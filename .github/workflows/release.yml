@@ -83,7 +83,6 @@ jobs:
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
-          Get-Content "Inno Config.iss" | select -First 10
 
       - name: Paste Client Id and Secret
         run: |
@@ -98,16 +97,9 @@ jobs:
 
       - name: Publish 64bit
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
-      #        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: Clean obj
         run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
-
-#      - name: Change Project Variables
-#        run: (gc "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml") -replace 'win-x64', 'win-x86' | Out-File -encoding ASCII "./YouTubeStreamTemplatesCrossPlatform/Properties/PublishProfiles/PublishSigned.pubxml"
-
-      #TODO cleanup unneeded steps
-      #TODO put unix in here too
 
       - name: Publish 32bit
         run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
