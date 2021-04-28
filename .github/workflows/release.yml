@@ -72,9 +72,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.0.2
-#      - uses: actions/setup-dotnet@v1
-#        with:
-#          dotnet-version: 5.0.x
 
       - name: Get the version
         id: version
@@ -99,8 +96,8 @@ jobs:
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
-      - name: Install dependencies
-        run: nuget restore
+#      - name: Install dependencies
+#        run: nuget restore
 
       - name: Publish 64bit
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
