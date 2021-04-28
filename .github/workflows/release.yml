@@ -8,8 +8,7 @@ on:
 
 env:
   PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
-  FILENAME_WIN: YouTube StreamTemplates
-  FILENAME_UNIX: YouTubeStreamTemplates
+  FILENAME: YouTubeStreamTemplates
   ARTIFACT_WIN: windows-artifact
   ARTIFACT_UNIX: unix-artifact
 
@@ -49,7 +48,7 @@ jobs:
       - name: Zip Linux
         run: |
           mkdir -p Installer
-          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME_UNIX }}.tar.gz" .
+          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Publish MacOS
         run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish/mac    -v:m -r:osx-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
@@ -57,14 +56,14 @@ jobs:
       - name: Zip MacOS
         run: |
           mkdir -p Installer
-          7z a "Installer/${{ env.FILENAME_UNIX }}.zip" ./Publish/* -xr!linux 
+          7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
 
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ env.ARTIFACT_UNIX }}
           path: |
-            Installer/${{ env.FILENAME_UNIX }}.tar.gz
-            Installer/${{ env.FILENAME_UNIX }}.zip
+            Installer/${{ env.FILENAME }}.tar.gz
+            Installer/${{ env.FILENAME }}.zip
 
   build-windows:
 #    if: github.event.base_ref == 'refs/heads/main'
@@ -104,7 +103,7 @@ jobs:
         run: nuget restore
 
       - name: Publish 64bit
-        run: msbuild /t:clean,restore,build,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
+        run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
       #        run: dotnet publish -p:PublishProfile=PublishSigned -c:Release -o:Publish\bin\64bit -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=false -p:PublishTrimmed=true
 
       - name: clean
@@ -119,9 +118,6 @@ jobs:
       - name: Restore 32bit
         run: msbuild /t:restore  -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
 
-#      - name: Build 32bit
-#        run: msbuild /t:build    -v:m /p:Configuration=Release -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
-
       - name: Publish 32bit
         run: msbuild /t:publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
         
@@ -131,7 +127,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ env.ARTIFACT_WIN }}
-          path: Installer/${{ env.FILENAME_WIN }}.exe
+          path: Installer/${{ env.FILENAME }}.exe
 
 #  create-release:
 #    needs: [ build-unix, build-windows ]
@@ -157,8 +153,8 @@ jobs:
 #          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
 #          draft: false
 #          files: |
-#            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME_WIN }}.exe
-#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.zip
-#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME_UNIX }}.tar.gz
+#            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME }}.exe
+#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME }}.zip
+#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME }}.tar.gz
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
