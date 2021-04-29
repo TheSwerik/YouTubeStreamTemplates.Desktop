@@ -1,8 +1,8 @@
 name: release
 
+#    branches: [ main ]
 on:
   push:
-    branches: [ main ]
     tags:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
@@ -14,7 +14,7 @@ env:
 
 jobs:
   build-unix:
-#    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
@@ -53,7 +53,7 @@ jobs:
           tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Zip MacOS
-        run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux 
+        run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux
 
       - uses: actions/upload-artifact@v2
         with:
@@ -63,7 +63,7 @@ jobs:
             Installer/${{ env.FILENAME }}.zip
 
   build-windows:
-#    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
@@ -72,8 +72,8 @@ jobs:
 
       - name: Get the version
         id: version
-        run: echo ::set-output name=VERSION::1.8.7
-#        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      #        run: echo ::set-output name=VERSION::1.8.7
 
       - name: Change Project Variables
         run: |
@@ -100,7 +100,7 @@ jobs:
 
       - name: Publish 32bit
         run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\32bit -property:RuntimeIdentifiers=win-x86 -property:RuntimeIdentifier=win-x86
-        
+
       - name: Create Installer
         run: iscc "/ssigntool=`$qC:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe`$q sign /f developer-cert.pfx /t http://timestamp.comodoca.com/authenticode /p ${{ secrets.PFX_KEY }} /fd sha256 $f" /qp "Inno Config.iss"
 
@@ -111,7 +111,7 @@ jobs:
 
   create-release:
     needs: [ build-unix, build-windows ]
-#    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -126,15 +126,15 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          fail_on_unmatched_files: true
-#          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
-#          draft: false
-#          files: |
-#            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME }}.exe
-#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME }}.zip
-#            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME }}.tar.gz
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          fail_on_unmatched_files: true
+          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
+          draft: false
+          files: |
+            Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME }}.exe
+            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME }}.zip
+            Installer/${{ env.ARTIFACT_UNIX }}/${{ env.FILENAME }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
