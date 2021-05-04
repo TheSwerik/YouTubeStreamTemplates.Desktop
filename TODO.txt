@@ -1,4 +1,2 @@
-use certificate not cert
-sign in github
 change version publish xml from CI
 try UWP: https://www.reddit.com/r/dotnet/comments/mvyvcg/distributing_desktop_application_which_needs/gvxrgqd?utm_source=share&utm_medium=web2x&context=3
