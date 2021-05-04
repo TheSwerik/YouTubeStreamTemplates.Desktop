@@ -77,6 +77,7 @@ namespace YouTubeStreamTemplates.Templates
             else Templates[index] = template;
 
             var path = SettingsService.Settings[Setting.SavePath] + $"/{template.Id}.tplt";
+            path = path.Replace("%appdata%", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
             await using var file = File.CreateText(path);
 
             await file.WriteLineAsync($"Name: {template.Name}");

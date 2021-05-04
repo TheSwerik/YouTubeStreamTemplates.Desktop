@@ -12,9 +12,13 @@ namespace YouTubeStreamTemplates.Settings
     public class SettingsService
     {
         private const string DefaultPath = @"res/Default.cfg";
-        private const string Path = @"settings.cfg";
+
         private static SettingsService? _instance;
         private readonly Dictionary<Setting, string> _defaultSettings;
+
+        private readonly string Path =
+            $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\YouTubeStreamTemplates\settings.cfg";
+
         public static SettingsService Instance => _instance ??= new SettingsService();
         public Dictionary<Setting, string> Settings { get; }
 
@@ -48,8 +52,7 @@ namespace YouTubeStreamTemplates.Settings
             foreach (var setting in settingNames)
             {
                 var value = lines.SingleOrDefault(line => line[0].Trim().Equals(setting.ToString()));
-                if (value != null && value.Length == 2) settings.Add(setting, value[1].Trim());
-                else settings.Add(setting, _defaultSettings[setting].Trim());
+                settings.Add(setting, value is {Length: 2} ? value[1].Trim() : _defaultSettings[setting].Trim());
             }
         }
 
