@@ -18,7 +18,8 @@ namespace YouTubeStreamTemplatesCrossPlatform
             }
             catch (Exception e)
             {
-                File.WriteAllText($"error logs {DateTime.Now.ToFileTime()}.txt", e.Message + "\n" + e.StackTrace);
+                File.WriteAllText($"error logs {DateTime.Now.ToFileTime()}.txt",
+                                  e.GetType() + ": " + e.Message + "\n" + e.StackTrace);
                 throw;
             }
         }
