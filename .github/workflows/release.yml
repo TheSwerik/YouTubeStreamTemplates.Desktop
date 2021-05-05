@@ -36,8 +36,8 @@ jobs:
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
-      - name: Publish Linux
-        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\linux -property:RuntimeIdentifiers=linux-x64 -property:RuntimeIdentifier=linux-x64
+      - name: Publish Ubuntu
+        run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\ubuntu -property:RuntimeIdentifiers=ubuntu.16.04-x64 -property:RuntimeIdentifier=ubuntu.16.04-x64
 
       - name: Clean obj
         run: get-childitem -Include obj -Recurse -force | Remove-Item -Force -Recurse
@@ -45,16 +45,16 @@ jobs:
       - name: Publish MacOS
         run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\mac -property:RuntimeIdentifiers=osx-x64 -property:RuntimeIdentifier=osx-x64
 
-      - name: add Publish-Files to Linux
-        run: cp Release\* Publish\linux
+      - name: add Publish-Files to Ubuntu
+        run: cp Release\* Publish\ubuntu
         
-      - name: Zip Linux
+      - name: Zip Ubuntu
         run: |
           New-Item -Path . -Name "Installer" -ItemType "directory"
-          tar -C Publish/linux --exclude=osx -czf "Installer/${{ env.FILENAME }}.tar.gz" .
+          tar -C Publish/ubuntu -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
       - name: Zip MacOS
-        run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux
+        run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/mac/*
 
       - uses: actions/upload-artifact@v2 
         with:
