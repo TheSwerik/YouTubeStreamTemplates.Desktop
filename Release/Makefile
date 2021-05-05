@@ -6,7 +6,7 @@ install:
 		find . -type f ! -path "./Makefile" -exec install -Dm 755 "{}" "$(OPTDIR)/$(NAME)/{}" \;
 		export PATH=$$PATH:/opt/$(NAME)
 		@if [ -d "/usr/share/applications/" ]; then\
-			echo "[Desktop Entry]\nName=$(NAME)\nExec=/opt/$(NAME)/YouTubeStreamTemplatesCrossPlatform\nTerminal=false\nType=Application" > /usr/share/applications/$(NAME).desktop;\
+			copy $(NAME).desktop > /usr/share/applications/$(NAME).desktop;\
 		fi
 		@echo "Icon=/opt/$(APP)/icon"
 
