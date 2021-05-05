@@ -11,7 +11,7 @@ install:
 		@echo "Icon=/opt/$(APP)/icon"
 
 uninstall:
-		rm $(OPTDIR)/$(NAME)
+		rm -r $(OPTDIR)/$(NAME)
 		@if [ -d "/usr/share/applications/" ]; then\
 			rm -r /usr/share/applications/$(NAME).desktop;\
 		fi
