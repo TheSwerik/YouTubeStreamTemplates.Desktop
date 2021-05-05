@@ -3,7 +3,7 @@ NAME = YouTubeStreamTemplates
 
 install:
 		@echo $(NAME)
-		find . -type f ! -path "./Makefile" -exec install -Dm 755 "{}" "$(OPTDIR)/$(NAME)/{}" \;
+		find . -type f ! -path "./Makefile" ! -path "./$(NAME).desktop" -exec install -Dm 755 "{}" "$(OPTDIR)/$(NAME)/{}" \;
 		export PATH=$$PATH:/opt/$(NAME)
 		@if [ -d "/usr/share/applications/" ]; then\
 			copy $(NAME).desktop > /usr/share/applications/$(NAME).desktop;\
