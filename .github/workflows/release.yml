@@ -53,7 +53,7 @@ jobs:
           New-Item -Path . -Name "Installer" -ItemType "directory"
           tar -C Publish/ubuntu -czf "Installer/${{ env.FILENAME }}.tar.gz" .
 
-      - name: Zip MacOS
+      - name: Zip MacOS 
         run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/mac/*
 
       - uses: actions/upload-artifact@v2 
