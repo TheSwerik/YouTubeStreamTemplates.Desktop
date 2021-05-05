@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: nuget restore
       
-    - name: Build
+    - name: Build 
       run: dotnet build --configuration Release --no-restore
       
     - name: Test
