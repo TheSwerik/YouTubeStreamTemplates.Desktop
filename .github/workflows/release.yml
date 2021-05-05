@@ -54,7 +54,7 @@ jobs:
       - name: Zip MacOS
         run: 7z a "Installer/${{ env.FILENAME }}.zip" ./Publish/* -xr!linux
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2 
         with:
           name: ${{ env.ARTIFACT_UNIX }}
           path: |
