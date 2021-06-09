@@ -78,7 +78,7 @@ CreateUninstallRegKey=true
 ;UninstallDisplayIcon={app}\{#MyAppIconName}   
 ; specify Icon for Setup
 SetupIconFile={#MyAppIconName}
-
+ 
 ; Makes you select install-Types for [Components]
 ; is optional, default Types will be created if left empty
 ;[Types]
