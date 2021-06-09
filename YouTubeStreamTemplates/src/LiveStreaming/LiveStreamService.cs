@@ -283,6 +283,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             var liveStream = await GetCurrentStream();
             var video = template.ToVideo();
             video.Id = liveStream.Id;
+            video.Status.MadeForKids = false; //TODO add setting
             var request = _youTubeService.Videos.Update(video, "id,snippet,liveStreamingDetails");
 
             Logger.Debug("Updating Video:\t{0} -> {1}", template.Name, liveStream.Id);
