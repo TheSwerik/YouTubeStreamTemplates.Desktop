@@ -52,7 +52,8 @@ namespace YouTubeStreamTemplates.LiveStreaming
                                               {
                                                   ScheduledStartTime = liveStream.StartTime.ToUniversalTime(),
                                                   ScheduledEndTime = liveStream.EndTime.ToUniversalTime()
-                                              }
+                                              },
+                       Status = new VideoStatus()
                    };
         }
 
@@ -64,7 +65,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
                        Title = video.Snippet.Title,
                        Description = video.Snippet.Description,
                        Category = video.Snippet.CategoryId,
-                       Tags = (List<string>) (video.Snippet.Tags ?? new List<string>()),
+                       Tags = (List<string>)(video.Snippet.Tags ?? new List<string>()),
                        TextLanguage = video.Snippet.DefaultLanguage,
                        AudioLanguage = video.Snippet.DefaultAudioLanguage,
                        StartTime = video.LiveStreamingDetails?.ScheduledStartTime ?? DateTime.MinValue,
