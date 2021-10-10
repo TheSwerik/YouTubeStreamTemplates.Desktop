@@ -101,7 +101,7 @@ namespace YouTubeStreamTemplates.LiveStreaming
             }
             else
             {
-                secrets = new ClientSecrets {ClientId = "CLIENT_ID", ClientSecret = "CLIENT_SECRET"};
+                secrets = new ClientSecrets { ClientId = "CLIENT_ID", ClientSecret = "CLIENT_SECRET" };
             }
 
             return await GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -283,8 +283,9 @@ namespace YouTubeStreamTemplates.LiveStreaming
             var liveStream = await GetCurrentStream();
             var video = template.ToVideo();
             video.Id = liveStream.Id;
-            video.Status.MadeForKids = false; //TODO add setting
-            var request = _youTubeService.Videos.Update(video, "id,snippet,liveStreamingDetails");
+            video.Status.SelfDeclaredMadeForKids = false; //TODO add setting
+            video.Status.PrivacyStatus = "public"; //TODO add setting
+            var request = _youTubeService.Videos.Update(video, "id,snippet,liveStreamingDetails,status");
 
             Logger.Debug("Updating Video:\t{0} -> {1}", template.Name, liveStream.Id);
             await request.ExecuteAsync();
