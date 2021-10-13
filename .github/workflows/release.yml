@@ -25,11 +25,6 @@ jobs:
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
 
-      - name: Paste Client Id and Secret
-        run: |
-          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_ID"', '"${{ secrets.CLIENT_ID }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
-          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_SECRET"', '"${{ secrets.CLIENT_SECRET }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
-
       - name: Get PFX-Cert
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
