@@ -85,6 +85,9 @@ jobs:
 
       - name: asdsa
         run: echo ${VERSION}
+        
+      - name: asdsa2
+        run: Get-ChildItem -Path Cert:\CurrentUser\My
 
       - name: Publish 64bit
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
