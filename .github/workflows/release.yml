@@ -66,20 +66,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.0.2
 
-      - name: Get the version
-        id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Get Version
+        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<DisableWinExeOutputInference>true</DisableWinExeOutputInference>', '<DisableWinExeOutputInference>false</DisableWinExeOutputInference>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
-          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ steps.version.outputs.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
-
-      - name: Paste Client Id and Secret
-        run: |
-          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_ID"', '"${{ secrets.CLIENT_ID }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
-          (gc "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs") -replace '"CLIENT_SECRET"', '"${{ secrets.CLIENT_SECRET }}"' | Out-File -encoding ASCII "YouTubeStreamTemplates\src\LiveStreaming\LiveStreamService.cs"
+          (gc "Inno Config.iss") -replace '"0.0.0"', '"${{ env.VERSION }}"' | Out-File -encoding ASCII "Inno Config.iss"
 
       - name: Get PFX-Cert
         run: |
@@ -117,15 +111,14 @@ jobs:
         with:
           path: Installer
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Get Version
+        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
-          prerelease: ${{ startsWith(steps.get_version.outputs.VERSION, '0.') }}
+          prerelease: ${{ startsWith(env.VERSION, '0.') }}
           draft: false
           files: |
             Installer/${{ env.ARTIFACT_WIN }}/${{ env.FILENAME }}.exe
