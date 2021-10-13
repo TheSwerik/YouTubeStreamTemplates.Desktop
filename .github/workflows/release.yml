@@ -69,7 +69,7 @@ jobs:
       - uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Get Version
-        run: $VERSION = ${GITHUB_REF##*/}
+        run: $env:VERSION = ${GITHUB_REF##*/}
 
       - name: Change Project Variables
         run: |
