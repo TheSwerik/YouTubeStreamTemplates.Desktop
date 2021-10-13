@@ -84,7 +84,7 @@ jobs:
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
       - name: asdsa
-        run: echo ${VERSION}
+        run: echo version is ${VERSION}
         
       - name: asdsa2
         run: Get-ChildItem -Path Cert:\CurrentUser\My
