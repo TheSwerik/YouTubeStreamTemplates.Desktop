@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-#    branches: [ main ]
+    #    branches: [ main ]
     tags:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
@@ -70,10 +70,14 @@ jobs:
 
       - name: echo Version
         run: |
+          echo "0 ${GITHUB_REF.replace('refs/tags/', '')}"
+          echo "1 $GITHUB_REF.replace('refs/tags/', '')"
+          echo "2 " + $GITHUB_REF.replace('refs/tags/', '')
           echo "3 $GITHUB_REF##*/"
           echo "4 $env:GITHUB_REF##*/"
 
       - name: Get Version
+        #        run: echo "VERSION=$GITHUB_REF##*/" >> $env:GITHUB_ENV
         run: echo "VERSION=$GITHUB_REF##*/" >> $env:GITHUB_ENV
 
       - name: See version
