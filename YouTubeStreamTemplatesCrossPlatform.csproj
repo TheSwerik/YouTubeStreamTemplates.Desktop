@@ -38,8 +38,4 @@
         <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
         <None Include="nlog.release.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Release' " Link="nlog.config"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="YouTubeStreamTemplates.sln"/>
-    </ItemGroup>
 </Project>
