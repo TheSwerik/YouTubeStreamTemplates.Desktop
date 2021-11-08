@@ -76,6 +76,8 @@ jobs:
           echo "  ${GITHUB_REF}"
           echo "  ${env:GITHUB_REF}"
           echo ("- " + "refs/tags/")
+          echo ("- " + "refs/tags/":5)
+          echo ("- " + "refs/tags/"#refs/)
           echo ("- " + ${"refs/tags/"})
           echo ("- " + "${"refs/tags/"}")
           echo ("- " + "${'refs/tags/'}")
