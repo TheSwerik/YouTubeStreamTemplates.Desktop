@@ -17,7 +17,7 @@ jobs:
           dotnet-version: 5.0.x
 
       - name: Install dependencies
-        run: nuget restore
+        run: nuget restore YouTubeStreamTemplatesCrossPlatform.csproj
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
