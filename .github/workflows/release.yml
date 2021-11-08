@@ -87,8 +87,8 @@ jobs:
           echo ("ß " + ${($env:GITHUB_REF)##*/})
           echo "ß1 ${GITHUB_REF#refs/*/}"
           echo ("ß2 " + ${GITHUB_REF#refs/*/})
-          echo ("10 " + ${(env:GITHUB_REF):10})
-          echo "11 ${(env:GITHUB_REF):10}"
+          echo ("10 " + ${(env:GITHUB_REF)})
+          echo "11 ${(env:GITHUB_REF)}"
           echo ("12 " + ${(env:GITHUB_REF)#refs/})
           echo "13 ${(env:GITHUB_REF)#refs/}"
           echo ("14 " + ${($env:GITHUB_REF):10})
