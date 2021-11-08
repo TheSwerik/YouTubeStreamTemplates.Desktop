@@ -72,6 +72,8 @@ jobs:
         run: |
           echo "  $GITHUB_REF"
           echo "  $env:GITHUB_REF"
+          echo "  ${GITHUB_REF}"
+          echo "  ${env:GITHUB_REF}"
           echo "0 ${env:GITHUB_REF.replace('refs/tags/', '')}"
           echo "1 $env:GITHUB_REF.replace('refs/tags/', '')"
           echo ("2 " + $env:GITHUB_REF.replace('refs/tags/', ''))
@@ -83,6 +85,8 @@ jobs:
           echo ("8 " + ${env:GITHUB_REF##*/})
           echo "9 ${($env:GITHUB_REF)##*/}"
           echo ("ß " + ${($env:GITHUB_REF)##*/})
+          echo "ß1 ${GITHUB_REF#refs/*/}"
+          echo ("ß2 " + ${GITHUB_REF#refs/*/})
 
       - name: Get Version
         #        run: echo "VERSION=$GITHUB_REF##*/" >> $env:GITHUB_ENV
