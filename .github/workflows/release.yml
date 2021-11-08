@@ -70,7 +70,11 @@ jobs:
 
       - name: Get Version
         #        run: $env:VERSION = ${GITHUB_REF##*/}
-        run: echo ${GITHUB_REF##*/}
+        run: |
+          echo ${GITHUB_REF##*/}
+          echo ${env:GITHUB_REF##*/}
+          echo $GITHUB_REF##*/
+          echo $env:GITHUB_REF##*/
 
       - name: Get Version
 #        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
@@ -79,7 +83,11 @@ jobs:
 
       - name: See version
         #        run: echo "version is ${$env:VERSION}"
-        run: echo $env:VERSION
+        run: |
+          echo $env:VERSION
+          echo $VERSION
+          echo "1version is $env:VERSION"
+          echo "2version is $VERSION"
 
       - name: Change Project Variables
         run: |
