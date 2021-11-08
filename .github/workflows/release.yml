@@ -81,7 +81,6 @@ jobs:
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
-      #TODO release the old releases
       - name: Publish 64bit
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
 
@@ -114,12 +113,6 @@ jobs:
 
       - name: Get Version
         run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
-
-      - name: See Version
-        run: |
-          echo $VERSION
-          echo $env:VERSION
-          echo $env.VERSION
 
       - name: Release
         uses: softprops/action-gh-release@v1
