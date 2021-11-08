@@ -2,7 +2,6 @@ name: release
 
 on:
   push:
-    #    branches: [ main ]
     tags:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
@@ -14,7 +13,7 @@ env:
 
 jobs:
   build-unix:
-    #    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
@@ -31,7 +30,6 @@ jobs:
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
-          ls
 
       - name: Publish Ubuntu
         run: msbuild /t:restore,publish  -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\linux -property:RuntimeIdentifiers=linux-x64 -property:RuntimeIdentifier=linux-x64
@@ -61,7 +59,7 @@ jobs:
             Installer/${{ env.FILENAME }}.zip
 
   build-windows:
-    #    if: github.event.base_ref == 'refs/heads/main'
+    if: github.event.base_ref == 'refs/heads/main'
     runs-on: windows-latest
 
     steps:
@@ -70,12 +68,6 @@ jobs:
 
       - name: Get Version
         run: echo ("VERSION=" + $env:GITHUB_REF.replace('refs/tags/', '')) >> $env:GITHUB_ENV
-
-      - name: See version
-        run: |
-          echo $env:VERSION
-          echo "version is $env:VERSION"
-          echo "version is ${{ env.VERSION }}"
 
       - name: Change Project Variables
         run: |
@@ -89,7 +81,6 @@ jobs:
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
 
-      #TODO fix version and change deploy back to tag
       #TODO release the old releases
       - name: Publish 64bit
         run: msbuild /t:restore,publish -v:m /p:Configuration=Release /p:PublishProfile=PublishSigned /p:PublishDir=..\Publish\bin\64bit -property:RuntimeIdentifiers=win-x64 -property:RuntimeIdentifier=win-x64
@@ -123,6 +114,12 @@ jobs:
 
       - name: Get Version
         run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: See Version
+        run: |
+          echo $VERSION
+          echo $env:VERSION
+          echo $env.VERSION
 
       - name: Release
         uses: softprops/action-gh-release@v1
