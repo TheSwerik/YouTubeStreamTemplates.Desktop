@@ -77,7 +77,7 @@ jobs:
         run: echo ("VERSION=187") >> $env:GITHUB_ENV
 
       - name: See version
-        run: echo "version is ${$env:VERSION}"
+        run: echo "version is ${VERSION}"
 
       - name: Change Project Variables
         run: |
