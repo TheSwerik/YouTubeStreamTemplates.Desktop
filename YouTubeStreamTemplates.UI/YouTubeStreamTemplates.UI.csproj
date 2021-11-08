@@ -17,11 +17,12 @@
         <Folder Include="ViewModels\Tabs"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.10.6"/>
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.6"/>
-        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.6"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6"/>
-        <PackageReference Include="NLog" Version="4.7.10"/>
+        <PackageReference Include="Avalonia" Version="0.10.10"/>
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.10"/>
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.10"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10"/>
+        <PackageReference Include="NLog" Version="4.7.12"/>
+        <PackageReference Include="YouTubeStreamTemplates" Version="0.9.3"/>
     </ItemGroup>
     <ItemGroup>
         <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
@@ -39,8 +40,5 @@
             <DependentUpon>StreamView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\YouTubeStreamTemplates\YouTubeStreamTemplates.csproj"/>
     </ItemGroup>
 </Project>
