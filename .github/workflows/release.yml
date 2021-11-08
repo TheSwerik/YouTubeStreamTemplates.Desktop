@@ -73,8 +73,8 @@ jobs:
 
       - name: Get Version
 #        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
-        run: echo ("VERSION=" + ${GITHUB_REF##*/}) >> $env:GITHUB_ENV
-#        run: echo ("VERSION=187") >> $env:GITHUB_ENV
+#        run: echo ("VERSION=" + ${GITHUB_REF##*/}) >> $env:GITHUB_ENV
+        run: echo ("VERSION=187") >> $env:GITHUB_ENV
 
       - name: See version
         run: echo "version is ${$env:VERSION}"
