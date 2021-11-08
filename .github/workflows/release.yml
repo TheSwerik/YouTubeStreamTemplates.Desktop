@@ -72,9 +72,9 @@ jobs:
         run: |
           echo "  $GITHUB_REF"
           echo "  $env:GITHUB_REF"
-          echo "0 ${GITHUB_REF.replace('refs/tags/', '')}"
-          echo "1 $GITHUB_REF.replace('refs/tags/', '')"
-          echo "2 " + $GITHUB_REF.replace('refs/tags/', '')
+          echo "0 ${env:GITHUB_REF.replace('refs/tags/', '')}"
+          echo "1 $env:GITHUB_REF.replace('refs/tags/', '')"
+          echo "2 " + $env:GITHUB_REF.replace('refs/tags/', '')
           echo "3 $GITHUB_REF##*/"
           echo "4 $env:GITHUB_REF##*/"
 
