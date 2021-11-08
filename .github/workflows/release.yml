@@ -2,8 +2,9 @@ name: release
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
+    branches: [main]
+#    tags:
+#      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching [0-9]+.[0-9]+.[0-9]+, i.e. 1.0.0, 187.753.5
 
 env:
   PROJECT_NAME: YouTubeStreamTemplatesCrossPlatform
@@ -70,6 +71,12 @@ jobs:
       - name: Get Version
         run: $env:VERSION = ${GITHUB_REF##*/}
 
+#      - name: Get Version
+#        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: See version
+        run: echo "version is ${VERSION}"
+
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
@@ -81,9 +88,6 @@ jobs:
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes('developer-cert.pfx', $bytes)
           Import-PfxCertificate -FilePath .\developer-cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String '${{ secrets.PFX_KEY }}' -AsPlainText -Force)
-
-      - name: asdsa
-        run: echo version is ${VERSION}
 #TODO fix version and change deploy back to tag
 #TODO release the old releases
       - name: Publish 64bit
