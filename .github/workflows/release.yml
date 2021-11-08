@@ -79,6 +79,10 @@ jobs:
           echo "4 $env:GITHUB_REF##*/"
           echo "5 ${GITHUB_REF##*/}"
           echo ("6 " + ${GITHUB_REF##*/})
+          echo "7 ${env:GITHUB_REF##*/}"
+          echo ("8 " + ${env:GITHUB_REF##*/})
+          echo "9 ${($env:GITHUB_REF)##*/}"
+          echo ("ß " + ${($env:GITHUB_REF)##*/})
 
       - name: Get Version
         #        run: echo "VERSION=$GITHUB_REF##*/" >> $env:GITHUB_ENV
