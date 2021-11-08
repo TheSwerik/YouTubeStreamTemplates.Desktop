@@ -9,7 +9,7 @@
         <Nullable>enable</Nullable>
         <ProjectGuid>{FFEEFFF0-611A-4302-A17C-5F38A8D163B1}</ProjectGuid>
         <!--        <PublishTrimmed>true</PublishTrimmed>-->
-        <ApplicationIcon>..\YouTubeStreamTemplates.ico</ApplicationIcon>
+        <ApplicationIcon>YouTubeStreamTemplates.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -37,5 +37,9 @@
     <ItemGroup>
         <None Include="nlog.debug.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Debug' " Link="nlog.config"/>
         <None Include="nlog.release.config" CopyToOutputDirectory="PreserveNewest" Condition=" '$(Configuration)' == 'Release' " Link="nlog.config"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="YouTubeStreamTemplates.sln"/>
     </ItemGroup>
 </Project>
