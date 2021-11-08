@@ -75,26 +75,9 @@ jobs:
           echo "  $env:GITHUB_REF"
           echo "  ${GITHUB_REF}"
           echo "  ${env:GITHUB_REF}"
-          echo "0 ${env:GITHUB_REF.replace('refs/tags/', '')}"
-          echo "1 $env:GITHUB_REF.replace('refs/tags/', '')"
-          echo "3 $GITHUB_REF##*/"
-          echo "4 $env:GITHUB_REF##*/"
-          echo "5 ${GITHUB_REF##*/}"
-          echo ("6 " + ${GITHUB_REF##*/})
-          echo "7 ${env:GITHUB_REF##*/}"
-          echo ("8 " + ${env:GITHUB_REF##*/})
-          echo "9 ${($env:GITHUB_REF)##*/}"
-          echo ("ß " + ${($env:GITHUB_REF)##*/})
-          echo "ß1 ${GITHUB_REF#refs/*/}"
-          echo ("ß2 " + ${GITHUB_REF#refs/*/})
-          echo ("10 " + ${(env:GITHUB_REF)})
-          echo "11 ${(env:GITHUB_REF)}"
-          echo ("12 " + ${(env:GITHUB_REF)#refs/})
-          echo "13 ${(env:GITHUB_REF)#refs/}"
-          echo ("14 " + ${($env:GITHUB_REF):10})
-          echo "15 ${($env:GITHUB_REF):10}"
-          echo ("16 " + ${($env:GITHUB_REF)#refs/})
-          echo "17 ${($env:GITHUB_REF)#refs/}"
+          echo ${"refs/tags/"}
+          echo ${"refs/tags/":5}
+          echo ${"refs/tags/"#refs/}
 
       - name: Get Version
         #        run: echo "VERSION=$GITHUB_REF##*/" >> $env:GITHUB_ENV
