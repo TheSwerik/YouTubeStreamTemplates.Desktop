@@ -75,13 +75,13 @@ jobs:
           echo "  $env:GITHUB_REF"
           echo "  ${GITHUB_REF}"
           echo "  ${env:GITHUB_REF}"
-          echo "refs/tags/"
-          echo ${"refs/tags/"}
-          echo "${"refs/tags/"}"
-          echo "${'refs/tags/'}"
-          echo "${refs/tags/}"
-          echo ${"refs/tags/":5}
-          echo ${"refs/tags/"#refs/}
+          echo ("- " + "refs/tags/")
+          echo ("- " + ${"refs/tags/"})
+          echo ("- " + "${"refs/tags/"}")
+          echo ("- " + "${'refs/tags/'}")
+          echo ("- " + "${refs/tags/}")
+          echo ("- " + ${"refs/tags/":5})
+          echo ("- " + ${"refs/tags/"#refs/})
 
       - name: Get Version
         #        run: echo "VERSION=$GITHUB_REF##*/" >> $env:GITHUB_ENV
