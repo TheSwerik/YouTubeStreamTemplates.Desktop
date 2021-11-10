@@ -1,7 +1,7 @@
 ﻿using System.Reactive;
 using System.Threading.Tasks;
 using ReactiveUI;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.LiveStream;
 using YouTubeStreamTemplates.Settings;
 
 namespace YouTubeStreamTemplates.UI.ViewModels
@@ -15,7 +15,7 @@ namespace YouTubeStreamTemplates.UI.ViewModels
         private static async Task<bool> InitLiveStreamService()
         {
             await SettingsService.Init();
-            await LiveStreamService.Init();
+            await StreamService.Init();
             return true;
         }
     }
