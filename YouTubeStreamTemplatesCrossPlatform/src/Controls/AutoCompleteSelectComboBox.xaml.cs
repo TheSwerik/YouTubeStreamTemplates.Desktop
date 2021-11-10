@@ -8,7 +8,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.LiveStream;
 using YouTubeStreamTemplatesCrossPlatform.Windows;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
@@ -137,7 +137,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void SearchResult_OnClick(object? sender, Playlist playlist)
         {
-            var checkBoxSearchResult = (CheckBoxSearchResult) sender!;
+            var checkBoxSearchResult = (CheckBoxSearchResult)sender!;
             if (checkBoxSearchResult.IsChecked) SelectedItems.Add(playlist);
             else SelectedItems.Remove(playlist);
             _searchInputBox.Focus();

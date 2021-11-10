@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.LiveStream;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
 {
@@ -16,7 +16,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         public CheckBoxSearchResult(string text) : this()
         {
-            ((TextBlock) _grid.Children.First(c => c is TextBlock)).Text = text;
+            ((TextBlock)_grid.Children.First(c => c is TextBlock)).Text = text;
             Text = text;
         }
 

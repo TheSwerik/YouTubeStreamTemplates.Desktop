@@ -10,7 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using NLog;
 using YouTubeStreamTemplates.Helpers;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.LiveStream;
 using YouTubeStreamTemplates.Settings;
 using YouTubeStreamTemplates.Templates;
 
@@ -91,16 +91,16 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private async Task Init()
         {
-            while (!LiveStreamService.IsInitialized)
+            while (!StreamService.IsInitialized)
             {
-                Logger.Debug("Waiting for LiveStreamService to initialize...");
+                Logger.Debug("Waiting for StreamService to initialize...");
                 await Task.Delay(100);
             }
 
-            _categoryComboBox.Items = LiveStreamService.Instance.Category;
+            _categoryComboBox.Items = StreamService.Instance.Category;
             _streamVisibilityComboBox.Items = Enum.GetValues<Visibility>();
             _vodVisibilityComboBox.Items = Enum.GetValues<Visibility>();
-            _playlistComboBox.Items = LiveStreamService.Instance.Playlists;
+            _playlistComboBox.Items = StreamService.Instance.Playlists;
             Refresh();
         }
 
@@ -125,7 +125,7 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
             // Logger.Debug($"Fill Values with:\n{template}");
             _titleTextBox.Text = template.Title;
             _descriptionTextBox.Text = template.Description;
-            _categoryComboBox.SelectedItem = LiveStreamService.Instance!.Category.FirstMatching(template.Category);
+            _categoryComboBox.SelectedItem = StreamService.Instance!.Category.FirstMatching(template.Category);
             _tagEditor.RefreshTags(template.Tags);
             await SettingsService.Instance.UpdateSetting(Setting.CurrentTemplate, template.Id);
             if (string.IsNullOrWhiteSpace(template.Thumbnail.Source))
@@ -139,11 +139,11 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                 _thumbnail = template.Thumbnail with { };
             }
 
-            if (LiveStreamService.IsInitialized)
-                _playlistComboBox.SetSelectedItems(LiveStreamService.Instance
-                                                                    .Playlists
-                                                                    .Where(p => template.PlaylistIDs.Contains(p.Id))
-                                                                    .ToList());
+            if (StreamService.IsInitialized)
+                _playlistComboBox.SetSelectedItems(StreamService.Instance
+                                                                .Playlists
+                                                                .Where(p => template.PlaylistIDs.Contains(p.Id))
+                                                                .ToList());
         }
 
         private bool HasDifference(Template? template = null)
@@ -173,10 +173,10 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                 return;
             }
 
-            if (e.RemovedItems.Count > 0 && e.RemovedItems[0] != null && HasDifference((Template?) e.RemovedItems[0]))
+            if (e.RemovedItems.Count > 0 && e.RemovedItems[0] != null && HasDifference((Template?)e.RemovedItems[0]))
             {
                 _ignoreDifferenceCheck = true;
-                _templateComboBox.SelectedItem = (Template?) e.RemovedItems[0];
+                _templateComboBox.SelectedItem = (Template?)e.RemovedItems[0];
                 Logger.Warn("You have unsaved changes!");
                 //TODO MessageBox
                 return;
@@ -222,14 +222,14 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
                                            {
                                                new()
                                                {
-                                                   Extensions = new List<string> {"png", "jpg", "jpeg"},
+                                                   Extensions = new List<string> { "png", "jpg", "jpeg" },
                                                    Name = "Image"
                                                }
                                            }
                              };
-            var strings = await fileDialog.ShowAsync((Window) Parent.Parent.Parent.Parent.Parent);
+            var strings = await fileDialog.ShowAsync((Window)Parent.Parent.Parent.Parent.Parent);
             if (strings == null || strings.Length == 0) return;
-            _thumbnail = new Thumbnail {Source = strings[0]};
+            _thumbnail = new Thumbnail { Source = strings[0] };
             _thumbnailImage.Source =
                 new Bitmap(await ImageHelper.GetImagePathAsync(_thumbnail.Source, true, SelectedTemplate.Id));
             OnChanged(null, null);

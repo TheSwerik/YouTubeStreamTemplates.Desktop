@@ -1,62 +1,113 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditTemplate"
-             xmlns:controls="clr-namespace:YouTubeStreamTemplatesCrossPlatform.Controls"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Runtime"
-             xmlns:templates="clr-namespace:YouTubeStreamTemplates.Templates;assembly=YouTubeStreamTemplates"
-             xmlns:liveStreaming="clr-namespace:YouTubeStreamTemplates.LiveStreaming;assembly=YouTubeStreamTemplates"
-             KeyUp="OnHotKeyPressed">
+﻿<UserControl
+    KeyUp="OnHotKeyPressed"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="YouTubeStreamTemplatesCrossPlatform.Controls.EditTemplate"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:controls="clr-namespace:YouTubeStreamTemplatesCrossPlatform.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Runtime"
+    xmlns:liveStream="clr-namespace:YouTubeStreamTemplates.LiveStream;assembly=YouTubeStreamTemplates"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:templates="clr-namespace:YouTubeStreamTemplates.Templates;assembly=YouTubeStreamTemplates"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border BorderThickness="0,0,1,0" CornerRadius="0">
-        <Grid x:Name="ContentGrid" Margin="0,0,50,0"
-              RowDefinitions="*,*,*,*,*,*,*,*,10*,*,*,10*,*,*,*,*,*,*,2*" ColumnDefinitions="*,10*,*">
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="Template" />
-            <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="5*,*">
-                <controls:GenericComboBox x:TypeArguments="templates:Template"
-                                          x:Name="TemplateComboBox"
-                                          SelectionChanged="TemplateComboBox_OnSelectionChanged">
+        <Grid
+            ColumnDefinitions="*,10*,*"
+            Margin="0,0,50,0"
+            RowDefinitions="*,*,*,*,*,*,*,*,10*,*,*,10*,*,*,*,*,*,*,2*"
+            x:Name="ContentGrid">
+            <TextBlock
+                Grid.Column="1"
+                Grid.Row="1"
+                Text="Template" />
+            <Grid
+                ColumnDefinitions="5*,*"
+                Grid.Column="1"
+                Grid.Row="2">
+                <controls:GenericComboBox
+                    SelectionChanged="TemplateComboBox_OnSelectionChanged"
+                    x:Name="TemplateComboBox"
+                    x:TypeArguments="templates:Template">
                     <ComboBox.ItemTemplate>
                         <DataTemplate DataType="templates:Template">
                             <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </controls:GenericComboBox>
-                <Button x:Name="SaveButton" Grid.Column="1"
-                        Content="Save" IsEnabled="False"
-                        Click="OnSaveButtonClicked" />
+                <Button
+                    Click="OnSaveButtonClicked"
+                    Content="Save"
+                    Grid.Column="1"
+                    IsEnabled="False"
+                    x:Name="SaveButton" />
             </Grid>
 
-            <Grid Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" ColumnDefinitions="5*,*" RowDefinitions="*,*,*">
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Title" />
-                <TextBox Grid.Row="2" Grid.Column="0" x:Name="TitleTextBox" AcceptsReturn="False" MaxLength="150"
-                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+            <Grid
+                ColumnDefinitions="5*,*"
+                Grid.Column="1"
+                Grid.Row="3"
+                Grid.RowSpan="3"
+                RowDefinitions="*,*,*">
+                <TextBlock
+                    Grid.Column="0"
+                    Grid.Row="1"
+                    Text="Title" />
+                <TextBox
+                    AcceptsReturn="False"
+                    Grid.Column="0"
+                    Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    MaxLength="150"
+                    VerticalAlignment="Stretch"
+                    x:Name="TitleTextBox" />
+                <Grid
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Grid.RowSpan="3">
                     <Image x:Name="ThumbnailImage" />
-                    <Image x:Name="ThumbnailImageOverlay" Source="{DynamicResource OverlayFileImage}" Classes="overlay"
-                           PointerReleased="ThumbnailImage_OnClick">
+                    <Image
+                        Classes="overlay"
+                        PointerReleased="ThumbnailImage_OnClick"
+                        Source="{DynamicResource OverlayFileImage}"
+                        x:Name="ThumbnailImageOverlay">
                         <Image.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="File" Click="FileContextButton_OnClick" />
-                                <MenuItem Header="URL" Click="URLContextButton_OnClick" />
+                                <MenuItem Click="FileContextButton_OnClick" Header="File" />
+                                <MenuItem Click="URLContextButton_OnClick" Header="URL" />
                             </ContextMenu>
                         </Image.ContextMenu>
                     </Image>
                 </Grid>
             </Grid>
 
-            <TextBlock Grid.Row="7" Grid.Column="1" Text="Description" />
-            <TextBox Grid.Row="8" Grid.Column="1" x:Name="DescriptionTextBox" AcceptsReturn="True" />
+            <TextBlock
+                Grid.Column="1"
+                Grid.Row="7"
+                Text="Description" />
+            <TextBox
+                AcceptsReturn="True"
+                Grid.Column="1"
+                Grid.Row="8"
+                x:Name="DescriptionTextBox" />
 
-            <TextBlock Grid.Row="10" Grid.Column="1" Text="Tags" />
-            <!-- TagEditor here Grid.Row="10" Grid.Column="1" -->
+            <TextBlock
+                Grid.Column="1"
+                Grid.Row="10"
+                Text="Tags" />
+            <!--  TagEditor here Grid.Row="10" Grid.Column="1"  -->
 
-            <TextBlock Grid.Row="13" Grid.Column="1" Text="Category" />
-            <controls:GenericComboBox Grid.Row="14" Grid.Column="1"
-                                      x:TypeArguments="generic:KeyValuePair(system:String,system:String)"
-                                      x:Name="CategoryComboBox">
+            <TextBlock
+                Grid.Column="1"
+                Grid.Row="13"
+                Text="Category" />
+            <controls:GenericComboBox
+                Grid.Column="1"
+                Grid.Row="14"
+                x:Name="CategoryComboBox"
+                x:TypeArguments="generic:KeyValuePair(system:String,system:String)">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Value}" />
@@ -65,17 +116,39 @@
             </controls:GenericComboBox>
 
 
-            <Grid Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" ColumnDefinitions="*,*,*" RowDefinitions="*,*">
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Playlist" />
-                <!-- x:TypeArguments="liveStreaming:Playlist"  -->
-                <controls:AutoCompleteSelectComboBox Grid.Row="1" Grid.Column="0"
-                                                     x:Name="PlaylistComboBox" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="Stream Visibility" />
-                <controls:GenericComboBox Grid.Row="1" Grid.Column="1"
-                                          x:TypeArguments="liveStreaming:Visibility" x:Name="StreamVisibilityComboBox" />
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="VOD Visibility" />
-                <controls:GenericComboBox Grid.Row="1" Grid.Column="2"
-                                          x:TypeArguments="liveStreaming:Visibility" x:Name="VodVisibilityComboBox" />
+            <Grid
+                ColumnDefinitions="*,*,*"
+                Grid.Column="1"
+                Grid.Row="16"
+                Grid.RowSpan="2"
+                RowDefinitions="*,*">
+                <TextBlock
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Text="Playlist" />
+                <!--  x:TypeArguments="liveStreaming:Playlist"  -->
+                <controls:AutoCompleteSelectComboBox
+                    Grid.Column="0"
+                    Grid.Row="1"
+                    x:Name="PlaylistComboBox" />
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Text="Stream Visibility" />
+                <controls:GenericComboBox
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    x:Name="StreamVisibilityComboBox"
+                    x:TypeArguments="liveStream:Visibility" />
+                <TextBlock
+                    Grid.Column="2"
+                    Grid.Row="0"
+                    Text="VOD Visibility" />
+                <controls:GenericComboBox
+                    Grid.Column="2"
+                    Grid.Row="1"
+                    x:Name="VodVisibilityComboBox"
+                    x:TypeArguments="liveStream:Visibility" />
             </Grid>
         </Grid>
     </Border>
