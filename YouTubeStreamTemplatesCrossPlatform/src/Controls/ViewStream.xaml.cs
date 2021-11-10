@@ -10,7 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using NLog;
 using YouTubeStreamTemplates.Helpers;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.LiveStream;
 using YouTubeStreamTemplatesCrossPlatform.Exceptions;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Controls
@@ -29,12 +29,12 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private void ThumbnailImage_OnClick(object? sender, PointerReleasedEventArgs e)
         {
-            if (!LiveStreamService.IsInitialized || LiveStreamService.Instance.CurrentLiveStream == null) return;
+            if (!StreamService.IsInitialized || StreamService.Instance.CurrentLiveStream == null) return;
             Process.Start(new ProcessStartInfo
                           {
                               UseShellExecute = true,
                               FileName = "https://www.youtube.com/watch?v=" +
-                                         LiveStreamService.Instance.CurrentLiveStream.Id
+                                         StreamService.Instance.CurrentLiveStream.Id
                           })?.Dispose();
         }
 
@@ -66,9 +66,9 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private async Task Init()
         {
-            while (!LiveStreamService.IsInitialized)
+            while (!StreamService.IsInitialized)
             {
-                Logger.Debug("Waiting for LiveStreamService to initialize...");
+                Logger.Debug("Waiting for StreamService to initialize...");
                 await Task.Delay(100);
             }
 
@@ -86,25 +86,25 @@ namespace YouTubeStreamTemplatesCrossPlatform.Controls
 
         private async Task CheckForStream(int delay = 1000)
         {
-            if (LiveStreamService.Instance == null) throw new ServiceNotInitializedException(typeof(LiveStreamService));
-            await foreach (var stream in LiveStreamService.Instance.CheckForStream(delay))
+            if (StreamService.Instance == null) throw new ServiceNotInitializedException(typeof(StreamService));
+            await foreach (var stream in StreamService.Instance.CheckForStream(delay))
                 if (stream == null) InvokeOnRender(ClearValues);
                 else InvokeOnRender(() => FillValues(stream));
         }
 
-        private async void FillValues(LiveStream liveStream)
+        private async void FillValues(Stream stream)
         {
-            // Logger.Debug($"Fill Values with:\n{liveStream}");
-            _titleTextBlock.Text = liveStream.Title;
-            _descriptionTextBlock.Text = liveStream.Description;
-            _categoryTextBlock.Text = LiveStreamService.Instance
-                                                       .Category
-                                                       .First(kp => kp.Key.Equals(liveStream.Category))
-                                                       .Value;
-            _tagEditor.Tags = liveStream.Tags.ToHashSet();
+            // Logger.Debug($"Fill Values with:\n{stream}");
+            _titleTextBlock.Text = stream.Title;
+            _descriptionTextBlock.Text = stream.Description;
+            _categoryTextBlock.Text = StreamService.Instance
+                                                   .Category
+                                                   .First(kp => kp.Key.Equals(stream.Category))
+                                                   .Value;
+            _tagEditor.Tags = stream.Tags.ToHashSet();
             _tagEditor.RefreshTags();
             _contentGrid.IsVisible = !(_noStreamGrid.IsVisible = false);
-            _thumbnail.Source = new Bitmap(await ImageHelper.GetLiveStreamImagePathAsync(liveStream.Id));
+            _thumbnail.Source = new Bitmap(await ImageHelper.GetLiveStreamImagePathAsync(stream.Id));
         }
 
         private void ClearValues()

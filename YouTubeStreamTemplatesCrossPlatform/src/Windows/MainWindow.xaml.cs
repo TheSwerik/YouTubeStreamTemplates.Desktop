@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using YouTubeStreamTemplates.LiveStreaming;
+using YouTubeStreamTemplates.LiveStream;
 
 namespace YouTubeStreamTemplatesCrossPlatform.Windows
 {
@@ -16,6 +16,6 @@ namespace YouTubeStreamTemplatesCrossPlatform.Windows
 
         public static MainWindow Instance { get; private set; } = null!;
 
-        private void Dispose(object? sender, CancelEventArgs e) { LiveStreamService.Instance.Dispose(); }
+        private void Dispose(object? sender, CancelEventArgs e) { StreamService.Instance.Dispose(); }
     }
 }

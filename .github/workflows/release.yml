@@ -20,6 +20,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.0.2
 
+      - name: Paste Client Id and Secret
+        run: |
+          (gc "${{ env.PROJECT_NAME }}\src\Windows\LoginWindow.xaml.cs") -replace 'CLIENT_ID', '${{ secrets.CLIENT_ID }}' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\src\Windows\LoginWindow.xaml.cs"
+          (gc "${{ env.PROJECT_NAME }}\src\Windows\LoginWindow.xaml.cs") -replace 'CLIENT_SECRET', '${{ secrets.CLIENT_SECRET }}' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\src\Windows\LoginWindow.xaml.cs"
+
       - name: Change Project Variables
         run: |
           (gc "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj") -replace '<OutputType>Exe</OutputType>', '<OutputType>WinExe</OutputType>' | Out-File -encoding ASCII "${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj"
